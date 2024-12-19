@@ -9,13 +9,13 @@ import ErrorComponent from 'components/common/ErrorComponent';
  */
 const Router = (): JSX.Element => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Suspense fallback={<ErrorComponent />}>
+    <Suspense fallback={<ErrorComponent />}>
+      <BrowserRouter>
+        <Routes>
           <Route path="/edit/:appId" element={<MainPageComponent />}></Route>
-        </Suspense>
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </Suspense>
   );
 };
 
