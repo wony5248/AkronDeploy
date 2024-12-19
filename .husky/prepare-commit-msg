@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+
+# 현재 브랜치명 가져오기
+BRANCH_NAME=$(git symbolic-ref --short HEAD)
+
+# 커밋 메시지 파일 경로
+COMMIT_MSG_FILE=$1
+
+# 브랜치명에서 '/' 이전 부분을 접두사로 추출
+PREFIX=$(echo "$BRANCH_NAME" | cut -d'/' -f1)
+
+# 접두사가 존재하고, 커밋 메시지가 해당 접두사로 시작하지 않는 경우 메시지 수정
+if [ -n "$PREFIX" ]; then
+  if ! grep -q "^₩[$PREFIX₩]" "$COMMIT_MSG_FILE"; then
+    sed -i.bak "1s/^/[$PREFIX] /" "$COMMIT_MSG_FILE"
+  fi
+fi
