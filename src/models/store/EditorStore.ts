@@ -10,8 +10,6 @@ import AkronContext from 'models/store/context/AkronContext';
 import AppContextBase from 'models/store/context/ContextBase';
 import SelectionManager from 'models/store/selection/SelectionManager';
 
-export interface WidgetID {}
-export interface WidgetModel {}
 /**
  * Editor Store 생성자 파라미터 Interface 입니다.
  */

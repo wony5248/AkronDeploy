@@ -3,7 +3,7 @@ import CommandEnum from '../command/CommandEnum';
 import SelectionContainer from './SelectionContainer';
 import WidgetSelection from './WidgetSelection';
 import AkronContext from 'models/store/context/AkronContext';
-import { WidgetModel } from 'models/store/EditorStore';
+import WidgetModel from 'models/node/WidgetModel';
 
 /**
  * 사용자의 Selection 상태를 보여주기 위한 Class

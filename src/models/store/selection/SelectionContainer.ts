@@ -1,5 +1,5 @@
 import { action, makeObservable } from 'mobx';
-import { WidgetModel } from 'models/store/EditorStore';
+import WidgetModel from 'models/node/WidgetModel';
 import WidgetSelection from 'models/store/selection/WidgetSelection';
 
 /**

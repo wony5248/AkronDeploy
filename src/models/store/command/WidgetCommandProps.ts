@@ -1,5 +1,5 @@
 import CommandProps from '../command/CommandProps';
-import { WidgetModel } from 'models/store/EditorStore';
+import WidgetModel from 'models/node/WidgetModel';
 import CommandEnum from 'models/store/command/CommandEnum';
 import SelectionEnum from 'models/store/selection/SelectionEnum';
 
