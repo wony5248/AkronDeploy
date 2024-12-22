@@ -1,7 +1,7 @@
 import { boundMethod } from 'autobind-decorator';
 import EventState from './EventState';
 import EventHandler from './EventHandler';
-import { WidgetID, WidgetModel } from 'models/store/EditorStore';
+import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
 import CommandEnum from 'models/store/command/CommandEnum';
 import { SelectionProp } from 'models/store/command/CommandProps';
 

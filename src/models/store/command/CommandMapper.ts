@@ -1,6 +1,6 @@
 import { boundMethod } from 'autobind-decorator';
 import CommandHandler from './CommandHandler';
-import { WidgetID } from 'models/store/EditorStore';
+import { WidgetID } from 'models/node/WidgetModel';
 import CommandEnum from 'models/store/command/CommandEnum';
 import { SelectionProp } from 'models/store/command/CommandProps';
 

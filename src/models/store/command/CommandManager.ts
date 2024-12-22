@@ -3,9 +3,9 @@ import Command from './Command';
 import CommandMapper from './CommandMapper';
 import CommandExecutor from './CommandExecutor';
 import Context from '../context/Context';
-import { WidgetID } from 'models/store/EditorStore';
 import CommandEnum from 'models/store/command/CommandEnum';
 import { SelectionProp } from 'models/store/command/CommandProps';
+import { WidgetID } from 'models/node/WidgetModel';
 
 export interface AkronCommandManager extends CommandManager<WidgetID, CommandEnum, SelectionProp> {}
 /**

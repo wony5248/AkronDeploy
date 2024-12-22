@@ -1,4 +1,4 @@
-import { WidgetModel } from 'models/store/EditorStore';
+import WidgetModel from 'models/node/WidgetModel';
 import SelectionEnum from '../selection/SelectionEnum';
 
 /**

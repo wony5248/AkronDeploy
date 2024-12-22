@@ -1,6 +1,6 @@
 /* eslint-disable */
 import EventMapper, { AkronEventMapper } from './EventMapper';
-import { WidgetID, WidgetModel } from 'models/store/EditorStore';
+import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
 import CommandEnum from 'models/store/command/CommandEnum';
 import { SelectionProp } from 'models/store/command/CommandProps';
 

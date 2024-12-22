@@ -1,5 +1,5 @@
 import { makeObservable } from 'mobx';
-import { WidgetModel } from 'models/store/EditorStore';
+import WidgetModel from 'models/node/WidgetModel';
 
 /**
  * HTML Widget Component 의 selection 정보를 나타내기 위한 class
