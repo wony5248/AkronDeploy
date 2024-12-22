@@ -1,6 +1,6 @@
-import { action, makeObservable, observable, override } from 'mobx';
-import { BaseWidgetModel, IWidgetCommonProperties, Nullable, WidgetCategory, WidgetTypeEnum } from 'akron_runner';
+import { BaseWidgetModel, IWidgetCommonProperties, Nullable, WidgetCategory, WidgetTypeEnum } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
+import { action, makeObservable, observable, override } from 'mobx';
 import IdContainerController from 'models/store/container/IdContainerController';
 
 export type WidgetID = number;

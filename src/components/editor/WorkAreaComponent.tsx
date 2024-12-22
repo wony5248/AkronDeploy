@@ -1,4 +1,4 @@
-import { WidgetCreatorComponent } from 'akron_runner';
+import { WidgetCreatorComponent } from '@akron/runner';
 // import useEditorStore from 'hooks/useEditorStore';
 import { WorkAreaStyle } from 'styles/editor/WorkAreaStyle';
 
