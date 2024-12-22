@@ -104,11 +104,11 @@ export default class SelectionManager {
             break;
           }
 
-          //   const selectedWidgets = (oldSelectionContainer as SelectionContainer).getSelectedWidgets();
-          //   const firstSelectedWidget = selectedWidgets[0];
-          //   if (!firstSelectedWidget) {
-          //     break;
-          //   }
+          const selectedWidgets = (oldSelectionContainer as SelectionContainer).getSelectedWidgets();
+          const firstSelectedWidget = selectedWidgets[0];
+          if (!firstSelectedWidget) {
+            break;
+          }
 
           //   const isPageDeleted = checkPageModel(firstSelectedWidget);
           //   if (isPageDeleted) {
@@ -136,10 +136,10 @@ export default class SelectionManager {
                 // selectableModelList set
                 const widgetModels = ctx.commandProps?.selectionProp?.widgetModels;
                 if (widgetModels !== undefined) {
-                  //   widgetModels.forEach(model => {
-                  //     newSelectionContainer.initSelectableWidgetModels(model);
-                  //   });
-                  //   newSelectionContainer.setWidgetModelSelectable();
+                  widgetModels.forEach(model => {
+                    newSelectionContainer.initSelectableWidgetModels(model);
+                  });
+                  newSelectionContainer.setWidgetModelSelectable();
                 }
 
                 this.udpateSelectionContainerByEditingWidgetModel(ctx);

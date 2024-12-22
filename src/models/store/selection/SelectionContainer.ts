@@ -1,3 +1,4 @@
+import { isDefined } from '@akron/runner';
 import { action, makeObservable } from 'mobx';
 import WidgetModel from 'models/node/WidgetModel';
 import WidgetSelection from 'models/store/selection/WidgetSelection';
@@ -55,9 +56,9 @@ export default class SelectionContainer {
   @action.bound
   public setSelected(selected: boolean): void {
     selected;
-    // this.widgetSelections.forEach(selection => {
-    //     selection.setSelected(selected);
-    // });
+    this.widgetSelections.forEach(selection => {
+      selection.setSelected(selected);
+    });
     // this.pageSelections.forEach(selection => {
     //     selection.setSelected(selected);
     // }); this.widgetSelections.forEach(selection => {
@@ -206,43 +207,43 @@ export default class SelectionContainer {
    * selectableWidgetModels 셋팅.
    * 선택 가능한 widgetModel
    */
-  //   public initSelectableWidgetModels(widgetModel: WidgetModel) {
-  //     if (widgetModel.getWidgetType() === 'Page') {
-  //       return;
-  //     }
-  //     const parentWidget = widgetModel.getParent();
-  //     if (isDefined(parentWidget) && parentWidget.getParent()?.getWidgetType() !== 'Page') {
-  //       // parent가 1depth widget이 아니라면
-  //       this.initSelectableWidgetModels(parentWidget);
-  //     }
-  //     // parent가 page면 child는 1depth widget이기 때문에 무의미하여 만들어주지 않음
-  //     if (parentWidget?.getWidgetType() !== 'Page') {
-  //       parentWidget?.forEachChild(child => {
-  //         this.selectableWidgetModels.push(child);
-  //       });
-  //     }
-  //   }
+  public initSelectableWidgetModels(widgetModel: WidgetModel) {
+    if (widgetModel.getWidgetType() === 'Page') {
+      return;
+    }
+    const parentWidget = widgetModel.getParent();
+    if (isDefined(parentWidget) && parentWidget.getParent()?.getWidgetType() !== 'Page') {
+      // parent가 1depth widget이 아니라면
+      this.initSelectableWidgetModels(parentWidget);
+    }
+    // parent가 page면 child는 1depth widget이기 때문에 무의미하여 만들어주지 않음
+    if (parentWidget?.getWidgetType() !== 'Page') {
+      parentWidget?.forEachChild((child: WidgetModel) => {
+        this.selectableWidgetModels.push(child);
+      });
+    }
+  }
 
   /**
    * selectableWidgetModels 초기화.
    * selectable false
    */
-  //   public clearSelectableWidgetModels() {
-  //     this.selectableWidgetModels.forEach(model => {
-  //       model.setSelectable(false);
-  //     });
-  //     this.selectableWidgetModels = [];
-  //   }
+  public clearSelectableWidgetModels() {
+    this.selectableWidgetModels.forEach(model => {
+      model.setSelectable(false);
+    });
+    this.selectableWidgetModels = [];
+  }
 
   /**
    * selectableWidgetModels 셋팅.
    * selectable true
    */
-  //   public setWidgetModelSelectable(): void {
-  //     this.selectableWidgetModels.forEach(model => {
-  //       model.setSelectable(true);
-  //     });
-  //   }
+  public setWidgetModelSelectable(): void {
+    this.selectableWidgetModels.forEach(model => {
+      model.setSelectable(true);
+    });
+  }
 
   /**
    * hoverWi

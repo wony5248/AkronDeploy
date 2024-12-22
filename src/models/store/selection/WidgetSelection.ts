@@ -1,4 +1,4 @@
-import { makeObservable } from 'mobx';
+import { action, makeObservable } from 'mobx';
 import WidgetModel from 'models/node/WidgetModel';
 
 /**
@@ -22,18 +22,18 @@ export default class WidgetSelection {
     // this.parentModel = widgetModel.getParent();
   }
 
-  //   /**
-  //    * 현재 Selection이 나타내는 WidgetModel의 select 유무를 설정합니다.
-  //    *
-  //    * @param selected widget의 select 유무.
-  //    */
-  //   @action.bound
-  //   public setSelected(selected: boolean): void {
-  //     this.widgetModel.setProperties({
-  //       ...this.widgetModel.getProperties(),
-  //       selected,
-  //     });
-  //   }
+  /**
+   * 현재 Selection이 나타내는 WidgetModel의 select 유무를 설정합니다.
+   *
+   * @param selected widget의 select 유무.
+   */
+  @action.bound
+  public setSelected(selected: boolean): void {
+    this.widgetModel.setProperties({
+      ...this.widgetModel.getProperties(),
+      selected,
+    });
+  }
 
   /**
    * widgetModel 반환.
