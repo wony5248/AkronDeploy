@@ -1,11 +1,11 @@
-import { action, observable, override } from 'mobx';
+import { action, makeObservable, observable, override } from 'mobx';
 import { BaseWidgetModel, IWidgetCommonProperties, Nullable, WidgetCategory, WidgetTypeEnum } from 'akron_runner';
 import { boundMethod } from 'autobind-decorator';
 import IdContainerController from 'models/store/container/IdContainerController';
 
 export type WidgetID = number;
 
-interface IWidgetModelInitProps<Properties> {
+export interface IWidgetModelInitProps<Properties> {
   id: WidgetID;
   widgetType: WidgetTypeEnum;
   widgetCategory: WidgetCategory;
@@ -39,6 +39,7 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
       properties: args.properties,
       ref: args.ref,
     });
+    makeObservable(this);
     this.rerenderSwitch = false;
     this.selectable = false;
   }
