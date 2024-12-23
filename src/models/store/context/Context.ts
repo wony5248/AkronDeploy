@@ -1,8 +1,8 @@
-import Command from '../command/Command';
-import UndoStack from '../command/UndoStack';
+import Command from '../command/common/Command';
+import UndoStack from '../command/common/UndoStack';
 import EventState from '../event/EventState';
-import SelectionContainer from '../selection/SelectionContainer';
-import CommandProps from '../command/CommandProps';
+import SelectionContainer from '../container/SelectionContainer';
+import CommandProps from '../command/common/CommandProps';
 import AppModeContainer from 'models/store/container/AppModeContainer';
 
 /**

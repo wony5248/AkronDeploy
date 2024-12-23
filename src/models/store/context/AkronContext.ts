@@ -1,10 +1,10 @@
-import SelectionContainer from '../selection/SelectionContainer';
-import CommandEnum from 'models/store/command/CommandEnum';
-import { SelectionProp } from 'models/store/command/CommandProps';
+import SelectionContainer from '../container/SelectionContainer';
+import CommandEnum from '../command/common/CommandEnum';
+import { SelectionProp } from '../command/common/WidgetCommandProps';
 import Context from './Context';
 import AppContextBase from 'models/store/context/ContextBase';
-import WidgetCommandProps from 'models/store/command/WidgetCommandProps';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
+import WidgetCommandProps from 'models/store/command/common/WidgetCommandProps';
 
 /**
  * DOM으로부터 얻은 page의 좌표(browser 기준)

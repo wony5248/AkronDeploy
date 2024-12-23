@@ -1,11 +1,11 @@
 import EventManager, { AkronEventManager } from './event/EventManager';
 import { AkronEventMapper } from './event/EventMapper';
 import { createContext } from 'react';
-import { AkronCommandMapper } from './command/CommandMapper';
-import CommandEnum from './command/CommandEnum';
-import CommandProps, { SelectionProp } from './command/CommandProps';
+import { AkronCommandMapper } from './command/common/CommandMapper';
+import CommandEnum from './command/common/CommandEnum';
+import CommandProps, { SelectionProp } from './command/common/CommandProps';
 import { action } from 'mobx';
-import CommandManager, { AkronCommandManager } from './command/CommandManager';
+import CommandManager, { AkronCommandManager } from './command/common/CommandManager';
 import AkronContext from 'models/store/context/AkronContext';
 import AppContextBase from 'models/store/context/ContextBase';
 import SelectionManager from 'models/store/selection/SelectionManager';

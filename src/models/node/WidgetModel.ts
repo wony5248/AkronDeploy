@@ -1,6 +1,7 @@
 import { BaseWidgetModel, IWidgetCommonProperties, Nullable, WidgetCategory, WidgetTypeEnum } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { action, makeObservable, observable, override } from 'mobx';
+import { OperationMessage } from 'models/message/OperationMessage';
 import IdContainerController from 'models/store/container/IdContainerController';
 
 export type WidgetID = number;
@@ -417,6 +418,23 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
         newChild.append(newNode);
       }
     });
+  }
+
+  /**
+   * Operation Message를 생성합니다.
+   */
+  @boundMethod
+  public makeOperationMessage(): Nullable<OperationMessage> {
+    return {
+      elementId: this.getID(),
+      parentId: this.getParent()?.getID(),
+      prevId: this.getPrevSibling()?.getID(),
+      nextId: this.getNextSibling()?.getID(),
+      childId: this.getFirstChild()?.getID(),
+      elementType: this.getWidgetType(),
+      // objectType: this.getObjectType(),
+      // contentData: this.getContentJsonString(),
+    };
   }
 }
 

@@ -1,11 +1,11 @@
 import { boundMethod } from 'autobind-decorator';
-import Command from './Command';
 import CommandMapper from './CommandMapper';
 import CommandExecutor from './CommandExecutor';
-import Context from '../context/Context';
-import CommandEnum from 'models/store/command/CommandEnum';
-import { SelectionProp } from 'models/store/command/CommandProps';
+import Context from '../../context/Context';
+import CommandEnum from './CommandEnum';
+import { SelectionProp } from './CommandProps';
 import { WidgetID } from 'models/node/WidgetModel';
+import Command from './Command';
 
 export interface AkronCommandManager extends CommandManager<WidgetID, CommandEnum, SelectionProp> {}
 /**

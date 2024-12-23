@@ -15,16 +15,6 @@ export const appModeTypeNames = [
 export type AppModeType = (typeof appModeTypeNames)[number];
 
 /**
- * UX 앱에서 사용되는 모드들에 대한 type입니다.
- */
-export type UXAppModeType = AppModeType;
-
-/**
- * GX 앱에서 사용되는 모드들에 대한 type입니다.
- */
-export type GXAppModeType = Extract<AppModeType, 'EDIT_APP' | 'RUNTIME_PREVIEW'>;
-
-/**
  * 편집 가능한 앱 모드들에 대한 type입니다.
  */
 export type EditableMode = Extract<AppModeType, 'EDIT_APP' | 'EDIT_DIALOG_WIDGET'>;
@@ -52,7 +42,6 @@ class AppModeContainer {
   /**
    * 생성자입니다.
    *
-   * @param appType 앱 종류
    * @param isHighLevel High-Level Studio 여부
    * @param appMode 앱 모드
    */

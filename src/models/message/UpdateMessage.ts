@@ -1,12 +1,14 @@
 import { boundMethod } from 'autobind-decorator';
+import { Nullable } from '@akron/runner';
+import { WidgetID } from 'models/node/WidgetModel';
 
 /**
  * 서버로 보낼 메시지 객체입니다.
  */
-export default class UpdateMessage<ID> {
-  private appID?: ID;
+export default class UpdateMessage {
+  private appID?: number;
 
-  private modelID?: ID;
+  private modelID?: WidgetID;
 
   // behavior 값으로 서버에서 업데이트 동작을 구분합니다.
   // 기본적으로 prefix는 I(Insert), U(Update), D(Delete)로 구분됩니다.
@@ -18,7 +20,7 @@ export default class UpdateMessage<ID> {
   /**
    * constructor
    */
-  public constructor(appID?: ID, modelID?: ID, behavior?: string) {
+  public constructor(appID?: number, modelID?: WidgetID, behavior?: string) {
     this.appID = appID;
     this.modelID = modelID;
     this.behavior = behavior;
@@ -28,16 +30,16 @@ export default class UpdateMessage<ID> {
    * AppID setter
    */
   @boundMethod
-  public setAppID(id?: ID): void {
-    this.appID = id;
+  public setAppID(appID?: number): void {
+    this.appID = appID;
   }
 
   /**
    *  modelID setter
    */
   @boundMethod
-  public setModelID(id: ID): void {
-    this.modelID = id;
+  public setModelID(modelID: WidgetID): void {
+    this.modelID = modelID;
   }
 
   /**
@@ -52,7 +54,7 @@ export default class UpdateMessage<ID> {
    * Getter of appID
    */
   @boundMethod
-  public getAppID(): ID | undefined {
+  public getAppID(): Nullable<number> {
     return this.appID;
   }
 
@@ -60,7 +62,7 @@ export default class UpdateMessage<ID> {
    * modelID getter
    */
   @boundMethod
-  public getModelID(): ID | undefined {
+  public getModelID(): Nullable<WidgetID> {
     return this.modelID;
   }
 
@@ -68,7 +70,7 @@ export default class UpdateMessage<ID> {
    * behavior getter
    */
   @boundMethod
-  public getBehavior(): string | undefined {
+  public getBehavior(): Nullable<string> {
     return this.behavior;
   }
 }
