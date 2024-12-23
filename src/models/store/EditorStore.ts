@@ -9,6 +9,9 @@ import CommandManager, { AkronCommandManager } from './command/common/CommandMan
 import AkronContext from 'models/store/context/AkronContext';
 import AppContextBase from 'models/store/context/ContextBase';
 import SelectionManager from 'models/store/selection/SelectionManager';
+import EditorUIStore from 'store/app/EditorUIStore';
+import TooltipStore from 'store/tooltip/TooltipStore';
+import WidgetLayerContainer from 'models/widget/WidgetLayerContainer';
 
 /**
  * Editor Store 생성자 파라미터 Interface 입니다.
@@ -32,6 +35,12 @@ class EditorStore {
   private readonly commandManager: AkronCommandManager;
 
   private readonly selectionManager: SelectionManager;
+
+  protected editorUIStore: EditorUIStore;
+
+  protected tooltipStore: TooltipStore;
+
+  protected widgetLayerContainer: WidgetLayerContainer;
   /**
    * 생성자
    */
@@ -42,6 +51,9 @@ class EditorStore {
     this.ctx = {
       appID: 100,
     };
+    this.editorUIStore = new EditorUIStore();
+    this.tooltipStore = new TooltipStore();
+    this.widgetLayerContainer = new WidgetLayerContainer();
   }
 
   /**
@@ -54,6 +66,27 @@ class EditorStore {
     this.selectionManager.updateSelection(this.getCtxAsAppContext());
     // this.updateProperties(this.getCtxAsAppContext());
     // this.saveApp();
+  }
+
+  /**
+   * ctx에 있는 EditorUIStore getter
+   */
+  public getEditorUIStore(): EditorUIStore {
+    return this.editorUIStore;
+  }
+
+  /**
+   * ctx에 있는 TooltipStore getter
+   */
+  public getTooltipStore(): TooltipStore {
+    return this.tooltipStore;
+  }
+
+  /**
+   * ctx에 있는 WidgetLayerContainer getter
+   */
+  public getWidgetLayerContainer(): WidgetLayerContainer {
+    return this.widgetLayerContainer;
   }
 
   /**
