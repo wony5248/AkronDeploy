@@ -1,4 +1,4 @@
-import Context from '../context/Context';
+import Context from '../../context/Context';
 
 /**
  * Context 내의 simpleCommand들을 차례대로 execute/unexecute/reexecute 합니다.

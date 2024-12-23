@@ -1,6 +1,6 @@
 import { action, makeObservable } from 'mobx';
-import CommandEnum from '../command/CommandEnum';
-import SelectionContainer from './SelectionContainer';
+import CommandEnum from '../command/common/CommandEnum';
+import SelectionContainer from '../container/SelectionContainer';
 import WidgetSelection from './WidgetSelection';
 import AkronContext from 'models/store/context/AkronContext';
 import WidgetModel from 'models/node/WidgetModel';

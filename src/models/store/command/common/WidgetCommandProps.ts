@@ -1,6 +1,6 @@
-import CommandProps from '../command/CommandProps';
+import CommandProps from '../../command/common/CommandProps';
 import WidgetModel from 'models/node/WidgetModel';
-import CommandEnum from 'models/store/command/CommandEnum';
+import CommandEnum from '../../command/common/CommandEnum';
 import SelectionEnum from 'models/store/selection/SelectionEnum';
 
 /**

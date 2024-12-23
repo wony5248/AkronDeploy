@@ -1,8 +1,11 @@
 /* eslint-disable */
+import { boundMethod } from 'autobind-decorator';
 import EventMapper, { AkronEventMapper } from './EventMapper';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
-import CommandEnum from 'models/store/command/CommandEnum';
-import { SelectionProp } from 'models/store/command/CommandProps';
+import CommandEnum from '../command/common/CommandEnum';
+import { SelectionProp } from '../command/common/CommandProps';
+import Context from 'models/store/context/Context';
+import { DefaultEvent, DefaultFormEvent } from '@akron/runner';
 
 export interface AkronEventManager
   extends EventManager<WidgetID, CommandEnum, SelectionProp, WidgetModel, AkronEventMapper> {}
@@ -33,293 +36,297 @@ class EventManager<
     return this.eventMap;
   }
 
-  //   @boundMethod
-  //   public onClick(event: MouseEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onClick(event, ctx));
-  //   }
+  @boundMethod
+  public onClick(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onClick(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onDoubleClick(event: MouseEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onDoubleClick(event, ctx));
-  //   }
+  @boundMethod
+  public onDoubleClick(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onDoubleClick(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onMouseDown(event: MouseEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onMouseDown(event, ctx));
-  //   }
+  @boundMethod
+  public onMouseDown(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onMouseDown(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onMouseMove(event: MouseEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onMouseMove(event, ctx));
-  //   }
+  @boundMethod
+  public onMouseMove(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onMouseMove(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onMouseOut(event: MouseEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onMouseOut(event, ctx));
-  //   }
+  @boundMethod
+  public onMouseOut(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onMouseOut(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onMouseOver(event: MouseEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onMouseOver(event, ctx));
-  //   }
+  @boundMethod
+  public onMouseOver(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onMouseOver(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onMouseUp(event: MouseEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onMouseUp(event, ctx));
-  //   }
+  @boundMethod
+  public onMouseUp(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onMouseUp(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onMouseWheel(event: MouseEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onMouseWheel(event, ctx));
-  //   }
+  @boundMethod
+  public onMouseWheel(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onMouseWheel(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onMouseEnter(event: MouseEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onMouseEnter(event, ctx));
-  //   }
+  @boundMethod
+  public onMouseEnter(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onMouseEnter(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onMouseLeave(event: MouseEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onMouseLeave(event, ctx));
-  //   }
+  @boundMethod
+  public onMouseLeave(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onMouseLeave(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onMouseDownCapture(event: MouseEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onMouseDownCapture(event, ctx));
-  //   }
+  @boundMethod
+  public onMouseDownCapture(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onMouseDownCapture(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onMouseUpCapture(event: MouseEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onMouseUpCapture(event, ctx));
-  //   }
+  @boundMethod
+  public onMouseUpCapture(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onMouseUpCapture(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onMouseMoveCapture(event: MouseEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onMouseMoveCapture(event, ctx));
-  //   }
+  @boundMethod
+  public onMouseMoveCapture(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onMouseMoveCapture(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onWheel(event: WheelEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onWheel(event, ctx));
-  //   }
+  @boundMethod
+  public onWheel(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onWheel(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onKeyDown(event: KeyEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onKeyDown(event, ctx));
-  //   }
+  @boundMethod
+  public onKeyDown(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onKeyDown(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onKeyUp(event: KeyEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onKeyUp(event, ctx));
-  //   }
+  @boundMethod
+  public onKeyUp(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onKeyUp(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onKeyPressed(event: KeyEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onKeyPressed(event, ctx));
-  //   }
+  @boundMethod
+  public onKeyPressed(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onKeyPressed(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onCompositionUpdate(event: CompositionEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onCompositionUpdate(event, ctx));
-  //   }
+  @boundMethod
+  public onCompositionUpdate(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onCompositionUpdate(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onBeforeInput(event: FormEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onBeforeInput(event, ctx));
-  //   }
+  @boundMethod
+  public onBeforeInput(event: DefaultFormEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onBeforeInput(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onInput(event: FormEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onInput(event, ctx));
-  //   }
+  @boundMethod
+  public onInput(event: DefaultFormEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onInput(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onChange(event: FormEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>, eventParams: any[]): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onChange(event, ctx, eventParams));
-  //   }
+  @boundMethod
+  public onChange(
+    event: DefaultFormEvent<Model>,
+    ctx: Context<ID, CommandEnum, SelectionProp>,
+    eventParams: any[]
+  ): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onChange(event, ctx, eventParams));
+  }
 
-  //   @boundMethod
-  //   public onFocus(event: FocusEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onFocus(event, ctx));
-  //   }
+  @boundMethod
+  public onFocus(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onFocus(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onBlur(event: FocusEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onBlur(event, ctx));
-  //   }
+  @boundMethod
+  public onBlur(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onBlur(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onContextMenu(event: MouseEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onContextMenu(event, ctx));
-  //   }
+  @boundMethod
+  public onContextMenu(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onContextMenu(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onDrag(event: DragEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onDrag(event, ctx));
-  //   }
+  @boundMethod
+  public onDrag(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onDrag(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onDragStart(event: DragEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onDragStart(event, ctx));
-  //   }
+  @boundMethod
+  public onDragStart(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onDragStart(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onDragEnd(event: DragEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onDragEnd(event, ctx));
-  //   }
+  @boundMethod
+  public onDragEnd(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onDragEnd(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onDragEnter(event: DragEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onDragEnter(event, ctx));
-  //   }
+  @boundMethod
+  public onDragEnter(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onDragEnter(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onDragLeave(event: DragEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onDragLeave(event, ctx));
-  //   }
+  @boundMethod
+  public onDragLeave(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onDragLeave(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onDragOver(event: DragEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onDragOver(event, ctx));
-  //   }
+  @boundMethod
+  public onDragOver(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onDragOver(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onScroll(event: UIEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onScroll(event, ctx));
-  //   }
+  @boundMethod
+  public onScroll(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onScroll(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onDrop(event: DragEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onDrop(event, ctx));
-  //   }
+  @boundMethod
+  public onDrop(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onDrop(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onFormContextMenu(event: MouseEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onFormContextMenu(event, ctx));
-  //   }
+  @boundMethod
+  public onFormContextMenu(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onFormContextMenu(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onInvalid(event: FormEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onInvalid(event, ctx));
-  //   }
+  @boundMethod
+  public onInvalid(event: DefaultFormEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onInvalid(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onReset(event: FormEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onReset(event, ctx));
-  //   }
+  @boundMethod
+  public onReset(event: DefaultFormEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onReset(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onSearch(event: FormEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onSearch(event, ctx));
-  //   }
+  @boundMethod
+  public onSearch(event: DefaultFormEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onSearch(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onSelect(event: FormEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onSelect(event, ctx));
-  //   }
+  @boundMethod
+  public onSelect(event: DefaultFormEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onSelect(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onSubmit(event: FormEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onSubmit(event, ctx));
-  //   }
+  @boundMethod
+  public onSubmit(event: DefaultFormEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onSubmit(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onCopy(event: ClipboardEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onCopy(event, ctx));
-  //   }
+  @boundMethod
+  public onCopy(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onCopy(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onCut(event: ClipboardEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onCut(event, ctx));
-  //   }
+  @boundMethod
+  public onCut(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onCut(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onPaste(event: ClipboardEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onPaste(event, ctx));
-  //   }
+  @boundMethod
+  public onPaste(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onPaste(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onTouchStart(event: TouchEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onTouchStart(event, ctx));
-  //   }
+  @boundMethod
+  public onTouchStart(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onTouchStart(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onTouchEnd(event: TouchEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onTouchEnd(event, ctx));
-  //   }
+  @boundMethod
+  public onTouchEnd(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onTouchEnd(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onTouchMove(event: TouchEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onTouchMove(event, ctx));
-  //   }
+  @boundMethod
+  public onTouchMove(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onTouchMove(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onPointerDown(event: PointerEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onPointerDown(event, ctx));
-  //   }
+  @boundMethod
+  public onPointerDown(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onPointerDown(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onPointerMove(event: PointerEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onPointerMove(event, ctx));
-  //   }
+  @boundMethod
+  public onPointerMove(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onPointerMove(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onPointerUp(event: PointerEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onPointerUp(event, ctx));
-  //   }
+  @boundMethod
+  public onPointerUp(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onPointerUp(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onPointerCancel(event: PointerEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onPointerCancel(event, ctx));
-  //   }
+  @boundMethod
+  public onPointerCancel(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onPointerCancel(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onPointerEnter(event: PointerEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onPointerEnter(event, ctx));
-  //   }
+  @boundMethod
+  public onPointerEnter(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onPointerEnter(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onPointerLeave(event: PointerEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onPointerLeave(event, ctx));
-  //   }
+  @boundMethod
+  public onPointerLeave(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onPointerLeave(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onPointerOver(event: PointerEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onPointerOver(event, ctx));
-  //   }
+  @boundMethod
+  public onPointerOver(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onPointerOver(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onGotPointerCapture(event: PointerEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onGotPointerCapture(event, ctx));
-  //   }
+  @boundMethod
+  public onGotPointerCapture(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onGotPointerCapture(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onLostPointerCapture(event: PointerEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onLostPointerCapture(event, ctx));
-  //   }
+  @boundMethod
+  public onLostPointerCapture(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onLostPointerCapture(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onAnimationStart(event: AnimationEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onAnimationStart(event, ctx));
-  //   }
+  @boundMethod
+  public onAnimationStart(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onAnimationStart(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onAnimationEnd(event: AnimationEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onAnimationEnd(event, ctx));
-  //   }
+  @boundMethod
+  public onAnimationEnd(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onAnimationEnd(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onAnimationIteration(event: AnimationEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onAnimationIteration(event, ctx));
-  //   }
+  @boundMethod
+  public onAnimationIteration(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onAnimationIteration(event, ctx));
+  }
 
-  //   @boundMethod
-  //   public onCustom(
-  //     event: BaseEvent<Model>,
-  //     ctx: Context<ID, CommandEnum, SelectionProp>,
-  //     widgetEventProperty: any
-  //   ): void {
-  //     this.eventMap.get(ctx.state)?.some(handler => handler.onCustom(event, ctx, widgetEventProperty));
-  //   }
+  @boundMethod
+  public onCustom(
+    event: DefaultEvent<Model>,
+    ctx: Context<ID, CommandEnum, SelectionProp>,
+    widgetEventProperty: any
+  ): void {
+    this.eventMap.get(ctx.state)?.some(handler => handler.onCustom(event, ctx, widgetEventProperty));
+  }
 }
 export default EventManager;

@@ -1,6 +1,3 @@
-import WidgetModel from 'models/node/WidgetModel';
-import SelectionEnum from '../selection/SelectionEnum';
-
 /**
  * CommandManager 에 command 를 execute 할 때 지켜야 할 interface 입니다.
  * CommandHandler 는 CommandPros 를 인자를 받아 작업을 처리합니다.
@@ -13,14 +10,6 @@ interface CommandProps<CommandEnum, SelectionProp> {
   selectionProp?: SelectionProp;
   reUpdateSelection?: boolean;
   undoable?: boolean;
-}
-
-export interface SelectionProp {
-  selectionType: SelectionEnum;
-  widgetModels: WidgetModel[];
-  // editingPageModel을 따로 주지 않는 경우, 기존 SelectionContainer에서 승계됩니다.
-  editingPageModel?: WidgetModel;
-  thumbnailModels?: WidgetModel[];
 }
 
 export default CommandProps;

@@ -1,5 +1,5 @@
 import CommandProps from './CommandProps';
-import Context from '../context/Context';
+import Context from '../../context/Context';
 
 /**
  * Document 의 command 를 처리하기 위한 class 입니다.

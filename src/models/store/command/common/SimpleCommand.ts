@@ -1,11 +1,11 @@
 // import CommandMessage from 'ux/model/message/CommandMessage';
-import UpdateMessage from '../../message/UpdateMessage';
+import { OperationMessage } from '../../../message/OperationMessage';
 
 /**
  * Document 를 제어하는 가장 작은 단위입니다.
  * 여러 simple command 가 모여 하나의 동작이 되며, undo/redo 가 가능합니다.
  */
-abstract class SimpleCommand<ID> {
+abstract class SimpleCommand {
   /**
    * Simple command 의 do 동작입니다.
    */
@@ -28,21 +28,21 @@ abstract class SimpleCommand<ID> {
   /**
    * do 동작에 맞는 update message를 생성합니다.
    */
-  public makeApplyUpdateMessage(): Array<UpdateMessage<ID>> | UpdateMessage<ID> | undefined {
+  public makeApplyUpdateMessage(): OperationMessage[] | OperationMessage | undefined {
     return undefined;
   }
 
   /**
    * undo 동작에 맞는 update message를 생성해 리턴합니다.
    */
-  public makeUnApplyUpdateMessage(): Array<UpdateMessage<ID>> | UpdateMessage<ID> | undefined {
+  public makeUnApplyUpdateMessage(): OperationMessage[] | OperationMessage | undefined {
     return undefined;
   }
 
   /**
    * redo 동작에 맞는 update message를 생성해 리턴합니다.
    */
-  public makeReApplyUpdateMessage(): Array<UpdateMessage<ID>> | UpdateMessage<ID> | undefined {
+  public makeReApplyUpdateMessage(): OperationMessage[] | OperationMessage | undefined {
     return undefined;
   }
 

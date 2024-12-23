@@ -2,8 +2,8 @@ import { boundMethod } from 'autobind-decorator';
 import EventState from './EventState';
 import EventHandler from './EventHandler';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
-import CommandEnum from 'models/store/command/CommandEnum';
-import { SelectionProp } from 'models/store/command/CommandProps';
+import CommandEnum from '../command/common/CommandEnum';
+import { SelectionProp } from '../command/common/CommandProps';
 
 /**
  * EventMaper 은 EventState 에 따라 어떤 event handler 들이 순서대로 동작하는 지를 정의한 class 입니다.
