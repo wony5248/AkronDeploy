@@ -4,7 +4,6 @@ import { css } from '@emotion/react';
 const toolpaneTitleHeight = '48px';
 const toolpaneSideMargin = '8px';
 const toolpaneMargin2 = '2px';
-const toolpaneMargin4 = '2px';
 const toolpaneMinWidth = '240px';
 const toolpaneMaxWidth = '500px';
 
@@ -55,7 +54,7 @@ export const toolPaneContent = css`
   box-sizing: border-box;
 
   width: 100%;
-  height: calc(100% - ToolpaneSize.$toolpaneTitleHeight);
+  height: calc(100% - ${toolpaneTitleHeight});
 
   font-size: 11px;
   font-weight: 600;
@@ -63,7 +62,7 @@ export const toolPaneContent = css`
   overflow-y: auto;
   overflow-x: hidden;
 
-  margin-top: ToolpaneSize.$toolpaneMargin2;
+  margin-top: ${toolpaneMargin2};
 
   &::-webkit-scrollbar {
     width: 16px;

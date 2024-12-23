@@ -22,7 +22,7 @@ const textMap = new Map<string, string>([
  * 해당되는 툴페인을 열고 닫는 토글 버튼입니다.
  */
 const ToolpaneDockButtonComponent: React.FC<IProps> = ({ name, isActive, onClick }: IProps) => (
-  <button css={[toolPaneDockButton, 'isActive']} type={'button'} onClick={onClick}>
+  <button css={toolPaneDockButton(isActive)} type={'button'} onClick={onClick}>
     {textMap.get(name)}
   </button>
 );

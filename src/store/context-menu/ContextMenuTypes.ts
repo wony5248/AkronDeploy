@@ -1,4 +1,4 @@
-import { propHandlerItem } from 'store/ribbon-menu/RibbonMenuComponentInfo';
+import { PropHandlerItem } from 'store/ribbon-menu/RibbonMenuComponentInfo';
 
 /**
  * ContextMenu의 위치
@@ -32,7 +32,7 @@ export interface LandingPageContextMenu {
  * ContextMenu Item에 필요한 데이터
  * subContextMenu는 아직 필요 상황이 없어 미적용
  */
-export interface ContextMenuProp extends propHandlerItem {
+export interface ContextMenuProp extends PropHandlerItem {
   id: string;
   variant: ContextMenuItemVariantType;
   mainText?: string;

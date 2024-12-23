@@ -1,8 +1,6 @@
-/* eslint-disable jsx-a11y/no-autofocus */
-
 import PortalComponent from 'components/common/PortalComponent';
 import useEditorStore from 'hooks/useEditorStore';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import {
   lastSavedTime,
   popover,

@@ -24,9 +24,10 @@ const LeftToolpaneComponent: React.FC = () => {
   const topToolPaneHeight = topToolPane.current?.clientHeight ?? 0;
   const bottomToolPaneHeight = bottomToolPane.current?.clientHeight ?? 0;
 
-  const onClickAddLibrary = async (id: string /*, libraryType: LibraryType*/) => {
-    const idValue = Number(id);
-  };
+  //   const onClickAddLibrary = async (id: string /*, libraryType: LibraryType*/) => {
+  //      const idValue = Number(id);
+  //      await appStore.addLibraryToUsed(idValue, libraryType);
+  //   };
 
   const onMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!isResizing) {

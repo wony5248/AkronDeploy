@@ -15,7 +15,7 @@ const LeftMenuComponent: React.FC = () => {
   const editorStore = useEditorStore();
   const ribbonButtonData = RibbonButtonDataList;
 
-  const onClick = (commandPropName: string, commandType: string, ...args: unknown[]) => {
+  const onClick = (commandPropName: string) => {
     // handleCommandEvent로 변경 예정
     // ribbonStore.onClickedRibbonButton(commandPropName, commandType, ...args);
     if (commandPropName === 'ConvertDataTab') {

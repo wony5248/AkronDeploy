@@ -5,13 +5,13 @@ import SaveErrorPageComponent from 'components/ribbon-menu/save-indicator/SaveEr
 import SaveLoading from 'components/ribbon-menu/save-indicator/SaveLoading';
 import useEditorStore from 'hooks/useEditorStore';
 import { observer } from 'mobx-react-lite';
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { saveIcon } from 'styles/ribbon-menu/SaveIndicator';
 
 /**
  * indicatorState의 Type
  */
-type indicatorType = 'SaveComplete' | 'SaveError';
+type IndicatorType = 'SaveComplete' | 'SaveError';
 
 /**
  * 우측 Ribbon Menu 구성 Component
@@ -21,7 +21,7 @@ const SaveIndicatorComponent: React.FC = () => {
   // const saveState = editorStore.getSaveState();
   const loadingTimer = useRef</*NodeJS.Timeout | */ number | null>();
 
-  const [indicatorState, setIndicatorState] = useState<indicatorType>('SaveComplete');
+  const [indicatorState, setIndicatorState] = useState<IndicatorType>('SaveComplete');
   const [showLoadingPage, setShowLoadingPage] = useState<boolean>(false);
   const [showErrorPage, setShowErrorPage] = useState<boolean>(false);
   const [messageShow, setMessageShow] = useState<boolean>(false);
@@ -32,7 +32,9 @@ const SaveIndicatorComponent: React.FC = () => {
    */
   const reSaving = () => {
     setMessageShow(false);
-    if (!loadingTimer.current) return;
+    if (!loadingTimer.current) {
+      return;
+    }
     clearTimeout(loadingTimer.current as number);
     loadingTimer.current = null;
     setShowLoadingPage(true);

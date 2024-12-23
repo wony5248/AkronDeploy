@@ -7,7 +7,7 @@ import { baseLeftToolPane, leftResourceToolPane, leftToolPane } from 'styles/too
  * Left ToolPane.
  */
 const DataLeftToolPaneComponent: React.FC = () => {
-  const [initialY, setInitialY] = useState(0);
+  const initialY = 0;
   const [isResizing, setIsResizing] = useState(false);
   const { ref, handlePointerMove, handlePointerDown, handlePointerUp, handleMouseMove } = useToolpaneResize();
 

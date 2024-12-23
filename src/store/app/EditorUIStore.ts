@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import { action, makeObservable, observable } from 'mobx';
 import { boundMethod } from 'autobind-decorator';
 import { LeftToolPaneType, RightToolPaneType } from 'store/toolpane/ToolPaneComponentInfo';
@@ -54,7 +53,7 @@ export default class EditorUIStore {
 
   // // Editor 영역에서 사용될 snackBar Msg
   @observable
-  snackbarMsg: string = '';
+  private snackbarMsg = '';
   //   @observable
   // private businessAlertOpenProperty: boolean;
   //   @observable
@@ -106,10 +105,7 @@ export default class EditorUIStore {
   /**
    * 생성자.
    */
-  constructor(args: {
-    // customPropertyContentRenderer?: WidgetPropertyContentRenderer;
-    // activeLeftToolPaneType?: LeftToolPaneType;
-  }) {
+  constructor() {
     makeObservable(this);
 
     // this.customPropertyContentRenderer = args.customPropertyContentRenderer ?? (() => null);

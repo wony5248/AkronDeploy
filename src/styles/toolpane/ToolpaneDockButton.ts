@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import { grayColor400, grayColor800 } from 'styles/Color';
 
-export const toolPaneDockButton = css`
+export const toolPaneDockButton = (isActive: boolean) => css`
   position: relative;
   cursor: pointer;
   font-size: 11px;
@@ -9,15 +9,10 @@ export const toolPaneDockButton = css`
   height: 16px;
   line-height: 16px;
   border: 0;
-  color: ${grayColor400};
+  color: ${isActive ? grayColor800 : grayColor400};
   border-color: transparent;
   background-color: transparent;
-  font-weight: 400;
-
-  &.isActive {
-    color: ${grayColor800};
-    font-weight: 700;
-  }
+  font-weight: ${isActive ? 700 : 400};
 
   &:hover {
     /* hover 상태의 스타일이 주석처리 되어있음 */

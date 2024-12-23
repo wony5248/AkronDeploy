@@ -1,6 +1,5 @@
 import useEditorStore from 'hooks/useEditorStore';
 import { observer } from 'mobx-react-lite';
-import { useState } from 'react';
 import { DataTabIndex } from 'store/app/EditorUIStore';
 import {
   pageThumbnail,
@@ -28,20 +27,10 @@ const DataTabMenuItemComponent: React.FC<IProps> = (props: IProps) => {
   const handleDataTabClick = (idx: DataTabIndex) => {
     UIStore.setDataTabIndex(idx);
   };
-  const [isHover, setIsHover] = useState<boolean>(false);
   const isSelected = UIStore.getDataTabIndex() === tabIndex;
 
   return (
-    <div
-      css={pageThumbnail}
-      onClick={() => handleDataTabClick(tabIndex)}
-      onMouseEnter={() => {
-        setIsHover(true);
-      }}
-      onMouseLeave={() => {
-        setIsHover(false);
-      }}
-    >
+    <div css={pageThumbnail(isSelected)} onClick={() => handleDataTabClick(tabIndex)}>
       <div css={pageThumbnailTitle}>
         {/* <ImageResourceComponent css={pageThumbnailIndex} id={imgID} w={'16px'} h={'16px'} /> */}
         <button style={{ width: '16px', height: '16px' }} />

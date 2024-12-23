@@ -1,6 +1,5 @@
 import EditorStore, { EditorStoreInitParams, EditorStoreProvider } from 'models/store/EditorStore';
 
-import EditorComponent from 'components/editor/EditorComponent';
 import WorkAreaComponent from 'components/editor/WorkAreaComponent';
 import { useState } from 'react';
 import ContextMenuContainer, { ContextMenuProvider } from 'store/context-menu/ContextMenuContainer';

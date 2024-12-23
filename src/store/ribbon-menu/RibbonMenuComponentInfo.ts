@@ -120,7 +120,7 @@ export interface IRibbonButton {
 /**
  * getPropsHandler를 사용하기 위한 필수 item 정보
  */
-export interface propHandlerItem {
+export interface PropHandlerItem {
   id: string;
   commandPropName?: string;
 }
@@ -128,7 +128,7 @@ export interface propHandlerItem {
 /**
  * RibbonMenu 내 Item들의 정보
  */
-export interface IRibbonItemProp extends propHandlerItem {
+export interface IRibbonItemProp extends PropHandlerItem {
   id: string;
   label?: string;
   greyLabel?: string;
@@ -145,7 +145,7 @@ export interface IRibbonItemProp extends propHandlerItem {
 /**
  * dropdown MenuItem을 위한 map
  */
-type dropdownMenuItemType = string;
+type DropdownMenuItemType = string;
 // | typeof NormalMenuItemComponent
 // | typeof SubMenuItemComponent
 // | typeof GalleryMenuItemComponent
@@ -155,7 +155,7 @@ type dropdownMenuItemType = string;
 // | typeof GreyTextAreaMenuItemComponent
 // | typeof DialogNoImageMenuItemComponent;
 
-export const ribbonDropdownMenuItemMap: { [key: string]: dropdownMenuItemType } = {
+export const ribbonDropdownMenuItemMap: { [key: string]: DropdownMenuItemType } = {
   // Ribbon Resize 되었을 때, 상위 Button 류를 처리하기 위함
   // NormalButton: NormalMenuItemComponent,
   // DropdownButton: SubMenuItemComponent,
@@ -174,7 +174,7 @@ export const ribbonDropdownMenuItemMap: { [key: string]: dropdownMenuItemType } 
 /**
  * dialog content를 위한 map
  */
-export type dialogContentType = string;
+export type DialogContentType = string;
 // | typeof PublishGXComponentsDialogContentComponent
 // | typeof PublishUXComponentsDialogContentComponent
 // | typeof PublishUXTemplateDialogContentComponent
@@ -197,7 +197,7 @@ export type dialogContentType = string;
 // | typeof SelectUXComponentLibraryDialogComponent
 // | typeof SelectTemplateLibraryDialogComponent;
 
-export const ribbonDialogContentMap: { [key: string]: dialogContentType } = {
+export const ribbonDialogContentMap: { [key: string]: DialogContentType } = {
   // PublishGXComponent: PublishGXComponentsDialogContentComponent,
   // PublishUXComponent: PublishUXComponentsDialogContentComponent,
   // PublishUXTemplate: PublishUXTemplateDialogContentComponent,
@@ -231,16 +231,16 @@ export const ribbonDialogContentMap: { [key: string]: dialogContentType } = {
 /**
  * GalleryItem Content를 위한 map
  */
-type ribbonGalleryItemContentType = string; // typeof DefaultGalleryItemComponent;
+type RibbonGalleryItemContentType = string; // typeof DefaultGalleryItemComponent;
 
-export const ribbonGalleryItemContentMap: { [key: string]: ribbonGalleryItemContentType } = {
+export const ribbonGalleryItemContentMap: { [key: string]: RibbonGalleryItemContentType } = {
   // Default: DefaultGalleryItemComponent,
 };
 
 /**
  * PropHandler의 반환 타입 정의
  */
-export interface ribbonProp {
+export interface RibbonProp {
   disabled?: boolean;
   selected?: boolean;
 }
@@ -248,14 +248,14 @@ export interface ribbonProp {
 /**
  * ribbonPropsHandler 타입 정의
  */
-type ribbonPropsHandlerType = (editorStore: EditorStore, commandPropName?: string) => ribbonProp;
+type RibbonPropsHandlerType = (editorStore: EditorStore, commandPropName?: string) => RibbonProp;
 
 /**
  * ribbonPropsHandler Map 정의
  * key: RibbonData.ts 내에 명시된 Item 의 ID
  * value: propsHandler
  */
-const ribbonPropsHandlerMap: { [key: string]: ribbonPropsHandlerType } = {
+const ribbonPropsHandlerMap: { [key: string]: RibbonPropsHandlerType } = {
   // Home
   // RIB_HOME_UNDO: undoComponentDisabledPropsHandler, // 실행 취소
   // RIB_HOME_REDO: redoComponentDisabledPropsHandler, // 다시 실행
@@ -459,8 +459,10 @@ const ribbonPropsHandlerMap: { [key: string]: ribbonPropsHandlerType } = {
 /**
  * Ribbon Item ID를 통해 propHandler 를 반환
  */
-export function getPropsHandler(ribbonItem: propHandlerItem, editorStore: EditorStore): ribbonProp | undefined {
-  if (ribbonItem.id === undefined) return undefined;
+export function getPropsHandler(ribbonItem: PropHandlerItem, editorStore: EditorStore): RibbonProp | undefined {
+  if (ribbonItem.id === undefined) {
+    return undefined;
+  }
   const handler = ribbonPropsHandlerMap[ribbonItem.id];
   return handler ? handler(editorStore, ribbonItem.commandPropName) : undefined;
 }

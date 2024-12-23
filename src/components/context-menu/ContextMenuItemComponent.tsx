@@ -1,7 +1,7 @@
 // import styles from 'common/style/context-menu/ContextMenuComponent.scss';
 import * as React from 'react';
 import { ContextMenuItemVariantType, ContextMenuProp } from 'store/context-menu/ContextMenuTypes';
-import { dialogContentType, ribbonDialogContentMap } from 'store/ribbon-menu/RibbonMenuComponentInfo';
+import { DialogContentType, ribbonDialogContentMap } from 'store/ribbon-menu/RibbonMenuComponentInfo';
 import {
   contextMenuDivider,
   contextMenuDividerLine,
@@ -101,7 +101,7 @@ const ContextMenuSmallDialogItemComponent = ({
     return <></>;
   }
 
-  const DialogComponent: dialogContentType = ribbonDialogContentMap[commandPropName];
+  const DialogComponent: DialogContentType = ribbonDialogContentMap[commandPropName];
 
   return (
     <>
@@ -149,7 +149,9 @@ const ContextMenuLargeItemComponent = ({
       type={'button'}
       css={contextMenuItemLarge}
       onClick={() => {
-        if (commandPropName && commandType) onClick(commandPropName, commandType);
+        if (commandPropName && commandType) {
+          onClick(commandPropName, commandType);
+        }
         handleClose();
       }}
       disabled={disabled}
@@ -179,7 +181,7 @@ const ContextMenuLargeDialogItemComponent = ({
     return <></>;
   }
 
-  const DialogComponent: dialogContentType = ribbonDialogContentMap[commandPropName];
+  const DialogComponent: DialogContentType = ribbonDialogContentMap[commandPropName];
   return (
     <>
       <button

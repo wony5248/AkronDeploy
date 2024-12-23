@@ -5,7 +5,7 @@ import SaveIndicatorComponent from 'components/ribbon-menu/save-indicator/SaveIn
 import useEditorStore from 'hooks/useEditorStore';
 import { observer } from 'mobx-react-lite';
 import { useState } from 'react';
-import EditorUIStore, { WorkAreaTabIndex } from 'store/app/EditorUIStore';
+import { WorkAreaTabIndex } from 'store/app/EditorUIStore';
 import { playButton, rightMenu } from 'styles/ribbon-menu/RibbonMenu';
 
 /**
@@ -21,7 +21,7 @@ const RightMenuComponent: React.FC = () => {
 
   const [open, setOpen] = useState<boolean>(false);
 
-  const onClick = (commandPropName: string, commandType: string, ...args: unknown[]) => {
+  const onClick = () => {
     // handleCommandEvent로 변경 예정
     // ribbonStore.onClickedRibbonButton(commandPropName, commandType, ...args);
   };
@@ -64,7 +64,7 @@ const RightMenuComponent: React.FC = () => {
           <div
             css={playButton}
             onClick={() => {
-              onClick('PreviewProject', 'View');
+              // onClick('PreviewProject', 'View');
             }}
             key={'RIB_VIEW_PREVIEW_PROJECT'}
           >

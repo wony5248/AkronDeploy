@@ -13,7 +13,7 @@ export const pageWidgetSection = css`
   margin-bottom: 10px;
 `;
 
-export const pageThumbnail = css`
+export const pageThumbnail = (isSelected: boolean) => css`
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
@@ -22,12 +22,9 @@ export const pageThumbnail = css`
   padding-top: 5px;
   padding-bottom: 5px;
   border-radius: 8px;
+  background-color: ${isSelected ? appPrimaryColor200 : 'transparent'};
 
-  &.isSelected {
-    background-color: ${appPrimaryColor200};
-  }
-
-  &.isHovered {
+  &:hover {
     background-color: ${appPrimaryColor150};
   }
 `;

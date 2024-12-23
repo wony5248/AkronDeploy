@@ -28,7 +28,7 @@ const ContextMenuContentComponent = () => {
             key={data.id}
             contextMenuData={data}
             variant={data.variant}
-            onClick={(commandPropName, commandType, ...args) => {
+            onClick={() => {
               // handleCommandEvent로 변경 예정
               // ribbonStore.onClickedRibbonButton(commandPropName, commandType, ...args);
             }}

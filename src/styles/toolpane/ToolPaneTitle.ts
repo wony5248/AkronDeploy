@@ -9,7 +9,7 @@ import {
 } from 'styles/Size';
 
 // toolPaneTitle 스타일
-export const toolPaneTitle = css`
+export const toolPaneTitle = (isDraggable: boolean) => css`
   position: relative;
   box-sizing: border-box;
   display: flex;
@@ -28,9 +28,7 @@ export const toolPaneTitle = css`
   line-height: 16px;
   user-select: none;
 
-  &.isDraggable {
-    -webkit-app-region: drag;
-  }
+  -webkit-app-region: ${isDraggable ? 'drag' : undefined};
 `;
 
 // toolPaneTitleButtonGroup 스타일

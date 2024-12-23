@@ -9,7 +9,9 @@ const useTooltip = (editorStore: EditorStore) => {
   const tooltipTimer = useRef</*NodeJS.Timeout | */ number | null>();
   const tooltipTarget = tooltipStore.getTarget();
   const clearTooltipTimer = () => {
-    if (!tooltipTimer.current) return;
+    if (!tooltipTimer.current) {
+      return;
+    }
     clearTimeout(tooltipTimer.current as number);
     tooltipTimer.current = null;
   };
@@ -79,7 +81,9 @@ const useTooltip = (editorStore: EditorStore) => {
 
   // 툴팁 위치 초기화
   const resetTooltipPosition = () => {
-    if (!tooltipRef.current) return;
+    if (!tooltipRef.current) {
+      return;
+    }
     tooltipRef.current.style.left = '';
     tooltipRef.current.style.top = '';
   };

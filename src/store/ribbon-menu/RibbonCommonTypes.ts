@@ -8,8 +8,8 @@
  * }
  */
 export interface IDialogContentProps {
-    open: boolean;
-    handleClose: () => void;
+  open: boolean;
+  handleClose: () => void;
 }
 
 /**
@@ -21,10 +21,10 @@ export interface IDialogContentProps {
  * type IProps = Pick<IRibbonDialogContentProps, 'open' | 'handleClose' | 'onClick'>;
  */
 export interface IRibbonDialogContentProps extends IDialogContentProps {
-    commandPropName: string;
-    commandType: string;
+  commandPropName: string;
+  commandType: string;
 
-    // 확인을 클릭할 경우의 handler.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onClick: (buttonName: string, commandType: string, ...args: any[]) => void;
+  // 확인을 클릭할 경우의 handler.
+
+  onClick: (buttonName: string, commandType: string, ...args: any[]) => void;
 }

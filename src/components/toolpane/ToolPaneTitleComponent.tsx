@@ -68,7 +68,7 @@ const ToolPaneTitleComponent: React.FC<IProps> = ({
   }
 
   return (
-    <div css={isLeftToolPane ? leftToolpaneTitle : [toolPaneTitle, 'isDraggable']}>
+    <div css={isLeftToolPane ? leftToolpaneTitle : toolPaneTitle(isDraggable)}>
       <div>
         {titleID === 'MSG_CM_TLP_TITLE_SERVICE_MAPPING' && (
           <button css={toolPanePopupButton} type={'button'} aria-label={'Back'} onClick={onClickBackButton}>

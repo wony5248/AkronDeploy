@@ -2,9 +2,9 @@ import LeftToolPaneContentComponent from 'components/toolpane/LeftToolpaneConten
 import ToolPaneTitleComponent from 'components/toolpane/ToolPaneTitleComponent';
 import useEditorStore from 'hooks/useEditorStore';
 import { observer } from 'mobx-react-lite';
-import WidgetLayerContainer, { WidgetLayerContainerProvider } from 'models/widget/WidgetLayerContainer';
+import { WidgetLayerContainerProvider } from 'models/widget/WidgetLayerContainer';
 import * as React from 'react';
-import { ForwardedRef, useState } from 'react';
+import { ForwardedRef } from 'react';
 import { reverseViewer } from 'styles/toolpane/LeftToolpane';
 
 /**
@@ -14,7 +14,7 @@ const TreeToolPaneComponent = React.forwardRef((_, ref: ForwardedRef<HTMLDivElem
   const editorStroe = useEditorStore();
   // const topWidgetModels = editorStroe.getEditingPageModel();
   // const isPageLocked = topWidgetModels?.getComponentSpecificProperties().locked ?? false;
-  const [store, setStore] = useState<WidgetLayerContainer>(() => new WidgetLayerContainer());
+  const store = editorStroe.getWidgetLayerContainer();
 
   return (
     <div id="TreeToolPaneComponent" ref={ref} style={{ height: 'calc(50% - 5px)' }}>

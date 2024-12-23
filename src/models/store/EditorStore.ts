@@ -11,6 +11,7 @@ import AppContextBase from 'models/store/context/ContextBase';
 import SelectionManager from 'models/store/selection/SelectionManager';
 import EditorUIStore from 'store/app/EditorUIStore';
 import TooltipStore from 'store/tooltip/TooltipStore';
+import WidgetLayerContainer from 'models/widget/WidgetLayerContainer';
 
 /**
  * Editor Store 생성자 파라미터 Interface 입니다.
@@ -38,6 +39,8 @@ class EditorStore {
   protected editorUIStore: EditorUIStore;
 
   protected tooltipStore: TooltipStore;
+
+  protected widgetLayerContainer: WidgetLayerContainer;
   /**
    * 생성자
    */
@@ -48,11 +51,9 @@ class EditorStore {
     this.ctx = {
       appID: 100,
     };
-    this.editorUIStore = new EditorUIStore({
-      // customPropertyContentRenderer: args.customPropertyContentRenderer,
-      // activeLeftToolPaneType: args.activeLeftToolPaneType,
-    });
+    this.editorUIStore = new EditorUIStore();
     this.tooltipStore = new TooltipStore();
+    this.widgetLayerContainer = new WidgetLayerContainer();
   }
 
   /**
@@ -65,6 +66,27 @@ class EditorStore {
     this.selectionManager.updateSelection(this.getCtxAsAppContext());
     // this.updateProperties(this.getCtxAsAppContext());
     // this.saveApp();
+  }
+
+  /**
+   * ctx에 있는 EditorUIStore getter
+   */
+  public getEditorUIStore(): EditorUIStore {
+    return this.editorUIStore;
+  }
+
+  /**
+   * ctx에 있는 TooltipStore getter
+   */
+  public getTooltipStore(): TooltipStore {
+    return this.tooltipStore;
+  }
+
+  /**
+   * ctx에 있는 WidgetLayerContainer getter
+   */
+  public getWidgetLayerContainer(): WidgetLayerContainer {
+    return this.widgetLayerContainer;
   }
 
   /**
@@ -82,20 +104,6 @@ class EditorStore {
   private initContext(commandProps?: CommandProps<CommandEnum, SelectionProp>): void {
     this.getCtxAsAppContext().commandProps = commandProps;
     this.getCtxAsAppContext().command = undefined;
-  }
-
-  /**
-   * ctx에 있는 EditorUIStore getter
-   */
-  public getEditorUIStore(): EditorUIStore {
-    return this.editorUIStore;
-  }
-
-  /**
-   * ctx에 있는 TooltipStore getter
-   */
-  public getTooltipStore(): TooltipStore {
-    return this.tooltipStore;
   }
 }
 

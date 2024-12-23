@@ -40,12 +40,10 @@ export interface ToolPaneProp {
  */
 export type RightToolPaneType = (typeof rightToolPaneTypeNames)[number];
 
-const leftToolPaneTypeNames = ['None', 'Component', 'Icon'] as const;
-
 /**
  * 각 좌측 툴페인의 종류를 나타냅니다.
  */
-export type LeftToolPaneType = (typeof leftToolPaneTypeNames)[number];
+export type LeftToolPaneType = ['None', 'Component', 'Icon'][number];
 
 /**
  * 툴페인 display 속성 프로퍼티
@@ -57,9 +55,9 @@ export interface IToolpaneDisplayProperties {
 /**
  * 툴페인 활성화/비활성화 핸들러 함수 타입 정의입니다.
  */
-type toolPanePropsHandlerType = (editorStore: EditorStore) => ToolPaneProp;
+type ToolPanePropsHandlerType = (editorStore: EditorStore) => ToolPaneProp;
 
-const toolPanePropsHandlerMap: Partial<Record<RightToolPaneType, toolPanePropsHandlerType>> = {
+const toolPanePropsHandlerMap: Partial<Record<RightToolPaneType, ToolPanePropsHandlerType>> = {
   Content: sectionSelectedPropsHandler,
   // Style: sectionSelectedPropsHandler,
 };

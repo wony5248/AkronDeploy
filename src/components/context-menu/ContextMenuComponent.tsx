@@ -19,7 +19,9 @@ interface IProps {
  */
 const ContextMenuComponent = forwardRef<HTMLDivElement, IProps>(({ children, closeMenu }: IProps, ref) => {
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.code === 'Escape') closeMenu();
+    if (event.code === 'Escape') {
+      closeMenu();
+    }
   };
 
   const preventWindowEvent = (event: React.MouseEvent) => {

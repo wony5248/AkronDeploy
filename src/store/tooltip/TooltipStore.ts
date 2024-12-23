@@ -1,4 +1,3 @@
-import { createContext } from 'react';
 import { observable, makeObservable, action } from 'mobx';
 import { boundMethod } from 'autobind-decorator';
 /**
@@ -117,7 +116,9 @@ class TooltipStore {
     position: TooltipPositionType,
     { title, content, icon, link, linkText }: TooltipDataType
   ) {
-    if (!e || (!title && !content && !icon && !link && !linkText)) return;
+    if (!e || (!title && !content && !icon && !link && !linkText)) {
+      return;
+    }
 
     this.tooltipData = { title, content, icon, link, linkText };
     this.position = position;
