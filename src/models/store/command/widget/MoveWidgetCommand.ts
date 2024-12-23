@@ -116,7 +116,7 @@ class MoveWidgetCommand extends SimpleCommand {
    * createApplyOperationMessage
    */
   @boundMethod
-  public override makeApplyUpdateMessage(): Array<IOperationMessage> | undefined {
+  public override makeApplyUpdateMessage(): IOperationMessage[] | undefined {
     const updateRelationMessage = this.target.makeOperationMessage() as IOperationMessage;
     updateRelationMessage.parentId = this.destParent.getID();
     updateRelationMessage.prevId = this.destPrevSibling?.getID();
@@ -132,7 +132,7 @@ class MoveWidgetCommand extends SimpleCommand {
    * createUnApplyOperationMessage
    */
   @boundMethod
-  public override makeUnApplyUpdateMessage(): Array<IOperationMessage> | undefined {
+  public override makeUnApplyUpdateMessage(): IOperationMessage[] | undefined {
     const updateRelationMessage = this.target.makeOperationMessage() as IOperationMessage;
     updateRelationMessage.parentId = this.depParent.getID();
     updateRelationMessage.prevId = this.depPrevSibling?.getID();
@@ -148,7 +148,7 @@ class MoveWidgetCommand extends SimpleCommand {
    * createReApplyOperationMessage
    */
   @boundMethod
-  public override makeReApplyUpdateMessage(): Array<IOperationMessage> | undefined {
+  public override makeReApplyUpdateMessage(): IOperationMessage[] | undefined {
     return this.makeApplyUpdateMessage();
   }
 }
