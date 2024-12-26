@@ -2,7 +2,7 @@ import { boundMethod } from 'autobind-decorator';
 import CommandHandler from './CommandHandler';
 import { WidgetID } from '../../../node/WidgetModel';
 import CommandEnum from './CommandEnum';
-import { SelectionProp } from './CommandProps';
+import { SelectionProp } from './WidgetCommandProps';
 
 export interface AkronCommandMapper extends CommandMapper<WidgetID, CommandEnum, SelectionProp> {}
 /**
@@ -13,7 +13,7 @@ class CommandMapper<ID, CommandEnum, SelectionProp> {
   /**
    * Command Enum 별 매핑되는 CommandHandler를 관리하는 map
    */
-  protected readonly commandMap: Map<CommandEnum, Array<CommandHandler<ID, CommandEnum, SelectionProp>>>;
+  protected readonly commandMap: Map<CommandEnum, CommandHandler[]>;
 
   /**
    * 생성자
@@ -29,7 +29,7 @@ class CommandMapper<ID, CommandEnum, SelectionProp> {
    * @returns Command ID 에 해당하는 command handler list
    */
   @boundMethod
-  public get(commandID: CommandEnum): Array<CommandHandler<ID, CommandEnum, SelectionProp>> | undefined {
+  public get(commandID: CommandEnum): CommandHandler[] | undefined {
     return this.commandMap.get(commandID);
   }
 }

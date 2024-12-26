@@ -6,6 +6,8 @@ import IdContainerController from 'models/store/container/IdContainerController'
 
 export type WidgetID = number;
 
+export type WidgetTypeID = number;
+
 export interface IWidgetModelInitProps<Properties> {
   id: WidgetID;
   widgetType: WidgetTypeEnum;

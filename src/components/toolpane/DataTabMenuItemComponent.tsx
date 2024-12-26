@@ -1,12 +1,7 @@
 import useEditorStore from 'hooks/useEditorStore';
 import { observer } from 'mobx-react-lite';
 import { DataTabIndex } from 'store/app/EditorUIStore';
-import {
-  pageThumbnail,
-  pageThumbnailIndex,
-  pageThumbnailName,
-  pageThumbnailTitle,
-} from 'styles/toolpane/PageWidgetList';
+import { pageThumbnail, pageThumbnailName, pageThumbnailTitle } from 'styles/toolpane/PageWidgetList';
 
 /**
  * DataTabMenuItemComponent Props
@@ -23,7 +18,7 @@ interface IProps {
 const DataTabMenuItemComponent: React.FC<IProps> = (props: IProps) => {
   const editorStore = useEditorStore();
   const UIStore = editorStore.getEditorUIStore();
-  const { tabIndex, imgID, labelString } = props;
+  const { tabIndex, labelString } = props;
   const handleDataTabClick = (idx: DataTabIndex) => {
     UIStore.setDataTabIndex(idx);
   };

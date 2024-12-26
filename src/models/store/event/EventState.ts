@@ -16,6 +16,7 @@ enum EventState {
 
   // INVALID
   INVALID,
+  TOOLPANE_MOVE,
 }
 
 export default EventState;

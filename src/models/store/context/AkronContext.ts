@@ -1,213 +1,525 @@
-import SelectionContainer from '../container/SelectionContainer';
-import CommandEnum from '../command/common/CommandEnum';
-import { SelectionProp } from '../command/common/WidgetCommandProps';
-import Context from './Context';
-import AppContextBase from 'models/store/context/ContextBase';
-import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
+import { Nullable } from '@akron/runner';
+import { boundMethod } from 'autobind-decorator';
+import AppModel from 'models/node/AppModel';
+import { WidgetID } from 'models/node/WidgetModel';
+import Command from 'models/store/command/common/Command';
 import WidgetCommandProps from 'models/store/command/common/WidgetCommandProps';
+import SelectionContainer from 'models/store/container/SelectionContainer';
+import {
+  ContextBaseInitializeProp,
+  ReadOnlyContextBaseProp,
+  ContextInitializeProp,
+  EditableContextProp,
+} from 'models/store/context/ContextTypes';
+import EditableContext from 'models/store/context/EditableContext';
+import { NavigateFunction } from 'react-router-dom';
 
 /**
- * DOM으로부터 얻은 page의 좌표(browser 기준)
- * width, height은 style에 있음
+ * DocumentStore 에서 관리하는 context 구조입니다.
  */
-interface PageRefPosition {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
+export default class AkronContext {
+  /**
+   * ReadOnlyContext 정보
+   */
+  // private appReadOnlyContext: ReadOnlyContext;
+
+  /**
+   * EditableContext 정보
+   */
+  private appEditableContext: EditableContext;
+
+  /**
+   * 생성자
+   */
+  constructor(initProp: ContextInitializeProp) {
+    // read only context
+    // this.appReadOnlyContext = new ReadOnlyContextBase(this.getReadOnlyContextProp(initProp));
+
+    // editable context
+    this.appEditableContext = new EditableContext(this.getEditableContextProp(initProp));
+  }
+
+  /**
+   * AppContext / AppContextBase 의 공통 interface를 구성하기 위하여 임의로 추가한 method
+   */
+  public doNotImplementThisFunctionExceptAppContext() {
+    // an empty function
+  }
+
+  /**
+   * AppContextBaseInitilizeProp을 기반으로 ReadOnlyContext의 생성자 prop을 생성해 반환합니다
+   * FIXME: 임시로 몇 가지 넣어뒀으나, EditableContext에서 분리해 해당 Context로 추가하는 작업이 필요합니다
+   */
+  @boundMethod
+  public getReadOnlyContextProp(initProp: ContextBaseInitializeProp): ReadOnlyContextBaseProp {
+    return {
+      appID: initProp.appID,
+    };
+  }
+
+  /**
+   * AppContextBaseInitilizeProp을 기반으로 EditableContext의 생성자 prop을 생성해 반환합니다
+   */
+  @boundMethod
+  public getEditableContextProp(initProp: ContextInitializeProp): EditableContextProp {
+    return {
+      newAppModel: initProp.newAppModel,
+      appID: initProp.appID,
+      // appInfo: initProp.appInfo,
+      // newMetaDataContainer: initProp.newMetaDataContainer,
+      // appStylesContainer: this.createAppStylesContainer(initProp.appInfo.globalCSSs),
+      // appStylesContainer: this.createAppStylesContainer(),
+      // businessContainer: initProp.businessContainer,
+      // newBusinessContainer: initProp.newBusinessContainer,
+      // dataStore: initProp.dataStore,
+      // serviceStore: initProp.serviceStore,
+      // customFunctionStore: initProp.customFunctionStore,
+      // serviceHandlerStore: initProp.serviceHandlerStore,
+      // dataBindingContainer: initProp.dataBindingContainer,
+      // globalThemeContainer: initProp.globalThemeContainer,
+      // compThemeContainer: initProp.compThemeContainer,
+      // compositeComponentContainer: initProp.compositeComponentContainer,
+      // newOSObjectContainer: initProp.newOSObjectContainer,
+      // outerServiceStore: initProp.outerServiceStore,
+      // highLevelStudiosContainer: initProp.highLevelStudiosContainer,
+      // uiStore: this.createUIStore(),
+      // businessComponentServiceMapper: this.createBusinessComponentServiceMapper(),
+      eventState: initProp.eventState,
+      appName: initProp.appName,
+      appModeContainer: initProp.appModeContainer,
+      // roomList: this.createRoomList(),
+      // needSaveState: this.createNeedSaveState(),
+      // commandProps: this.createCommandProps(),
+      // commandController: this.createCommand(),
+      // commandMode: this.createCommandMode(),
+      // saveState: this.createSaveState(),
+      // fileSaveState: this.createFileSaveState(),
+      // zoomRatio: this.createZoomRatio(),
+      // previewZoomRatio: this.createPreviewZoomRatio(),
+      // pageScroll: this.createPageScroll(),
+      // isFitWindow: this.createIsFitWindow(),
+      // dragObject: this.createDragObject(),
+      // mouseMode: this.createMouseMode(),
+      // contextMenu: this.createContextMenu(),
+      // saved: this.createSaved(),
+      // dialogType: this.createDialogType(),
+      // dialogOpen: this.createDialogOpen(),
+      // undoStack: this.createUndoStack(),
+      // lastRegisteredEditUndoStackTag: this.createLastRegisteredEditUndoStackTag(),
+      // hitContainer: this.createHitContainer(),
+      // selectionContainer: this.createSelectionContainer(),
+      // clipboardContainer: this.createClipboardContainer(),
+      // propContainer: this.createPropContainer(),
+      // widgetEditInfoContainer: this.createWidgetEditInfoContainer(),
+      // errorBoundaryContainer: this.createErrorBoundaryContainer(),
+      // smartGuideContainer: this.createSmartGuideContainer(),
+      // updateMessageContainer: this.createUpdateMessageContainer(),
+      // pageContainer: this.createPageContainer({
+      //   startPageID: initProp.startPageID,
+      //   startPageURL: initProp.startPageURL,
+      // }),
+      // editorUIStore: this.createEditorUIStore(
+      //   initProp.customPropertyContentRenderer,
+      //   initProp.activeLeftToolPaneType,
+      //   // 하이레벨 스튜디오의 경우 요소 추가 부분이 열린 상태로 시작.
+      //   initProp.appModeContainer.isHighLevelStudio() ? 'ADD_WIDGET' : undefined
+      // ),
+      contextMenuContainer: initProp.contextMenuContainer,
+      // fileMessageContainer: this.createFileMessageContainer(),
+      // fileContainer: initProp.fileContainer,
+      // libraryContainer: initProp.libraryContainer,
+      // widgetHandToolContainer: this.createWidgetHandToolContainer(),
+    } as EditableContextProp;
+  }
+
+  /**
+   * BusinessComponentServiceMapper를 생성해 반환합니다
+   */
+  // @boundMethod
+  // public createBusinessComponentServiceMapper(): BusinessComponentServiceMapper {
+  //   return new BusinessComponentServiceMapper(new BusinessComponentRuntimeServiceFactory());
+  // }
+
+  /**
+   * UIStore를 생성해 반환합니다
+   */
+  // @boundMethod
+  // public createUIStore(): UIStore {
+  //   return new UIStore();
+  // }
+
+  /**
+   * AppStylesContainer를 생성해 반환합니다
+   */
+  // @boundMethod
+  // public createAppStylesContainer(globalCsss?: [string, CSSInfo][]): AppStylesContainer {
+  //   const appStylesContainer = new AppStylesContainer();
+  //   appStylesContainer.setAllGlobalCSSs(globalCsss ?? []);
+  //   return appStylesContainer;
+  // }
+
+  /**
+   * AppID를 반환합니다
+   */
+  // @boundMethod
+  // public getAppID(): WidgetID {
+  //   return this.appReadOnlyContext.getAppID();
+  // }
+
+  /**
+   * AppType을 반환합니다
+   */
+  // @boundMethod
+  // public getAppType(): AppType {
+  //   return this.appReadOnlyContext.getAppType();
+  // }
+
+  /**
+   * AppWidgetModel을 반환합니다
+   */
+  @boundMethod
+  public getNewAppModel(): AppModel {
+    return this.appEditableContext.getNewAppModel();
+  }
+
+  /**
+   * AppWidgetModel을 설정합니다
+   */
+  @boundMethod
+  public setAppWidgetModel(appModel: AppModel): void {
+    this.appEditableContext.setNewAppModel(appModel);
+  }
+
+  /**
+   * AppID를 설정합니다
+   */
+  @boundMethod
+  public setAppID(appID: WidgetID): void {
+    this.appEditableContext.setAppID(appID);
+  }
+
+  /**
+   * DocumentContext
+   * CommandProps를 반환합니다
+   */
+  @boundMethod
+  public getCommandProps(): WidgetCommandProps | undefined {
+    return this.appEditableContext.getCommandProps();
+  }
+
+  /**
+   * DocumentContext
+   * CommandProps를 설정합니다
+   */
+  @boundMethod
+  public setCommandProps(commandProps: WidgetCommandProps | undefined): void {
+    this.appEditableContext.setCommandProps(commandProps);
+  }
+
+  /**
+   * DocumentContext
+   * Command를 반환합니다
+   */
+  @boundMethod
+  public getCommand(): Command | undefined {
+    return this.appEditableContext.getCommand();
+  }
+
+  /**
+   * DocumentContext
+   * Command를 설정합니다
+   */
+  @boundMethod
+  public setCommand(command: Command | undefined): void {
+    this.appEditableContext.setCommand(command);
+  }
+
+  /**
+   * DocumentContext
+   * SelectionContainer을 반환합니다
+   */
+  @boundMethod
+  public getSelectionContainer(): SelectionContainer {
+    return this.appEditableContext.getSelectionContainer();
+  }
+
+  /**
+   * AppInfo를 반환합니다
+   */
+  // @boundMethod
+  // public getAppInfo(): AppInfo {
+  //   return this.appEditableContext.getAppInfo();
+  // }
+
+  /**
+   * AppInfo를 설정합니다
+   */
+  // @boundMethod
+  // public setAppInfo(appInfo: AppInfo): void {
+  //   this.appEditableContext.setAppInfo(appInfo);
+  // }
+
+  /**
+   * newMetaDataContainer를 반환합니다
+   */
+  // @boundMethod
+  // public getNewMetaDataContainer(): NewMetaDataContainer {
+  //   return this.appEditableContext.getNewMetaDataContainer();
+  // }
+
+  // /**
+  //  * newMetaDataContainer를 설정합니다
+  //  */
+  // @boundMethod
+  // public setNewMetaDataContainer(newMetaDataContainer: NewMetaDataContainer): void {
+  //   this.appEditableContext.setNewMetaDataContainer(newMetaDataContainer);
+  // }
+
+  // /**
+  //  * AppStylesContainer를 반환합니다
+  //  */
+  // @boundMethod
+  // public getAppStylesContainer(): AppStylesContainer {
+  //   return this.appEditableContext.getAppStylesContainer();
+  // }
+
+  // /**
+  //  * AppStylesContainer를 설정합니다
+  //  */
+  // @boundMethod
+  // public setAppStylesContainer(appStylesContainer: AppStylesContainer): void {
+  //   this.appEditableContext.setAppStylesContainer(appStylesContainer);
+  // }
+
+  // /**
+  //  * BusinessContainer를 반환합니다
+  //  */
+  // @boundMethod
+  // public getBusinessContainer(): BusinessContainerBase {
+  //   return this.appEditableContext.getBusinessContainer();
+  // }
+
+  // /**
+  //  * BusinessContainer를 설정합니다
+  //  */
+  // @boundMethod
+  // public setBusinessContainer(businessContainer: BusinessContainerBase): void {
+  //   this.appEditableContext.setBusinessContainer(businessContainer);
+  // }
+
+  // /**
+  //  * NewBusinessContainer를 반환합니다
+  //  */
+  // @boundMethod
+  // public getNewBusinessContainer(): NewBusinessContainer {
+  //   return this.appEditableContext.getNewBusinessContainer();
+  // }
+
+  // /**
+  //  * NewBusinessContainer를 설정합니다
+  //  */
+  // @boundMethod
+  // public setNewBusinessContainer(newBusinessContainer: NewBusinessContainer): void {
+  //   this.appEditableContext.setNewBusinessContainer(newBusinessContainer);
+  // }
+
+  // /**
+  //  * NewOSObjectContainer를 반환합니다
+  //  */
+  // @boundMethod
+  // public getNewOSObjectContainer(): NewOSObjectContainer {
+  //   return this.appEditableContext.getNewOSObjectContainer();
+  // }
+
+  // /**
+  //  * NewOSObjectContainer를 설정합니다
+  //  */
+  // @boundMethod
+  // public setNewOSObjectContainer(newOSObjectContainer: NewOSObjectContainer): void {
+  //   this.appEditableContext.setNewOSObjectContainer(newOSObjectContainer);
+  // }
+
+  // /**
+  //  * DataStore를 반환합니다
+  //  */
+  // @boundMethod
+  // public getDataStore(): DataStoreBase {
+  //   return this.appEditableContext.getDataStore();
+  // }
+
+  // /**
+  //  * DataStore를 설정합니다
+  //  */
+  // @boundMethod
+  // public setDataStore(dataStore: DataStoreBase): void {
+  //   this.appEditableContext.setDataStore(dataStore);
+  // }
+
+  // /**
+  //  * Custom Function 관리자 반환
+  //  */
+  // @boundMethod
+  // public getCustomFunctionStore(): CustomFunctionStoreBase {
+  //   return this.appEditableContext.getCustomFunctionStore();
+  // }
+
+  // /**
+  //  * Custom Function 관리자 설정
+  //  */
+  // @boundMethod
+  // public setCustomFunctionStore(customFunctionStore: CustomFunctionStoreBase): void {
+  //   this.appEditableContext.setCustomFunctionStore(customFunctionStore);
+  // }
+
+  // /**
+  //  * 서비스 매핑 관리자 반환
+  //  */
+  // @boundMethod
+  // public getServiceStore(): ServiceStoreBase {
+  //   return this.appEditableContext.getServiceStore();
+  // }
+
+  // /**
+  //  * 서비스 매핑 관리자 설정
+  //  */
+  // @boundMethod
+  // public setServiceStore(serviceStore: ServiceStoreBase): void {
+  //   this.appEditableContext.setServiceStore(serviceStore);
+  // }
+
+  // /**
+  //  * CMSEventHandlerStore를 반환합니다
+  //  */
+  // @boundMethod
+  // public getServiceHandlerStore(): ServiceHandlerStoreBase {
+  //   return this.appEditableContext.getServiceHandlerStore();
+  // }
+
+  // /**
+  //  * CMSEventHandlerStore를 설정합니다
+  //  */
+  // @boundMethod
+  // public setServiceHandlerStore(serviceHandlerStore: ServiceHandlerStoreBase): void {
+  //   return this.appEditableContext.setServiceHandlerStore(serviceHandlerStore);
+  // }
+
+  // /**
+  //  * DataBindingContainer를 반환합니다
+  //  */
+  // @boundMethod
+  // public getDataBindingContainer(): DataBindingContainer {
+  //   return this.appEditableContext.getDataBindingContainer();
+  // }
+
+  // /**
+  //  * DataBindingContainer를 설정합니다
+  //  */
+  // @boundMethod
+  // public setDataBindingContainer(dataBindingContainer: DataBindingContainer): void {
+  //   this.appEditableContext.setDataBindingContainer(dataBindingContainer);
+  // }
+
+  // /**
+  //  * UiStore를 반환합니다
+  //  */
+  // @boundMethod
+  // public getUiStore(): UIStore {
+  //   return this.appEditableContext.getUiStore();
+  // }
+
+  // /**
+  //  * UiStore를 설정합니다
+  //  */
+  // @boundMethod
+  // public setUiStore(uiStore: UIStore): void {
+  //   this.appEditableContext.setUiStore(uiStore);
+  // }
+
+  // /**
+  //  * BusinessComponentServiceMapper를 반환합니다
+  //  */
+  // @boundMethod
+  // public getBusinessComponentServiceMapper(): BusinessComponentServiceMapper {
+  //   return this.appEditableContext.getBusinessComponentServiceMapper();
+  // }
+
+  // /**
+  //  * BusinessComponentServiceMapper를 설정합니다
+  //  */
+  // @boundMethod
+  // public setBusinessComponentServiceMapper(businessComponentServiceMapper: BusinessComponentServiceMapper): void {
+  //   this.appEditableContext.setBusinessComponentServiceMapper(businessComponentServiceMapper);
+  // }
+
+  /**
+   * NavigateFunction를 반환합니다
+   */
+  @boundMethod
+  public getNavigateFunction(): Nullable<NavigateFunction> {
+    return this.appEditableContext.getNavigateFunction();
+  }
+
+  /**
+   * NavigateFunction를 설정합니다
+   */
+  @boundMethod
+  public setNavigateFunction(navigateFunction: NavigateFunction): void {
+    this.appEditableContext.setNavigateFunction(navigateFunction);
+  }
+
+  /**
+   * drawingToolContainer를 반환합니다
+   */
+  // @boundMethod
+  // public getDrawingToolContainer(): DrawingToolContainer {
+  //   return this.appEditableContext.getDrawingToolContainer();
+  // }
+
+  // /**
+  //  * GlobalThemeContainer를 반환합니다
+  //  */
+  // @boundMethod
+  // public getGlobalThemeContainer(): GlobalThemeContainer {
+  //   return this.appEditableContext.getGlobalThemeContainer();
+  // }
+
+  // /**
+  //  * CompThemeContainer를 반환합니다
+  //  */
+  // @boundMethod
+  // public getCompThemeContainer(): CompThemeContainer {
+  //   return this.appEditableContext.getCompThemeContainer();
+  // }
+
+  // /**
+  //  * CompostieComponentContainer를 반환합니다
+  //  */
+  // @boundMethod
+  // public getCompositeComponentContainer(): CompositeComponentContainer {
+  //   return this.appEditableContext.getCompositeComponentContainer();
+  // }
+
+  // /**
+  //  * OUTER 서비스 매핑 관리자 반환
+  //  */
+  // @boundMethod
+  // public getOuterServiceStore(): OuterServiceStoreBase {
+  //   return this.appEditableContext.getOuterServiceStore() as OuterServiceStoreBase;
+  // }
+
+  // /**
+  //  * OUTER 서비스 매핑 관리자 설정
+  //  */
+  // @boundMethod
+  // public setOuterServiceStore(OuterServiceStore: OuterServiceStoreBase): void {
+  //   this.appEditableContext.setOuterServiceStore(OuterServiceStore);
+  // }
+
+  // /**
+  //  * 스튜디오 컴포넌트 정보 관리자 반환
+  //  */
+  // @boundMethod
+  // public getHighLevelStudiosContainer(): HighLevelStudiosContainer {
+  //   return this.appEditableContext.getHighLevelStudiosContainer();
+  // }
 }
-
-/**
- * 현재 편집 중인 app의 정보 및 편집기의 상태들을 담고 있습니다.
- * AppStore는 command, event 등의 로직들을 현재의 AppContext 값 위에 정해진 순서대로 적용하는 형태로 작동합니다.
- * (CM/C (Component Manager / Component) 구조)
- */
-interface AkronContext extends AppContextBase, Context<WidgetID, CommandEnum, SelectionProp> {
-  /**
-   * 현재 수정중인 widget의 model입니다.
-   * (ex. App or Composite or BusinessDialog widget)
-   */
-  editingWidgetModel: WidgetModel;
-
-  /**
-   * UX 프로젝트에서 LeftToolpane 기본 요소 탭에 표시될 컴포넌트들에 대한 라이브러리 정보입니다.
-   * 현재 UXPin에 대한 라이브러리만 제공되며, 추후 다른 라이브러리 추가 시 자료구조 변경 필요.
-   */
-  //   presetLibraryInfo: ILibraryInfo;
-
-  /**
-   * 현재 프로젝트에서 등록한 라이브러리에 대한 정보입니다.
-   */
-  //   registeredLibraryInfoMap: Record<LibraryType, Map<number, ILibraryInfo>>;
-
-  /**
-   * High Level Studio에서 등록한 라이브러리에 대한 정보입니다.
-   */
-  //   registeredHighLevelLibraryInfoMap: Record<LibraryType, Map<number, ILibraryInfo>>;
-
-  /**
-   * 사용자가 제작한 composite widget들의 목록(ordered map)입니다.
-   */
-  //   registeredCompositeWidgetMap: Map<WidgetID, WidgetModel<IComponentCommonProperties, ICompositeWidgetProperties>>;
-
-  /**
-   * 현재 event 의 command id 와 handling 에 필요한 요소들을 나타냅니다. 휘발적이며 event 마다 초기화 됩니다.
-   */
-  commandProps?: WidgetCommandProps;
-
-  /**
-   * 현재 App의 이름을 나타냅니다.
-   */
-  appName: string;
-
-  /**
-   * Mouse Event로 드래깅 시 Hit 정보들을 저장하는 Container 입니다.
-   */
-  //   hitContainer: HitContainer<WidgetModel>;
-
-  /**
-   * 현재 선택된 Selection 정보
-   */
-  selectionContainer?: SelectionContainer;
-
-  /**
-   * 이전에 선택된 Selection 정보
-   */
-  prevSelectionContainer?: SelectionContainer;
-
-  /**
-   * Clipboard 정보
-   */
-  //   clipboardContainer: ClipboardContainer;
-
-  /**
-   * 현재 Selection을 바탕으로, 업데이트되어야 할 Style의 정보를 보관합니다.
-   */
-  //   propContainer: PropContainer;
-
-  /**
-   * 모드 변경 전, 마지막으로 선택된 Selection 정보
-   */
-  editModeLastSelectionContainer?: SelectionContainer;
-
-  /**
-   * WidgetEditModelInfoContainer
-   * App에 배치 된 Widget을 끌어서 이동/리사이즈 할 유지되어야 하는 정보들을 보관합니다.
-   */
-  //   widgetEditInfoContainer: WidgetEditInfoContainer;
-
-  /**
-   * ContextMenuContainer
-   * Context menu에 필요한 내용을 관리합니다..
-   */
-  //   contextMenuContainer: ContextMenuContainer;
-
-  /**
-   * ErrorBoundaryContainer
-   * 속성 값 오류로 인해 렌더링 오류가 발생한 WidgetModel들을 관리합니다..
-   */
-  //   errorBoundaryContainer: ErrorBoundaryContainer;
-
-  /**
-   * 저장 상태를 나타냅니다.
-   */
-  //   saveState: SaveState;
-
-  /**
-   * 저장 작업 진행중일 때, 해당 저장 작업 이후 다시 저장 작업이 필요한지를 나타냅니다.
-   */
-  needSaveState: boolean;
-
-  /**
-   * UpdateMessage를 보관합니다.
-   * 전송이 될 경우, Message를 비우고, 다시 생성하여 채웁니다.
-   */
-  //   updateMessageContainer: UpdateMessageContainer<WidgetID>;
-
-  //   user: UserModel;
-
-  /**
-   * 룸 id를 나타냅니다.
-   */
-  roomID: number;
-
-  /**
-   * 룸 목록을 나타냅니다.
-   */
-  //   roomList: RoomModel[];
-
-  /**
-   * 마지막으로 문서가 저장된 시간을 나타냅니다.
-   */
-  lastSavedTime?: Date;
-
-  /**
-   * 페이지에 관련된 정보들을 담고 있습니다.
-   */
-  //   pageContainer: PageContainer;
-
-  /**
-   * 편집 UI 관련 공통 상태들을 관리하는 Store
-   */
-  //   editorUIStore: EditorUIStore;
-
-  /**
-   * 마지막으로 저장된 edit mode undostack 의 tag
-   */
-  lastRegisteredEditUndoStackTag: string;
-
-  /**
-   * zoom ratio를 나타냅니다.
-   */
-  zoomRatio: number;
-
-  /**
-   * 화면 맞춤 여부를 나타냅니다.
-   */
-  isFitWindow: boolean;
-
-  /**
-   * 작업중인 page의 ref로부터 얻어온 page의 좌표값
-   */
-  editingPageRefPosition: PageRefPosition;
-
-  /*
-   * Smart Guide 관련 정보가 있는 container
-   */
-  //   smartGuideContainer: SmartGuideContainer;
-
-  /**
-   * OS object ID를 나타냅니다.
-   */
-  OSobjectID?: number;
-
-  /**
-   * drag하고 있는 object의 type.
-   * 추후 drag되는 type 추가 시 DragContainer 등으로 분리하고 고도화가 필요함
-   */
-  dragObject: 'Thumbnail' | 'Section' | undefined;
-
-  /**
-   * 특정 동작을 하게 되는 마우스 상태
-   */
-  mouseMode: 'Normal' | 'InsertContainer';
-
-  // 서버 통신 중인 메세지 관련 상태.
-  saved: boolean;
-
-  // 띄울 dialog type.
-  // 현재 리본에서는 버튼이 dialog를 소유하고 open 여부를 결정하는데,
-  // 추후 Editor에서처럼 아래 변수를 이용해 type 결정 및 open 여부를 context에서 해야 함
-  //   dialogType: dialogContentType | undefined;
-
-  // dialog open 여부.
-  dialogOpen: boolean;
-
-  // drag&drop 할때 drop된 위치의 targetModel
-  dragDesModel?: WidgetModel;
-
-  // appReadOnlyContext
-  //   appReadOnlyContext: AppReadOnlyContext;
-}
-
-export default AkronContext;

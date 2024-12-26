@@ -1,19 +1,19 @@
-import Context from '../../context/Context';
+import AkronContext from 'models/store/context/AkronContext';
 
 /**
  * Context 내의 simpleCommand들을 차례대로 execute/unexecute/reexecute 합니다.
  */
-class CommandExecutor<ID, CommandEnum, SelectionProp> {
+class CommandExecutor {
   /**
    * Context 에 있는 command 를 execute 하고 undo stack 에 반영합니다.
    *
    * @param ctx Command 가 보관되어 있는 context
    */
-  public executeCommand(ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    if (ctx.command === undefined) {
+  public executeCommand(ctx: AkronContext): void {
+    if (ctx.getCommand() === undefined) {
       return;
     }
-    ctx.command.apply();
+    ctx.getCommand()?.apply();
     // if (ctx.command.isUndoable() === true) {
     //   if (isEditAppMode(ctx.appModeContainer)) {
     //     ctx.undoStack.push(ctx.command);
@@ -28,7 +28,7 @@ class CommandExecutor<ID, CommandEnum, SelectionProp> {
    *
    * @param ctx Undo stack 이 보관되어 있는 context
    */
-  public unExecuteCommand(ctx: Context<ID, CommandEnum, SelectionProp>): void {
+  public unExecuteCommand(ctx: AkronContext): void {
     // if (isEditAppMode(ctx.appModeContainer)) {
     //   if (ctx.undoStack.canUndo() === false) {
     //     return;
@@ -40,7 +40,7 @@ class CommandExecutor<ID, CommandEnum, SelectionProp> {
     //   }
     //   ctx.command = ctx.editBusinessDialogWidgetModeUndoStack.prev();
     // }
-    ctx.command?.unapply();
+    ctx.getCommand()?.unapply();
   }
 
   /**
@@ -48,7 +48,7 @@ class CommandExecutor<ID, CommandEnum, SelectionProp> {
    *
    * @param ctx Undo stack 이 보관되어 있는 context
    */
-  public reExecuteCommand(ctx: Context<ID, CommandEnum, SelectionProp>): void {
+  public reExecuteCommand(ctx: AkronContext): void {
     // if (isEditAppMode(ctx.appModeContainer)) {
     //   if (ctx.undoStack.canRedo() === false) {
     //     return;
@@ -60,7 +60,7 @@ class CommandExecutor<ID, CommandEnum, SelectionProp> {
     //   }
     //   ctx.command = ctx.editBusinessDialogWidgetModeUndoStack.next();
     // }
-    ctx.command?.reapply();
+    ctx.getCommand()?.reapply();
   }
 }
 
