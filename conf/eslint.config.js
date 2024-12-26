@@ -78,8 +78,7 @@ export default [
         { format: ['PascalCase'], selector: 'typeAlias' },
       ],
       '@typescript-eslint/explicit-module-boundary-types': 'off',
-      '@typescript-eslint/array-type': ['error', { default: 'array-simple' }],
-      '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
+      '@typescript-eslint/no-unused-vars': ['warn', { ignoreRestSiblings: true }],
       '@typescript-eslint/member-ordering': [
         'error',
         {
