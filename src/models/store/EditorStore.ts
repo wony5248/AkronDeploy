@@ -16,10 +16,11 @@ import ContextMenuContainer from 'store/context-menu/ContextMenuContainer';
 import AkronContext from 'models/store/context/AkronContext';
 import EventState from 'models/store/event/EventState';
 import { LeftToolPaneType } from 'store/toolpane/ToolPaneComponentInfo';
-import { BaseWidgetModel } from '@akron/runner';
+import { BaseWidgetModel, Nullable } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { AppInfo } from 'store/app/AppInfo';
 import CompositeComponentContainer from 'models/store/container/CompositeComponentContainer';
+import WidgetModel from 'models/node/WidgetModel';
 
 /**
  * Editor Store 생성자 파라미터 Interface 입니다.
@@ -70,6 +71,9 @@ class EditorStore {
     this.commandManager = new CommandManager(params.commandMapper);
     this.selectionManager = new SelectionManager();
     const appModeContainer = new AppModeContainer(params.mode);
+    this.editorUIStore = new EditorUIStore();
+    this.tooltipStore = new TooltipStore();
+    this.widgetLayerContainer = new WidgetLayerContainer();
     let eventState = EventState.DEFAULT;
     this.ctx = new AkronContext({
       appID: params.appID,
@@ -83,10 +87,8 @@ class EditorStore {
       activeLeftToolPaneType: params.activeLeftToolPaneType,
       appModeContainer,
       compositeComponentContainer: params.compositeComponentContainer,
+      editorUIStore: this.editorUIStore,
     });
-    this.editorUIStore = new EditorUIStore();
-    this.tooltipStore = new TooltipStore();
-    this.widgetLayerContainer = new WidgetLayerContainer();
   }
 
   /**
@@ -129,6 +131,63 @@ class EditorStore {
   @boundMethod
   getSelectedWidgets() {
     return (this.getCtxAsAppContext().getSelectionContainer()?.getSelectedWidgets() as BaseWidgetModel[]) ?? [];
+  }
+
+  /**
+   * 현재 수정중인 widget model을 반환합니다.
+   *
+   * @returns 현재 모드에 따라 수정중인 widget model 반환 (EDIT_APP 모드에서는 AppWidgetModel 반환)
+   */
+  public getEditingWidgetModel() {
+    return this.getCtxAsAppContext().getEditingWidgetModel();
+  }
+
+  /**
+   * 현재 편집 중인 페이지를 반환합니다.
+   * (선택된 페이지들 중 마지막 페이지와 동일합니다.)
+   */
+  public getEditingPageModel(): Nullable<WidgetModel /*<IComponentCommonProperties, IPageWidgetProperties>*/> {
+    return this.getCtxAsAppContext().getSelectionContainer()?.getEditingPage();
+  }
+
+  /**
+   * 현재 편집 중인 페이지를 반환합니다.
+   * (선택된 페이지들 중 마지막 페이지와 동일합니다.)
+   */
+  public getCtx(): AkronContext {
+    return this.ctx;
+  }
+
+  /**
+   * editingPageRefPosition 값 셋팅.
+   */
+  @action
+  setEditingPageRefPosition(x: number, y: number, width: number, height: number) {
+    this.getCtxAsAppContext().setEditingPageRefPosition({ x, y, width, height });
+  }
+
+  /**
+   * editingPageRefPosition 값을 가져옴.
+   */
+  getEditingPageRefPosition() {
+    return this.getCtxAsAppContext().getEditingPageRefPosition();
+  }
+
+  /**
+   * zoom Ratio 반환.
+   *
+   * @returns context의 zoom ratio.
+   */
+  getZoomRatio(): number {
+    return this.getCtxAsAppContext().getZoomRatio();
+  }
+
+  /**
+   * zoom Ratio set.
+   */
+  @action
+  setZoomRatio(zoomRatio: number) {
+    this.getCtxAsAppContext().setZoomRatio(zoomRatio);
   }
 
   /**

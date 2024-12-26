@@ -50,9 +50,9 @@ export default class EditorUIStore {
   @observable
   private activeLeftToolPaneType: LeftToolPaneType;
 
-  // // 트리 Rerender Flag
-  //   @observable
-  // treeRerenderFlag: boolean = false;
+  // 트리 Rerender Flag
+  @observable
+  private treeRerenderFlag: boolean = false;
 
   // // Editor 영역에서 사용될 snackBar Msg
   @observable
@@ -212,6 +212,14 @@ export default class EditorUIStore {
   // treeRerender() {
   //     this.treeRerenderFlag = !this.treeRerenderFlag;
   // }
+
+  /*
+   * rerender tree
+   */
+  @action
+  treeRerender() {
+    this.treeRerenderFlag = !this.treeRerenderFlag;
+  }
 
   // /**
   //  * get treeRerenderFlag

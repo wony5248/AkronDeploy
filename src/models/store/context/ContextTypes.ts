@@ -9,6 +9,7 @@ import HitContainer from 'models/store/container/HitContainer';
 import PropContainer from 'models/store/container/PropContainer';
 import SelectionContainer from 'models/store/container/SelectionContainer';
 import WidgetEditInfoContainer from 'models/store/container/WidgetEditInfoContainer';
+import { PageRefPosition } from 'models/store/context/EditableContext';
 import EventState from 'models/store/event/EventState';
 import { NavigateFunction } from 'react-router-dom';
 import { AppInfo } from 'store/app/AppInfo';
@@ -128,6 +129,7 @@ export interface ContextInitializeProp extends ContextBaseInitializeProp {
   // fileContainer: FileContainer;
   // insertedPuxLibraryInfoMap: InsertedPuxLibraryInfoMap;
   // libraryContainer: LibraryContainer;
+  editorUIStore: EditorUIStore;
 }
 
 /**
