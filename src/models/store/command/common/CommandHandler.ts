@@ -1,5 +1,5 @@
 import AkronContext from 'models/store/context/AkronContext';
-import WidgetCommandProps from 'models/store/command/common/WidgetCommandProps';
+import WidgetCommandProps from 'models/store/command/widget/WidgetCommandProps';
 
 /**
  * Document 의 command 를 처리하기 위한 class 입니다.

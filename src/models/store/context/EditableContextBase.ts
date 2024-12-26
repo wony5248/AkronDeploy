@@ -4,6 +4,7 @@ import AppModel from 'models/node/AppModel';
 import { WidgetID } from 'models/node/WidgetModel';
 import { EditableContextBaseProp } from 'models/store/context/ContextTypes';
 import { NavigateFunction } from 'react-router-dom';
+import { AppInfo } from 'store/app/AppInfo';
 
 /**
  * 현재 편집 중인 app의 정보 및 편집기의 상태들을 담고 있습니다.
@@ -26,8 +27,8 @@ class AppEditableContextBase {
   /**
    * App 의 Info
    */
-  // @observable
-  // private appInfo: AppInfo;
+  @observable
+  private appInfo: AppInfo;
 
   /**
    * Widget 생성에 필요한 정보들을 담고 있습니다.
@@ -143,7 +144,7 @@ class AppEditableContextBase {
 
     this.newAppModel = initProp.newAppModel;
     this.appID = initProp.appID;
-    // this.appInfo = initProp.appInfo;
+    this.appInfo = initProp.appInfo;
     // this.newMetaDataContainer = initProp.newMetaDataContainer;
     // this.appStylesContainer = initProp.appStylesContainer;
     // this.businessContainer = initProp.businessContainer;
@@ -200,18 +201,18 @@ class AppEditableContextBase {
   /**
    * AppInfo를 반환합니다
    */
-  //   @boundMethod
-  //   public getAppInfo(): AppInfo {
-  //     return this.appInfo;
-  //   }
+  @boundMethod
+  public getAppInfo(): AppInfo {
+    return this.appInfo;
+  }
 
-  //   /**
-  //    * AppInfo를 설정합니다
-  //    */
-  //   @boundMethod
-  //   public setAppInfo(appInfo: AppInfo): void {
-  //     this.appInfo = appInfo;
-  //   }
+  /**
+   * AppInfo를 설정합니다
+   */
+  @boundMethod
+  public setAppInfo(appInfo: AppInfo): void {
+    this.appInfo = appInfo;
+  }
 
   /**
    * NewMetaDataContainer를 반환합니다

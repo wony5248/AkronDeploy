@@ -3,8 +3,10 @@
 // import PageModel from 'models/node/PageModel';
 // import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
 // import CommandEnum from 'models/store/command/common/CommandEnum';
-// import { SelectionProp } from 'models/store/command/common/WidgetCommandProps';
+// import { SelectionProp } from 'models/store/command/widget/WidgetCommandProps';
+// import { WidgetEditingState } from 'models/store/command/widget/WidgetModelTypes';
 // import SelectionContainer from 'models/store/container/SelectionContainer';
+// import WidgetEditInfoContainer, { WidgetEditSubEventState } from 'models/store/container/WidgetEditInfoContainer';
 // import AkronContext from 'models/store/context/AkronContext';
 // import EventHandler from 'models/store/event/EventHandler';
 // import EventState from 'models/store/event/EventState';
@@ -39,7 +41,7 @@
 //     const targetModel = event.getTargetModel();
 
 //     const hitModel = ctx.getHitContainer().getStartHitItem()?.getModel();
-//     if (!(hitModel instanceof NewWidgetModel)) return false;
+//     if (!(hitModel instanceof WidgetModel)) return false;
 
 //     if (isUndefined(selectionContainer)) {
 //       return false;
@@ -77,9 +79,7 @@
 //     const widgetEditSubEventState = widgetEditInfoContainer.getWidgetEditSubEventState();
 
 //     const movedWidgetModels = selectedWidgets.includes(hitModel)
-//       ? selectedWidgets.filter(
-//           widgetModel => widgetModel instanceof NewWidgetModel && widgetModel.getLocked() === false
-//         )
+//       ? selectedWidgets.filter(widgetModel => widgetModel instanceof WidgetModel && widgetModel.getLocked() === false)
 //       : [hitModel];
 
 //     // 첫 drag 시점
@@ -87,11 +87,11 @@
 //       ctx.setState(EventState.WIDGET_MOVE);
 //       widgetEditInfoContainer.setWidgetEditSubEventState(WidgetEditSubEventState.DRAG);
 
-//       if (hitModel instanceof NewWidgetModel) {
+//       if (hitModel instanceof WidgetModel) {
 //         const zoomRatio = ctx.getZoomRatio() / 100;
 //         const parentElement = hitModel.getParent();
-//         const parentRefX = parentElement instanceof NewWidgetModel ? (parentElement.getRefX() ?? 0) : 0;
-//         const parentRefY = parentElement instanceof NewWidgetModel ? (parentElement.getRefY() ?? 0) : 0;
+//         const parentRefX = parentElement instanceof WidgetModel ? (parentElement.getRefX() ?? 0) : 0;
+//         const parentRefY = parentElement instanceof WidgetModel ? (parentElement.getRefY() ?? 0) : 0;
 //         const widgetRefX = hitModel.getRefX() ?? 0;
 //         const widgetRefY = hitModel.getRefY() ?? 0;
 
@@ -125,7 +125,7 @@
 
 //       // 현재 단위 저장
 //       const startHitModel = ctx.getHitContainer().getStartHitItem()?.getModel();
-//       if (startHitModel instanceof NewWidgetModel) {
+//       if (startHitModel instanceof WidgetModel) {
 //         this.originalUnits.set(startHitModel.getID().toString(), {
 //           width: startHitModel.getWidth().unit,
 //           height: startHitModel.getHeight().unit,
@@ -133,7 +133,7 @@
 
 //         // 임시로 px 단위로 변환
 //         const parent = startHitModel.getParent();
-//         if (parent instanceof NewWidgetModel) {
+//         if (parent instanceof WidgetModel) {
 //           if (startHitModel.getWidth().unit === '%') {
 //             const parentWidth = parent.getRefWidth() ?? 0;
 //             const pxValue = (Number(startHitModel.getWidth().value) * Number(parentWidth)) / 100;
@@ -158,7 +158,7 @@
 //       // Move Start CommandProps 생성
 //       const commandProps: WidgetMoveStartCommandProps = {
 //         commandID: CommandEnum.WIDGET_MOVE_START,
-//         targetModels: movedWidgetModels as NewWidgetModel[],
+//         targetModels: movedWidgetModels as WidgetModel[],
 //       };
 //       ctx.setCommandProps(commandProps);
 //     }
@@ -181,7 +181,7 @@
 //     const pinnedDirections = hitModel.getPinnedDirections();
 //     const { keepX, keepY } = this.shouldKeepPosition(pinnedDirections);
 
-//     if (hitModel instanceof NewWidgetModel) {
+//     if (hitModel instanceof WidgetModel) {
 //       const zoomRatio = ctx.getZoomRatio() / 100;
 //       const parentElement = hitModel.getParent();
 
@@ -200,7 +200,7 @@
 //       let parentWidth = 0;
 //       let parentHeight = 0;
 
-//       if (parentElement instanceof NewWidgetModel) {
+//       if (parentElement instanceof WidgetModel) {
 //         parentWidth = parentElement.getRefWidth() ? Number(parentElement.getRefWidth()) / zoomRatio : 0;
 //         parentHeight = parentElement.getRefHeight() ? Number(parentElement.getRefHeight()) / zoomRatio : 0;
 //       } else {
@@ -249,7 +249,7 @@
 //       ctx.getSmartGuideContainer().setDragHoveredNewWidget(undefined);
 //     } else if (
 //       ctx.getSmartGuideContainer().getDragHoveredNewWidget() !== nestedContainer &&
-//       nestedContainer instanceof NewWidgetModel &&
+//       nestedContainer instanceof WidgetModel &&
 //       nestedContainer.getEditingState() !== WidgetEditingState.MOVE &&
 //       movedWidgetModels.length > 0
 //     ) {
@@ -275,9 +275,9 @@
 //       // const nextSibling = findNextSiblingDragInContainer(
 //       //     nestedContainer,
 //       //     { x: event.getClientX(), y: event.getClientY() },
-//       //     movedWidgetModels.includes(hitModel as NewWidgetModel)
+//       //     movedWidgetModels.includes(hitModel as WidgetModel)
 //       //         ? movedWidgetModels
-//       //         : movedWidgetModels.concat(hitModel as NewWidgetModel)
+//       //         : movedWidgetModels.concat(hitModel as WidgetModel)
 //       // );
 //       // let refX = 0;
 //       // let refY = 0;
@@ -367,7 +367,7 @@
 
 //     // 이동 정상 종료
 //     const targetModel = event.getTargetModel();
-//     if (!(targetModel instanceof NewWidgetModel) && !(targetModel instanceof WorkAreaModel)) return false;
+//     if (!(targetModel instanceof WidgetModel) && !(targetModel instanceof WorkAreaModel)) return false;
 
 //     let widgetModels = selectedWidgets;
 //     // select 상태가 아닌 widget을 끌 경우 hitModel로 처리함
@@ -375,20 +375,20 @@
 //       widgetModels = [hitModel];
 //     }
 
-//     const movedWidgetModels: NewWidgetModel[] = widgetModels.filter(
-//       widgetModel => widgetModel instanceof NewWidgetModel && !widgetModel.getLocked()
-//     ) as NewWidgetModel[];
+//     const movedWidgetModels: WidgetModel[] = widgetModels.filter(
+//       widgetModel => widgetModel instanceof WidgetModel && !widgetModel.getLocked()
+//     ) as WidgetModel[];
 
 //     const mainMovedWidget = movedWidgetModels[0];
 //     if (!mainMovedWidget) return false;
 
 //     const pinnedDirections = hitModel.getPinnedDirections();
 
-//     if (targetModel instanceof NewWidgetModel && targetModel.getLocked()) {
+//     if (targetModel instanceof WidgetModel && targetModel.getLocked()) {
 //       // 삽입하려고 하는 컴포넌트가 잠금일 경우 이동 하기 전 위치로 이동
 //       const props: WidgetMoveCommandProps = {
 //         commandID: CommandEnum.WIDGET_MOVE_END,
-//         targetModels: widgetModels as NewWidgetModel[],
+//         targetModels: widgetModels as WidgetModel[],
 //         deltaX: 0,
 //         deltaY: 0,
 //         pinnedDirections,
@@ -436,7 +436,7 @@
 
 //     const props: WidgetMoveCommandProps = {
 //       commandID: CommandEnum.WIDGET_MOVE_END,
-//       targetModels: movedWidgetModels as NewWidgetModel[],
+//       targetModels: movedWidgetModels as WidgetModel[],
 //       useRefPosition: true,
 //       deltaX: widgetEditInfoContainer.getDeltaX(),
 //       deltaY: widgetEditInfoContainer.getDeltaY(),
@@ -449,7 +449,7 @@
 //         nestedContainer !== selectionContainer?.getEditingNewWorkArea() &&
 //         nestedContainer !== selectionContainer?.getEditingNewWorkArea()?.getFirstChild() &&
 //         nestedContainer.getWidgetType() !== 'InnerPageLayout' &&
-//         nestedContainer instanceof NewWidgetModel &&
+//         nestedContainer instanceof WidgetModel &&
 //         nestedContainer.getDragHovered()
 //           ? nestedContainer
 //           : undefined,
@@ -462,26 +462,26 @@
 //         : undefined,
 //       desModel:
 //         targetModel.getWidgetTypeId() === SystemComponentType.WorkArea ||
-//         (targetModel as NewWidgetModel).getEditingState() === WidgetEditingState.NONE
+//         (targetModel as WidgetModel).getEditingState() === WidgetEditingState.NONE
 //           ? targetModel
 //           : undefined,
 //     };
 //     ctx.setCommandProps(props);
 
 //     // 원래 단위로 복원
-//     if (hitModel instanceof NewWidgetModel) {
+//     if (hitModel instanceof WidgetModel) {
 //       const originalUnit = this.originalUnits.get(hitModel.getID().toString());
 //       const currentParent = hitModel.getParent();
 
 //       if (originalUnit && currentParent) {
 //         runInAction(() => {
-//           if (originalUnit.width === '%' && currentParent instanceof NewWidgetModel) {
+//           if (originalUnit.width === '%' && currentParent instanceof WidgetModel) {
 //             const pxWidth = hitModel.getWidth().value;
 //             const parentWidth = currentParent.getRefWidth() ?? 0;
 //             const percentValue = (Number(pxWidth) / Number(parentWidth)) * 100;
 //             hitModel.setWidth({ value: percentValue, unit: '%' });
 //           }
-//           if (originalUnit.height === '%' && currentParent instanceof NewWidgetModel) {
+//           if (originalUnit.height === '%' && currentParent instanceof WidgetModel) {
 //             const pxHeight = hitModel.getHeight().value;
 //             const parentHeight = currentParent.getRefHeight() ?? 0;
 //             const percentValue = (Number(pxHeight) / Number(parentHeight)) * 100;
@@ -509,7 +509,7 @@
 //   /**
 //    * Mouse Leave
 //    */
-//   public override onMouseLeave(event: MouseEvent<NewWidgetModel>, ctx: AppContext): boolean {
+//   public override onMouseLeave(event: MouseEvent<WidgetModel>, ctx: AppContext): boolean {
 //     this.finishMoveOnInterrupted(ctx);
 
 //     return true;
@@ -518,7 +518,7 @@
 //   /**
 //    * onKeyDown
 //    */
-//   public override onKeyDown(event: KeyEvent<NewWidgetModel>, ctx: AppContext): boolean {
+//   public override onKeyDown(event: KeyEvent<WidgetModel>, ctx: AppContext): boolean {
 //     switch (true) {
 //       case /^Escape$/.test(event.getKey()): {
 //         event.stopPropagation();
@@ -546,7 +546,7 @@
 //   /**
 //    * onKeyUp
 //    */
-//   public override onKeyUp(event: KeyEvent<NewWidgetModel>): boolean {
+//   public override onKeyUp(event: KeyEvent<WidgetModel>): boolean {
 //     event.stopPropagation();
 
 //     return true;
@@ -591,7 +591,7 @@
 //         selectionContainer.getSelectedWidgets().includes(widgetEditInfoContainer.getEditingWidgetModels()[0]) ||
 //         selectionContainer
 //           .getSelectedCompositeKeyModels()
-//           .includes(widgetEditInfoContainer.getEditingWidgetModels()[0] as NewWidgetModel)
+//           .includes(widgetEditInfoContainer.getEditingWidgetModels()[0] as WidgetModel)
 //       )
 //     ) {
 //       return false;
@@ -612,7 +612,7 @@
 //     }
 
 //     const startHitModel = ctx.getHitContainer().getStartHitItem()?.getModel();
-//     if (startHitModel instanceof NewWidgetModel) {
+//     if (startHitModel instanceof WidgetModel) {
 //       const originalUnit = this.originalUnits.get(startHitModel.getID().toString());
 //       const currentParent = startHitModel.getParent();
 
@@ -620,13 +620,13 @@
 //         runInAction(() => {
 //           if (originalUnit.width === '%') {
 //             const pxWidth = startHitModel.getWidth().value;
-//             const parentWidth = currentParent instanceof NewWidgetModel ? (currentParent.getRefWidth() ?? 0) : 0;
+//             const parentWidth = currentParent instanceof WidgetModel ? (currentParent.getRefWidth() ?? 0) : 0;
 //             const percentValue = (Number(pxWidth) / Number(parentWidth)) * 100;
 //             startHitModel.setWidth({ value: percentValue, unit: '%' });
 //           }
 //           if (originalUnit.height === '%') {
 //             const pxHeight = startHitModel.getHeight().value;
-//             const parentHeight = (currentParent as NewWidgetModel).getRefHeight() ?? 0;
+//             const parentHeight = (currentParent as WidgetModel).getRefHeight() ?? 0;
 //             const percentValue = (Number(pxHeight) / Number(parentHeight)) * 100;
 //             startHitModel.setHeight({ value: percentValue, unit: '%' });
 //           }
@@ -645,11 +645,11 @@
 
 //     if (selectedWidgetsOnFinish.length > 0) {
 //       const mainWidget = selectedWidgetsOnFinish[0];
-//       const pinDirections = mainWidget instanceof NewWidgetModel ? mainWidget.getPinnedDirections() : [];
+//       const pinDirections = mainWidget instanceof WidgetModel ? mainWidget.getPinnedDirections() : [];
 
 //       const commandProps: WidgetMoveCommandProps = {
 //         commandID: CommandEnum.WIDGET_MOVE_END,
-//         targetModels: selectedWidgetsOnFinish as NewWidgetModel[],
+//         targetModels: selectedWidgetsOnFinish as WidgetModel[],
 //         deltaX: widgetEditInfoContainer.getDeltaX(),
 //         deltaY: widgetEditInfoContainer.getDeltaY(),
 //         pinnedDirections: pinDirections,

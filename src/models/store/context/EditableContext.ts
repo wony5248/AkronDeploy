@@ -3,8 +3,7 @@ import { boundMethod } from 'autobind-decorator';
 import { observable, makeObservable, action } from 'mobx';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
 import Command from 'models/store/command/common/Command';
-import CommandEnum from 'models/store/command/common/CommandEnum';
-import WidgetCommandProps, { SelectionProp } from 'models/store/command/common/WidgetCommandProps';
+import WidgetCommandProps, { SelectionProp } from 'models/store/command/widget/WidgetCommandProps';
 import AppModeContainer from 'models/store/container/AppModeContainer';
 import ClipboardContainer from 'models/store/container/ClipboardContainer';
 import HitContainer from 'models/store/container/HitContainer';
@@ -247,7 +246,7 @@ class EditableContext extends EditableContextBase {
   /**
    * 현재 event 에서 실행되어야 할 command 를 보관하는 자료구조 입니다.
    */
-  private command?: Command<WidgetID, CommandEnum, SelectionProp>;
+  private command?: Command;
 
   /**
    * 미리보기 동작을 위한 CommandCompositor입니다.
@@ -303,7 +302,6 @@ class EditableContext extends EditableContextBase {
     // this.fileSaveState = initProp.fileSaveState;
     this.appName = initProp.appName;
     this.appModeContainer = initProp.appModeContainer;
-    // this.roomList = initProp.roomList;
     this.needSaveState = initProp.needSaveState;
     this.commandProps = initProp.commandProps;
     // this.command = initProp.commandController;
@@ -443,7 +441,7 @@ class EditableContext extends EditableContextBase {
    * Command를 반환합니다
    */
   @boundMethod
-  public getCommand(): Command<WidgetID, CommandEnum, SelectionProp> | undefined {
+  public getCommand(): Command | undefined {
     return this.command;
   }
 
@@ -451,7 +449,7 @@ class EditableContext extends EditableContextBase {
    * Command를 설정합니다
    */
   @boundMethod
-  public setCommand(command: Command<WidgetID, CommandEnum, SelectionProp> | undefined): void {
+  public setCommand(command: Command | undefined): void {
     this.command = command;
   }
 

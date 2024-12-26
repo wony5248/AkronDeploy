@@ -1,15 +1,13 @@
 import { boundMethod } from 'autobind-decorator';
 import CommandHandler from './CommandHandler';
-import { WidgetID } from '../../../node/WidgetModel';
 import CommandEnum from './CommandEnum';
-import { SelectionProp } from './WidgetCommandProps';
 
-export interface AkronCommandMapper extends CommandMapper<WidgetID, CommandEnum, SelectionProp> {}
+export interface AkronCommandMapper extends CommandMapper {}
 /**
  * CommandMapper 는 command ID 에 따라 어떤 command handler 들이 동작하는지를 정의한 class 입니다.
  * Command manager 가 command ID 를 받으면 command mapper 에서 command handler list 를 받을 수 있습니다.
  */
-class CommandMapper<ID, CommandEnum, SelectionProp> {
+class CommandMapper {
   /**
    * Command Enum 별 매핑되는 CommandHandler를 관리하는 map
    */

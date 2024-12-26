@@ -2,15 +2,14 @@ import EventManager, { AkronEventManager } from './event/EventManager';
 import { AkronEventMapper } from './event/EventMapper';
 import { createContext } from 'react';
 import { AkronCommandMapper } from './command/common/CommandMapper';
-import CommandEnum from './command/common/CommandEnum';
 import CommandProps from './command/common/CommandProps';
 import { action } from 'mobx';
-import CommandManager, { AkronCommandManager } from './command/common/CommandManager';
+import CommandManager from './command/common/CommandManager';
 import SelectionManager from 'models/store/selection/SelectionManager';
 import EditorUIStore from 'store/app/EditorUIStore';
 import TooltipStore from 'store/tooltip/TooltipStore';
 import WidgetLayerContainer from 'models/widget/WidgetLayerContainer';
-import WidgetCommandProps, { SelectionProp } from 'models/store/command/common/WidgetCommandProps';
+import WidgetCommandProps, { SelectionProp } from 'models/store/command/widget/WidgetCommandProps';
 import AppModeContainer, { AppModeType } from 'models/store/container/AppModeContainer';
 import AppModel from 'models/node/AppModel';
 import ContextMenuContainer from 'store/context-menu/ContextMenuContainer';
@@ -19,6 +18,8 @@ import EventState from 'models/store/event/EventState';
 import { LeftToolPaneType } from 'store/toolpane/ToolPaneComponentInfo';
 import { BaseWidgetModel } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
+import { AppInfo } from 'store/app/AppInfo';
+import CompositeComponentContainer from 'models/store/container/CompositeComponentContainer';
 
 /**
  * Editor Store 생성자 파라미터 Interface 입니다.
@@ -46,7 +47,7 @@ class EditorStore {
 
   private readonly eventManager: AkronEventManager;
 
-  private readonly commandManager: AkronCommandManager;
+  private readonly commandManager: CommandManager;
 
   private readonly selectionManager: SelectionManager;
 
@@ -58,7 +59,13 @@ class EditorStore {
   /**
    * 생성자
    */
-  constructor(params: EditorStoreInitParams & { appModel: AppModel }) {
+  constructor(
+    params: EditorStoreInitParams & {
+      appModel: AppModel;
+      appInfo: AppInfo;
+      compositeComponentContainer: CompositeComponentContainer;
+    }
+  ) {
     this.eventManager = new EventManager(params.eventMapper);
     this.commandManager = new CommandManager(params.commandMapper);
     this.selectionManager = new SelectionManager();
@@ -66,6 +73,7 @@ class EditorStore {
     let eventState = EventState.DEFAULT;
     this.ctx = new AkronContext({
       appID: params.appID,
+      appInfo: params.appInfo,
       newAppModel: params.appModel,
       eventState,
       appName: params.appName,
@@ -74,6 +82,7 @@ class EditorStore {
       startPageURL: params.startPageURL || '',
       activeLeftToolPaneType: params.activeLeftToolPaneType,
       appModeContainer,
+      compositeComponentContainer: params.compositeComponentContainer,
     });
     this.editorUIStore = new EditorUIStore();
     this.tooltipStore = new TooltipStore();
@@ -134,7 +143,7 @@ class EditorStore {
   /**
    * Event 시작 전 휘발성이 있는 context 를 초기화 합니다.
    */
-  private initContext(commandProps?: CommandProps<CommandEnum, SelectionProp>): void {
+  private initContext(commandProps?: CommandProps): void {
     this.getCtxAsAppContext().setCommandProps(commandProps);
     this.getCtxAsAppContext().setCommand(undefined);
   }

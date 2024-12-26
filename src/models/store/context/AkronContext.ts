@@ -1,19 +1,36 @@
-import { Nullable } from '@akron/runner';
+import { BaseWidgetModel, Nullable } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import AppModel from 'models/node/AppModel';
 import { WidgetID } from 'models/node/WidgetModel';
 import Command from 'models/store/command/common/Command';
-import WidgetCommandProps from 'models/store/command/common/WidgetCommandProps';
+import WidgetCommandProps from 'models/store/command/widget/WidgetCommandProps';
+import AppModeContainer from 'models/store/container/AppModeContainer';
+import ClipboardContainer from 'models/store/container/ClipboardContainer';
+import HitContainer from 'models/store/container/HitContainer';
+import PropContainer from 'models/store/container/PropContainer';
 import SelectionContainer from 'models/store/container/SelectionContainer';
+import WidgetEditInfoContainer from 'models/store/container/WidgetEditInfoContainer';
 import {
   ContextBaseInitializeProp,
   ReadOnlyContextBaseProp,
   ContextInitializeProp,
   EditableContextProp,
+  DragObjectType,
+  MouseModeType,
 } from 'models/store/context/ContextTypes';
 import EditableContext from 'models/store/context/EditableContext';
+import EventState from 'models/store/event/EventState';
 import { NavigateFunction } from 'react-router-dom';
+import { AppInfo } from 'store/app/AppInfo';
+import { ContextMenu } from 'store/context-menu/ContextMenuTypes';
 
+/**
+ * Zoom 데이터 관리를 위한 상수
+ */
+export enum ZoomData {
+  maximum = 3200,
+  minimum = 1,
+}
 /**
  * DocumentStore 에서 관리하는 context 구조입니다.
  */
@@ -65,7 +82,7 @@ export default class AkronContext {
     return {
       newAppModel: initProp.newAppModel,
       appID: initProp.appID,
-      // appInfo: initProp.appInfo,
+      appInfo: initProp.appInfo,
       // newMetaDataContainer: initProp.newMetaDataContainer,
       // appStylesContainer: this.createAppStylesContainer(initProp.appInfo.globalCSSs),
       // appStylesContainer: this.createAppStylesContainer(),
@@ -78,7 +95,7 @@ export default class AkronContext {
       // dataBindingContainer: initProp.dataBindingContainer,
       // globalThemeContainer: initProp.globalThemeContainer,
       // compThemeContainer: initProp.compThemeContainer,
-      // compositeComponentContainer: initProp.compositeComponentContainer,
+      compositeComponentContainer: initProp.compositeComponentContainer,
       // newOSObjectContainer: initProp.newOSObjectContainer,
       // outerServiceStore: initProp.outerServiceStore,
       // highLevelStudiosContainer: initProp.highLevelStudiosContainer,
@@ -87,30 +104,29 @@ export default class AkronContext {
       eventState: initProp.eventState,
       appName: initProp.appName,
       appModeContainer: initProp.appModeContainer,
-      // roomList: this.createRoomList(),
-      // needSaveState: this.createNeedSaveState(),
-      // commandProps: this.createCommandProps(),
+      needSaveState: this.createNeedSaveState(),
+      commandProps: this.createCommandProps(),
       // commandController: this.createCommand(),
       // commandMode: this.createCommandMode(),
       // saveState: this.createSaveState(),
       // fileSaveState: this.createFileSaveState(),
-      // zoomRatio: this.createZoomRatio(),
-      // previewZoomRatio: this.createPreviewZoomRatio(),
+      zoomRatio: this.createZoomRatio(),
+      previewZoomRatio: this.createPreviewZoomRatio(),
       // pageScroll: this.createPageScroll(),
-      // isFitWindow: this.createIsFitWindow(),
-      // dragObject: this.createDragObject(),
-      // mouseMode: this.createMouseMode(),
-      // contextMenu: this.createContextMenu(),
-      // saved: this.createSaved(),
+      isFitWindow: this.createIsFitWindow(),
+      dragObject: this.createDragObject(),
+      mouseMode: this.createMouseMode(),
+      contextMenu: this.createContextMenu(),
+      saved: this.createSaved(),
       // dialogType: this.createDialogType(),
-      // dialogOpen: this.createDialogOpen(),
+      dialogOpen: this.createDialogOpen(),
       // undoStack: this.createUndoStack(),
-      // lastRegisteredEditUndoStackTag: this.createLastRegisteredEditUndoStackTag(),
-      // hitContainer: this.createHitContainer(),
-      // selectionContainer: this.createSelectionContainer(),
-      // clipboardContainer: this.createClipboardContainer(),
-      // propContainer: this.createPropContainer(),
-      // widgetEditInfoContainer: this.createWidgetEditInfoContainer(),
+      lastRegisteredEditUndoStackTag: this.createLastRegisteredEditUndoStackTag(),
+      hitContainer: this.createHitContainer(),
+      selectionContainer: this.createSelectionContainer(),
+      clipboardContainer: this.createClipboardContainer(),
+      propContainer: this.createPropContainer(),
+      widgetEditInfoContainer: this.createWidgetEditInfoContainer(),
       // errorBoundaryContainer: this.createErrorBoundaryContainer(),
       // smartGuideContainer: this.createSmartGuideContainer(),
       // updateMessageContainer: this.createUpdateMessageContainer(),
@@ -118,12 +134,12 @@ export default class AkronContext {
       //   startPageID: initProp.startPageID,
       //   startPageURL: initProp.startPageURL,
       // }),
-      // editorUIStore: this.createEditorUIStore(
-      //   initProp.customPropertyContentRenderer,
-      //   initProp.activeLeftToolPaneType,
-      //   // 하이레벨 스튜디오의 경우 요소 추가 부분이 열린 상태로 시작.
-      //   initProp.appModeContainer.isHighLevelStudio() ? 'ADD_WIDGET' : undefined
-      // ),
+      editorUIStore: this.createEditorUIStore(
+        initProp.customPropertyContentRenderer,
+        initProp.activeLeftToolPaneType,
+        // 하이레벨 스튜디오의 경우 요소 추가 부분이 열린 상태로 시작.
+        undefined
+      ),
       contextMenuContainer: initProp.contextMenuContainer,
       // fileMessageContainer: this.createFileMessageContainer(),
       // fileContainer: initProp.fileContainer,
@@ -167,14 +183,6 @@ export default class AkronContext {
   // }
 
   /**
-   * AppType을 반환합니다
-   */
-  // @boundMethod
-  // public getAppType(): AppType {
-  //   return this.appReadOnlyContext.getAppType();
-  // }
-
-  /**
    * AppWidgetModel을 반환합니다
    */
   @boundMethod
@@ -196,6 +204,40 @@ export default class AkronContext {
   @boundMethod
   public setAppID(appID: WidgetID): void {
     this.appEditableContext.setAppID(appID);
+  }
+
+  /**
+   * ZoomRatio를 반환합니다
+   */
+  @boundMethod
+  public getZoomRatio(): number {
+    return this.appEditableContext.getZoomRatio();
+  }
+
+  /**
+   * ZoomRatio를 설정합니다
+   */
+  @boundMethod
+  public setZoomRatio(zoomRatio: number): void {
+    const resultZoomRatio = Math.max(ZoomData.minimum, Math.min(zoomRatio, ZoomData.maximum));
+    this.appEditableContext.setZoomRatio(resultZoomRatio);
+  }
+
+  /**
+   * PreviewZoomRatio를 반환합니다
+   */
+  @boundMethod
+  public getPreviewZoomRatio(): number {
+    return this.appEditableContext.getPreviewZoomRatio();
+  }
+
+  /**
+   * PreviewZoomRatio를 설정합니다
+   */
+  @boundMethod
+  public setPreviewZoomRatio(previewZoomRatio: number): void {
+    const resultZoomRatio = Math.max(ZoomData.minimum, Math.min(previewZoomRatio, ZoomData.maximum));
+    this.appEditableContext.setPreviewZoomRatio(resultZoomRatio);
   }
 
   /**
@@ -244,19 +286,294 @@ export default class AkronContext {
   }
 
   /**
+   * DocumentContext
+   * SelectionContainer 초기값을 생성해 반환합니다
+   */
+  @boundMethod
+  public createSelectionContainer(): SelectionContainer {
+    return new SelectionContainer();
+  }
+
+  /**
+   * WidgetEditInfoContainer을 반환합니다
+   */
+  @boundMethod
+  public getWidgetEditInfoContainer(): WidgetEditInfoContainer {
+    return this.appEditableContext.getWidgetEditInfoContainer();
+  }
+
+  /**
+   * WidgetEditInfoContainer을 설정합니다
+   */
+  @boundMethod
+  public setWidgetEditInfoContainer(widgetEditInfoContainer: WidgetEditInfoContainer): void {
+    this.appEditableContext.setWidgetEditInfoContainer(widgetEditInfoContainer);
+  }
+
+  /**
+   * PropContainer을 반환합니다
+   */
+  @boundMethod
+  public getPropContainer(): PropContainer {
+    return this.appEditableContext.getPropContainer();
+  }
+
+  /**
+   * PropContainer을 설정합니다
+   */
+  @boundMethod
+  public setPropContainer(propContainer: PropContainer): void {
+    this.appEditableContext.setPropContainer(propContainer);
+  }
+
+  /**
+   * HitContainer을 반환합니다
+   */
+  @boundMethod
+  public getHitContainer(): HitContainer<BaseWidgetModel> {
+    return this.appEditableContext.getHitContainer();
+  }
+
+  /**
+   * HitContainer을 설정합니다
+   */
+  @boundMethod
+  public setHitContainer(hitContainer: HitContainer<BaseWidgetModel>): void {
+    this.appEditableContext.setHitContainer(hitContainer);
+  }
+
+  /**
+   * HitContainer 초기값을 생성해 반환합니다
+   */
+  @boundMethod
+  public createHitContainer(): HitContainer<BaseWidgetModel> {
+    return new HitContainer();
+  }
+
+  /**
+   * WidgetEditInfoContainer 초기값을 생성해 반환합니다
+   */
+  @boundMethod
+  public createWidgetEditInfoContainer(): WidgetEditInfoContainer {
+    return new WidgetEditInfoContainer();
+  }
+
+  /**
+   * ClipboardContainer 초기값을 생성해 반환합니다
+   */
+  @boundMethod
+  public createClipboardContainer(): ClipboardContainer {
+    return new ClipboardContainer();
+  }
+
+  /**
+   * PropContainer 초기값을 생성해 반환합니다
+   */
+  @boundMethod
+  public createPropContainer(): PropContainer {
+    return new PropContainer();
+  }
+
+  /**
+   * NeedSaveState 초기값을 생성해 반환합니다
+   */
+  @boundMethod
+  public createNeedSaveState(): boolean {
+    return false;
+  }
+
+  /**
+   * CommandProps 초기값을 생성해 반환합니다
+   */
+  @boundMethod
+  public createCommandProps(): WidgetCommandProps | undefined {
+    return undefined;
+  }
+
+  /**
+   * LastRegisteredEditUndoStackTag 초기값을 생성해 반환합니다
+   */
+  @boundMethod
+  public createLastRegisteredEditUndoStackTag(): string {
+    return '';
+  }
+
+  /**
+   * ZoomRatio 초기값을 생성해 반환합니다
+   */
+  @boundMethod
+  public createZoomRatio(): number {
+    return 100;
+  }
+
+  /**
+   * PreviewZoomRatio 초기값을 생성해 반환합니다
+   */
+  @boundMethod
+  public createPreviewZoomRatio(): number {
+    return 50;
+  }
+
+  /**
+   * DocumentContext
+   * EventState를 반환합니다
+   */
+  @boundMethod
+  public getState(): EventState {
+    return this.appEditableContext.getEventstate();
+  }
+
+  /**
+   * DocumentContext
+   * EventState를 설정합니다
+   */
+  @boundMethod
+  public setState(state: EventState): void {
+    this.appEditableContext.setEventState(state);
+  }
+
+  /**
    * AppInfo를 반환합니다
    */
-  // @boundMethod
-  // public getAppInfo(): AppInfo {
-  //   return this.appEditableContext.getAppInfo();
-  // }
+  @boundMethod
+  public getAppInfo(): AppInfo {
+    return this.appEditableContext.getAppInfo();
+  }
 
   /**
    * AppInfo를 설정합니다
    */
+  @boundMethod
+  public setAppInfo(appInfo: AppInfo): void {
+    this.appEditableContext.setAppInfo(appInfo);
+  }
+
+  /**
+   * IsFitWindow 초기값을 생성해 반환합니다
+   */
+  @boundMethod
+  public createIsFitWindow(): boolean {
+    return false;
+  }
+
+  /**
+   * DragObject 초기값을 생성해 반환합니다
+   */
+  @boundMethod
+  public createDragObject(): DragObjectType {
+    return undefined;
+  }
+
+  /**
+   * MouseMode 초기값을 생성해 반환합니다
+   */
+  @boundMethod
+  public createMouseMode(): MouseModeType {
+    return 'Normal';
+  }
+
+  /**
+   * ContextMenu 초기값을 생성해 반환합니다
+   */
+  @boundMethod
+  public createContextMenu(): ContextMenu | null {
+    return null;
+  }
+
+  /**
+   * Saved 초기값을 생성해 반환합니다
+   */
+  @boundMethod
+  public createSaved(): boolean {
+    return true;
+  }
+
+  /**
+   * DialogType 초기값을 생성해 반환합니다
+   */
+  @boundMethod
+  public createDialogOpen(): boolean {
+    return false;
+  }
+
+  /**
+   * AppModeContainer를 반환합니다
+   */
+  @boundMethod
+  public getAppModeContainer(): AppModeContainer {
+    return this.appEditableContext.getAppModeContainer();
+  }
+
+  /**
+   * AppModeContainer를 설정합니다
+   */
+  @boundMethod
+  public setAppModeContainer(appModeContainer: AppModeContainer): void {
+    this.appEditableContext.setAppModeContainer(appModeContainer);
+  }
+
+  /**
+   * edit Mode Last SelectionContainer을 반환합니다
+   */
+  @boundMethod
+  public getEditModeLastSelectionContainer(): SelectionContainer | undefined {
+    return this.appEditableContext.getEditModeLastSelectionContainer();
+  }
+
+  /**
+   *  edit Mode last SelectionContainer을 설정합니다
+   */
+  @boundMethod
+  public setEditModeLastSelectionContainer(editModeLastSelectionContainer: SelectionContainer | undefined): void {
+    this.appEditableContext.setEditModeLastSelectionContainer(editModeLastSelectionContainer);
+  }
+
+  /**
+   * PrevSelectionContainer을 반환합니다
+   */
+  @boundMethod
+  public getPrevSelectionContainer(): SelectionContainer | undefined {
+    return this.appEditableContext.getPrevSelectionContainer();
+  }
+
+  /**
+   * PrevSelectionContainer을 설정합니다
+   */
+  @boundMethod
+  public setPrevSelectionContainer(prevSelectionContainer: SelectionContainer | undefined): void {
+    this.appEditableContext.setPrevSelectionContainer(prevSelectionContainer);
+  }
+
+  /**
+   * EditingWidgetModel을 반환합니다
+   */
+  @boundMethod
+  public getEditingWidgetModel(): BaseWidgetModel {
+    return this.appEditableContext.getEditingNewWidgetModel();
+  }
+
+  /**
+   * EditingWidgetModel을 설정합니다
+   */
+  @boundMethod
+  public setEditingWidgetModel(editingWidgetModel: BaseWidgetModel): void {
+    this.appEditableContext.setEditingNewWidgetModel(editingWidgetModel);
+  }
+
+  /**
+   * EditorUIStore 초기값을 생성해 반환합니다
+   */
   // @boundMethod
-  // public setAppInfo(appInfo: AppInfo): void {
-  //   this.appEditableContext.setAppInfo(appInfo);
+  // public createEditorUIStore(
+  //   customPropertyContentRenderer: WidgetPropertyContentRenderer | undefined,
+  //   activeLeftToolPaneType?: LeftToolPaneType,
+  //   initialTabId?: string
+  // ): EditorUIStore {
+  //   return new EditorUIStore({
+  //     customPropertyContentRenderer,
+  //     activeLeftToolPaneType,
+  //     initialTabId,
+  //   });
   // }
 
   /**
