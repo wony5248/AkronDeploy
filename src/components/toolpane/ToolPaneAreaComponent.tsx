@@ -32,13 +32,13 @@ const ToolPaneAreaComponent: React.FC = () => {
   // const selectedWidget = editorStroe.getSelectedWidgets()[0];
 
   const [varDialogOpen, setVarDialogOpen] = useState<VarToolpaneInfo | undefined>(undefined);
-  const handleVarDialogOpen = (object: VarToolpaneInfo) => {
-    setVarDialogOpen(object);
-  };
-  const handleVarDialogClose = () => {
-    const object = { ...varDialogOpen, varDialogOpen: false };
-    setVarDialogOpen(object as VarToolpaneInfo);
-  };
+  // const handleVarDialogOpen = (object: VarToolpaneInfo) => {
+  //   setVarDialogOpen(object);
+  // };
+  // const handleVarDialogClose = () => {
+  //   const object = { ...varDialogOpen, varDialogOpen: false };
+  //   setVarDialogOpen(object as VarToolpaneInfo);
+  // };
 
   return (
     <div css={toolPaneArea}>

@@ -38,6 +38,9 @@ export default class EditorUIStore {
 
   // 현재 활성화된 툴페인 및 그 상태.
   // (null: 활성화된 툴페인이 없음.)
+
+  @observable
+  private isLogicToolpaneOpen: boolean;
   @observable
   private activeRightToolPaneType: RightToolPaneType | null;
   //   @observable
@@ -111,6 +114,7 @@ export default class EditorUIStore {
     // this.customPropertyContentRenderer = args.customPropertyContentRenderer ?? (() => null);
 
     this.activeRightToolPaneType = 'Design';
+    this.isLogicToolpaneOpen = false;
     // this.selectedServiceComponent = null;
     this.activeLeftToolPaneType = 'None'; // args.activeLeftToolPaneType || 'None';
 
@@ -184,6 +188,21 @@ export default class EditorUIStore {
   @action.bound
   setActiveLeftToolPaneType(activeLeftToolPaneType: LeftToolPaneType) {
     this.activeLeftToolPaneType = activeLeftToolPaneType;
+  }
+
+  /**
+   * getIsOpenLogicToolpane
+   */
+  getIsLogicToolpaneOpen(): boolean {
+    return this.isLogicToolpaneOpen;
+  }
+
+  /**
+   * setIsOpenLogicToolpane
+   */
+  @action
+  setIsLogicToolpaneOpen(isOpen: boolean) {
+    this.isLogicToolpaneOpen = isOpen;
   }
 
   // /**

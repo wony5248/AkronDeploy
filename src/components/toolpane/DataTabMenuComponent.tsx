@@ -1,6 +1,5 @@
 import DataTabMenuItemComponent from 'components/toolpane/DataTabMenuItemComponent';
 import ToolPaneTitleComponent from 'components/toolpane/ToolPaneTitleComponent';
-import useEditorStore from 'hooks/useEditorStore';
 import { IDataTabMenu, IDataTabMenuTitle, tabMenuItemData } from 'store/toolpane/DataLeftToolpaneInfo';
 import { pageWidgetList } from 'styles/toolpane/PageWidgetList';
 
@@ -8,7 +7,6 @@ import { pageWidgetList } from 'styles/toolpane/PageWidgetList';
  * Data Tab Menu를 화면에 표시하기 위한 component.
  */
 const DataTabMenuComponent: React.FC = () => {
-  const editorStore = useEditorStore();
   const tabMenuData = tabMenuItemData;
 
   const parseTabMenuData = () => {

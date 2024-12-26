@@ -1,24 +1,24 @@
 import { boundMethod } from 'autobind-decorator';
-import Context from '../../context/Context';
 import SelectionContainer from '../../container/SelectionContainer';
 import SimpleCommand from './SimpleCommand';
+import AkronContext from 'models/store/context/AkronContext';
 
 /**
  * 하나의 작업 단위를 나타내는 class 입니다.
  * 여러 simple command 를 list 로 가지고 있으며 do/undo/redo 의 단위가 됩니다.
  * Undo stack 이 이 class 의 life cycle 을 담당합니다.
  */
-class Command<ID, CommandEnum, SelectionProp> {
+class Command {
   /**
    * Command 실행에 필요한 simple command 들의 list 입니다.
    */
-  private commandList: Array<SimpleCommand<ID>>;
+  private commandList: SimpleCommand[];
 
   /**
    * Command 실행에 필요한 simple command 들의 list 로, 후처리로 진행되어야 하는 simple command 들입니다.
    * Do, undo, redo 시 commandList 의 작업이 마쳐진 뒤 postCommandList 의 작업을 수행합니다.
    */
-  private postCommandList: Array<SimpleCommand<ID>>;
+  private postCommandList: SimpleCommand[];
 
   /**
    * Undo 가 가능한 command 인지를 나타냅니다. undoable === false 인 경우, undo stack 에 들어가지 않고 사라집니다.
@@ -44,12 +44,12 @@ class Command<ID, CommandEnum, SelectionProp> {
   /**
    * 생성자
    */
-  public constructor(ctx: Context<ID, CommandEnum, SelectionProp>) {
-    this.commandList = [] as Array<SimpleCommand<ID>>;
-    this.postCommandList = [] as Array<SimpleCommand<ID>>;
+  public constructor(ctx: AkronContext) {
+    this.commandList = [] as SimpleCommand[];
+    this.postCommandList = [] as SimpleCommand[];
     this.undoable = true;
-    this.oldSelectionContainer = ctx.selectionContainer;
-    this.newSelectionContainer = ctx.selectionContainer;
+    this.oldSelectionContainer = ctx.getSelectionContainer();
+    this.newSelectionContainer = ctx.getSelectionContainer();
     this.tag = `UndoStackTag_${String(new Date().getTime())}`;
   }
 
@@ -71,7 +71,7 @@ class Command<ID, CommandEnum, SelectionProp> {
    * @param command Command 에 추가할 후처리 simple command
    */
   @boundMethod
-  public appendPost(command: SimpleCommand<ID>): void {
+  public appendPost(command: SimpleCommand): void {
     this.postCommandList.push(command);
   }
 

@@ -1,11 +1,15 @@
 /* eslint-disable */
 
-import Context from '../context/Context';
+import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
+import Context from '../context/EditableContext';
 import { DefaultEvent, DefaultFormEvent } from '@akron/runner';
+import CommandEnum from 'models/store/command/common/CommandEnum';
+import { SelectionProp } from 'models/store/command/common/WidgetCommandProps';
 /**
  * event 를 처리하는 event handler class 입니다.
  * Event handler list 안에 존재하며 메소드가 return true 하면 chaining 이 중단됩니다.
  */
+
 class EventHandler<ID, CommandEnum, SelectionProp, Model> {
   public onClick(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): boolean {
     return false;

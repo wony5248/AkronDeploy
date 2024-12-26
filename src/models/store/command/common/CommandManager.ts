@@ -1,11 +1,11 @@
 import { boundMethod } from 'autobind-decorator';
 import CommandMapper from './CommandMapper';
 import CommandExecutor from './CommandExecutor';
-import Context from '../../context/Context';
 import CommandEnum from './CommandEnum';
-import { SelectionProp } from './CommandProps';
+import { SelectionProp } from './WidgetCommandProps';
 import { WidgetID } from 'models/node/WidgetModel';
 import Command from './Command';
+import AkronContext from 'models/store/context/AkronContext';
 
 export interface AkronCommandManager extends CommandManager<WidgetID, CommandEnum, SelectionProp> {}
 /**
@@ -21,7 +21,7 @@ class CommandManager<ID, CommandEnum, SelectionProp> {
   /**
    * Command 를 실제 실행하는 객체입니다.
    */
-  private readonly commandExecutor: CommandExecutor<ID, CommandEnum, SelectionProp>;
+  private readonly commandExecutor: CommandExecutor;
 
   /**
    * 생성자
@@ -38,30 +38,32 @@ class CommandManager<ID, CommandEnum, SelectionProp> {
    * @param ctx context 정보로 로직에 필요한 데이터를 가지고 있습니다.
    */
   @boundMethod
-  public execute(ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    if (ctx.commandProps === undefined) {
+  public execute(ctx: AkronContext): void {
+    const commandProps = ctx.getCommandProps();
+    if (commandProps === undefined) {
       return;
     }
     // undo
-    if (ctx.commandProps.commandID === this.UndoCommandEnum()) {
+    if (commandProps.commandID === this.UndoCommandEnum()) {
       this.commandExecutor.unExecuteCommand(ctx);
       return;
     }
     // redo
-    if (ctx.commandProps.commandID === this.RedoCommandEnum()) {
+    if (ctx.getCommandProps()?.commandID === this.RedoCommandEnum()) {
       this.commandExecutor.reExecuteCommand(ctx);
       return;
     }
 
-    ctx.command = new Command(ctx);
+    ctx.setCommand(new Command(ctx));
+
     // compose simple commands
     this.commandMap
-      .get(ctx.commandProps.commandID)
-      ?.some(handler => (ctx.commandProps ? handler.processCommand(ctx.commandProps, ctx) : true));
+      .get(commandProps.commandID)
+      ?.some(handler => (ctx.getCommandProps() ? handler.processCommand(commandProps, ctx) : true));
     // execute
-    if (ctx.command.isEmpty() === false) {
-      if (ctx.commandProps.undoable !== undefined) {
-        ctx.command.setUndoable(ctx.commandProps.undoable);
+    if (ctx.getCommand()?.isEmpty() === false) {
+      if (commandProps.undoable !== undefined) {
+        ctx.getCommand()?.setUndoable(commandProps.undoable);
       }
       this.commandExecutor.executeCommand(ctx);
     }

@@ -3,24 +3,38 @@ import { AkronEventMapper } from './event/EventMapper';
 import { createContext } from 'react';
 import { AkronCommandMapper } from './command/common/CommandMapper';
 import CommandEnum from './command/common/CommandEnum';
-import CommandProps, { SelectionProp } from './command/common/CommandProps';
+import CommandProps from './command/common/CommandProps';
 import { action } from 'mobx';
 import CommandManager, { AkronCommandManager } from './command/common/CommandManager';
-import AkronContext from 'models/store/context/AkronContext';
-import AppContextBase from 'models/store/context/ContextBase';
 import SelectionManager from 'models/store/selection/SelectionManager';
 import EditorUIStore from 'store/app/EditorUIStore';
 import TooltipStore from 'store/tooltip/TooltipStore';
 import WidgetLayerContainer from 'models/widget/WidgetLayerContainer';
+import WidgetCommandProps, { SelectionProp } from 'models/store/command/common/WidgetCommandProps';
+import AppModeContainer, { AppModeType } from 'models/store/container/AppModeContainer';
+import AppModel from 'models/node/AppModel';
+import ContextMenuContainer from 'store/context-menu/ContextMenuContainer';
+import AkronContext from 'models/store/context/AkronContext';
+import EventState from 'models/store/event/EventState';
+import { LeftToolPaneType } from 'store/toolpane/ToolPaneComponentInfo';
+import { BaseWidgetModel } from '@akron/runner';
+import { boundMethod } from 'autobind-decorator';
 
 /**
  * Editor Store 생성자 파라미터 Interface 입니다.
  */
 export interface EditorStoreInitParams {
-  // widgetID, commandEnum, SelectionProp, WidgetModel
   eventMapper: AkronEventMapper;
-  // WidgetID, CommandEnum, SelectionProp
+  mode: AppModeType;
+  appName: string;
+  appModeContainer: AppModeContainer;
   commandMapper: AkronCommandMapper;
+  appID: number;
+  contextMenuContainer: ContextMenuContainer;
+  activeLeftToolPaneType?: LeftToolPaneType;
+  selectAtFirst: boolean;
+  startPageURL?: string;
+  startPageID?: number;
 }
 
 /**
@@ -28,7 +42,7 @@ export interface EditorStoreInitParams {
  * Editor Page를 렌더하기 위해 사용되는 모든 기능을 전반적으로 관리합니다.
  */
 class EditorStore {
-  protected ctx: AppContextBase;
+  protected ctx: AkronContext;
 
   private readonly eventManager: AkronEventManager;
 
@@ -44,13 +58,23 @@ class EditorStore {
   /**
    * 생성자
    */
-  constructor(params: EditorStoreInitParams) {
+  constructor(params: EditorStoreInitParams & { appModel: AppModel }) {
     this.eventManager = new EventManager(params.eventMapper);
     this.commandManager = new CommandManager(params.commandMapper);
     this.selectionManager = new SelectionManager();
-    this.ctx = {
-      appID: 100,
-    };
+    const appModeContainer = new AppModeContainer(params.mode);
+    let eventState = EventState.DEFAULT;
+    this.ctx = new AkronContext({
+      appID: params.appID,
+      newAppModel: params.appModel,
+      eventState,
+      appName: params.appName,
+      contextMenuContainer: params.contextMenuContainer,
+      startPageID: params.startPageID || -1,
+      startPageURL: params.startPageURL || '',
+      activeLeftToolPaneType: params.activeLeftToolPaneType,
+      appModeContainer,
+    });
     this.editorUIStore = new EditorUIStore();
     this.tooltipStore = new TooltipStore();
     this.widgetLayerContainer = new WidgetLayerContainer();
@@ -60,9 +84,10 @@ class EditorStore {
    * commandEvent를 처리합니다.
    */
   @action.bound
-  public handleCommandEvent(commandProps: CommandProps<CommandEnum, SelectionProp>): void {
+  public handleCommandEvent(commandProps: WidgetCommandProps): void {
+    const ctx = this.getCtxAsAppContext();
     this.initContext(commandProps);
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.commandManager.execute(ctx);
     this.selectionManager.updateSelection(this.getCtxAsAppContext());
     // this.updateProperties(this.getCtxAsAppContext());
     // this.saveApp();
@@ -90,6 +115,14 @@ class EditorStore {
   }
 
   /**
+   * 현재 선택된 widget들을 가져옴.
+   */
+  @boundMethod
+  getSelectedWidgets() {
+    return (this.getCtxAsAppContext().getSelectionContainer()?.getSelectedWidgets() as BaseWidgetModel[]) ?? [];
+  }
+
+  /**
    * this.ctx가 RuntimeStore를 상속받기 때문에 AppContextBase이다.
    * 하지만 AppStore에서는 constructor에서 this.ctx를 AppContext로 정의하고 있기 때문에
    * 타입 단언(as)를 통해 AppContext로 정의해야 AppContext의 기능을 사용할 수 있다.
@@ -102,8 +135,8 @@ class EditorStore {
    * Event 시작 전 휘발성이 있는 context 를 초기화 합니다.
    */
   private initContext(commandProps?: CommandProps<CommandEnum, SelectionProp>): void {
-    this.getCtxAsAppContext().commandProps = commandProps;
-    this.getCtxAsAppContext().command = undefined;
+    this.getCtxAsAppContext().setCommandProps(commandProps);
+    this.getCtxAsAppContext().setCommand(undefined);
   }
 }
 

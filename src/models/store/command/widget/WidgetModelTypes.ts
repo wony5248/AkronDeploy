@@ -59,3 +59,26 @@ export enum ContentType {
 export enum ObjectType {
   DEFAULT = 0,
 }
+
+export enum WidgetEditingState {
+  NONE,
+  RESIZE,
+  MOVE, // 이동을 시작한 원본 widget(이동 중에 움직이지 않음)
+  FLOATING, // 이동을 시작한 widget으로부터 clone된 floating widget
+}
+
+/**
+ * Layout Widget의 종류 = 'LayoutHorizontalFrame' | 'LayoutVerticalFrame' |
+ */
+export type LayoutWidgetType = (typeof layoutWidgetTypeNames)[number];
+
+export const layoutWidgetTypeNames: readonly string[] = [
+  'LayoutHorizontalFrame',
+  'LayoutVerticalFrame',
+  'RepeatableLayout',
+  'InfiniteLayout',
+  'ConditionalLayout',
+  'ScreenLayout',
+  'InnerPageLayout',
+  'FragmentLayout',
+] as const;

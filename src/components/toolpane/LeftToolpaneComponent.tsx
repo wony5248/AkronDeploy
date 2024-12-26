@@ -1,7 +1,6 @@
 import LeftToolPaneResizingBar from 'components/toolpane/LeftToolPaneResizingBar';
 import PageSorterViewComponent from 'components/toolpane/PageSorterViewComponent';
 import TreeToolPaneComponent from 'components/toolpane/TreeToolPaneComponent';
-import useEditorStore from 'hooks/useEditorStore';
 import useToolpaneResize from 'hooks/useToolpaneResize';
 import { observer } from 'mobx-react-lite';
 import { useState, useRef } from 'react';
@@ -11,11 +10,9 @@ import { baseLeftToolPane, leftResourceToolPane, leftToolPane } from 'styles/too
  * Left ToolPane.
  */
 const LeftToolpaneComponent: React.FC = () => {
-  const editorStore = useEditorStore();
   const [initialY, setInitialY] = useState(0);
   const [isResizing, setIsResizing] = useState(false);
   const { ref, handlePointerMove, handlePointerDown, handlePointerUp, handleMouseMove } = useToolpaneResize();
-  const [addLibraryDialogOpen, SetAddLibraryDialogOpen] = useState(false);
 
   const minTopToolPaneHeight = 100;
 
