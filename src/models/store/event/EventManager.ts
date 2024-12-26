@@ -3,9 +3,9 @@ import { boundMethod } from 'autobind-decorator';
 import EventMapper, { AkronEventMapper } from './EventMapper';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
 import CommandEnum from '../command/common/CommandEnum';
-import { SelectionProp } from '../command/common/CommandProps';
-import Context from 'models/store/context/Context';
 import { DefaultEvent, DefaultFormEvent } from '@akron/runner';
+import { SelectionProp } from 'models/store/command/widget/WidgetCommandProps';
+import AkronContext from 'models/store/context/AkronContext';
 
 export interface AkronEventManager
   extends EventManager<WidgetID, CommandEnum, SelectionProp, WidgetModel, AkronEventMapper> {}
@@ -37,296 +37,288 @@ class EventManager<
   }
 
   @boundMethod
-  public onClick(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onClick(event, ctx));
+  public onClick(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onClick(event, ctx));
   }
 
   @boundMethod
-  public onDoubleClick(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onDoubleClick(event, ctx));
+  public onDoubleClick(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onDoubleClick(event, ctx));
   }
 
   @boundMethod
-  public onMouseDown(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onMouseDown(event, ctx));
+  public onMouseDown(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onMouseDown(event, ctx));
   }
 
   @boundMethod
-  public onMouseMove(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onMouseMove(event, ctx));
+  public onMouseMove(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onMouseMove(event, ctx));
   }
 
   @boundMethod
-  public onMouseOut(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onMouseOut(event, ctx));
+  public onMouseOut(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onMouseOut(event, ctx));
   }
 
   @boundMethod
-  public onMouseOver(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onMouseOver(event, ctx));
+  public onMouseOver(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onMouseOver(event, ctx));
   }
 
   @boundMethod
-  public onMouseUp(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onMouseUp(event, ctx));
+  public onMouseUp(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onMouseUp(event, ctx));
   }
 
   @boundMethod
-  public onMouseWheel(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onMouseWheel(event, ctx));
+  public onMouseWheel(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onMouseWheel(event, ctx));
   }
 
   @boundMethod
-  public onMouseEnter(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onMouseEnter(event, ctx));
+  public onMouseEnter(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onMouseEnter(event, ctx));
   }
 
   @boundMethod
-  public onMouseLeave(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onMouseLeave(event, ctx));
+  public onMouseLeave(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onMouseLeave(event, ctx));
   }
 
   @boundMethod
-  public onMouseDownCapture(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onMouseDownCapture(event, ctx));
+  public onMouseDownCapture(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onMouseDownCapture(event, ctx));
   }
 
   @boundMethod
-  public onMouseUpCapture(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onMouseUpCapture(event, ctx));
+  public onMouseUpCapture(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onMouseUpCapture(event, ctx));
   }
 
   @boundMethod
-  public onMouseMoveCapture(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onMouseMoveCapture(event, ctx));
+  public onMouseMoveCapture(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onMouseMoveCapture(event, ctx));
   }
 
   @boundMethod
-  public onWheel(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onWheel(event, ctx));
+  public onWheel(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onWheel(event, ctx));
   }
 
   @boundMethod
-  public onKeyDown(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onKeyDown(event, ctx));
+  public onKeyDown(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onKeyDown(event, ctx));
   }
 
   @boundMethod
-  public onKeyUp(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onKeyUp(event, ctx));
+  public onKeyUp(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onKeyUp(event, ctx));
   }
 
   @boundMethod
-  public onKeyPressed(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onKeyPressed(event, ctx));
+  public onKeyPressed(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onKeyPressed(event, ctx));
   }
 
   @boundMethod
-  public onCompositionUpdate(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onCompositionUpdate(event, ctx));
+  public onCompositionUpdate(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onCompositionUpdate(event, ctx));
   }
 
   @boundMethod
-  public onBeforeInput(event: DefaultFormEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onBeforeInput(event, ctx));
+  public onBeforeInput(event: DefaultFormEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onBeforeInput(event, ctx));
   }
 
   @boundMethod
-  public onInput(event: DefaultFormEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onInput(event, ctx));
+  public onInput(event: DefaultFormEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onInput(event, ctx));
   }
 
   @boundMethod
-  public onChange(
-    event: DefaultFormEvent<Model>,
-    ctx: Context<ID, CommandEnum, SelectionProp>,
-    eventParams: any[]
-  ): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onChange(event, ctx, eventParams));
+  public onChange(event: DefaultFormEvent<Model>, ctx: AkronContext, eventParams: any[]): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onChange(event, ctx, eventParams));
   }
 
   @boundMethod
-  public onFocus(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onFocus(event, ctx));
+  public onFocus(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onFocus(event, ctx));
   }
 
   @boundMethod
-  public onBlur(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onBlur(event, ctx));
+  public onBlur(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onBlur(event, ctx));
   }
 
   @boundMethod
-  public onContextMenu(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onContextMenu(event, ctx));
+  public onContextMenu(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onContextMenu(event, ctx));
   }
 
   @boundMethod
-  public onDrag(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onDrag(event, ctx));
+  public onDrag(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onDrag(event, ctx));
   }
 
   @boundMethod
-  public onDragStart(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onDragStart(event, ctx));
+  public onDragStart(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onDragStart(event, ctx));
   }
 
   @boundMethod
-  public onDragEnd(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onDragEnd(event, ctx));
+  public onDragEnd(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onDragEnd(event, ctx));
   }
 
   @boundMethod
-  public onDragEnter(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onDragEnter(event, ctx));
+  public onDragEnter(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onDragEnter(event, ctx));
   }
 
   @boundMethod
-  public onDragLeave(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onDragLeave(event, ctx));
+  public onDragLeave(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onDragLeave(event, ctx));
   }
 
   @boundMethod
-  public onDragOver(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onDragOver(event, ctx));
+  public onDragOver(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onDragOver(event, ctx));
   }
 
   @boundMethod
-  public onScroll(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onScroll(event, ctx));
+  public onScroll(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onScroll(event, ctx));
   }
 
   @boundMethod
-  public onDrop(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onDrop(event, ctx));
+  public onDrop(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onDrop(event, ctx));
   }
 
   @boundMethod
-  public onFormContextMenu(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onFormContextMenu(event, ctx));
+  public onFormContextMenu(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onFormContextMenu(event, ctx));
   }
 
   @boundMethod
-  public onInvalid(event: DefaultFormEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onInvalid(event, ctx));
+  public onInvalid(event: DefaultFormEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onInvalid(event, ctx));
   }
 
   @boundMethod
-  public onReset(event: DefaultFormEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onReset(event, ctx));
+  public onReset(event: DefaultFormEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onReset(event, ctx));
   }
 
   @boundMethod
-  public onSearch(event: DefaultFormEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onSearch(event, ctx));
+  public onSearch(event: DefaultFormEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onSearch(event, ctx));
   }
 
   @boundMethod
-  public onSelect(event: DefaultFormEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onSelect(event, ctx));
+  public onSelect(event: DefaultFormEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onSelect(event, ctx));
   }
 
   @boundMethod
-  public onSubmit(event: DefaultFormEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onSubmit(event, ctx));
+  public onSubmit(event: DefaultFormEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onSubmit(event, ctx));
   }
 
   @boundMethod
-  public onCopy(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onCopy(event, ctx));
+  public onCopy(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onCopy(event, ctx));
   }
 
   @boundMethod
-  public onCut(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onCut(event, ctx));
+  public onCut(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onCut(event, ctx));
   }
 
   @boundMethod
-  public onPaste(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onPaste(event, ctx));
+  public onPaste(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onPaste(event, ctx));
   }
 
   @boundMethod
-  public onTouchStart(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onTouchStart(event, ctx));
+  public onTouchStart(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onTouchStart(event, ctx));
   }
 
   @boundMethod
-  public onTouchEnd(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onTouchEnd(event, ctx));
+  public onTouchEnd(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onTouchEnd(event, ctx));
   }
 
   @boundMethod
-  public onTouchMove(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onTouchMove(event, ctx));
+  public onTouchMove(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onTouchMove(event, ctx));
   }
 
   @boundMethod
-  public onPointerDown(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onPointerDown(event, ctx));
+  public onPointerDown(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onPointerDown(event, ctx));
   }
 
   @boundMethod
-  public onPointerMove(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onPointerMove(event, ctx));
+  public onPointerMove(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onPointerMove(event, ctx));
   }
 
   @boundMethod
-  public onPointerUp(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onPointerUp(event, ctx));
+  public onPointerUp(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onPointerUp(event, ctx));
   }
 
   @boundMethod
-  public onPointerCancel(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onPointerCancel(event, ctx));
+  public onPointerCancel(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onPointerCancel(event, ctx));
   }
 
   @boundMethod
-  public onPointerEnter(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onPointerEnter(event, ctx));
+  public onPointerEnter(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onPointerEnter(event, ctx));
   }
 
   @boundMethod
-  public onPointerLeave(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onPointerLeave(event, ctx));
+  public onPointerLeave(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onPointerLeave(event, ctx));
   }
 
   @boundMethod
-  public onPointerOver(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onPointerOver(event, ctx));
+  public onPointerOver(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onPointerOver(event, ctx));
   }
 
   @boundMethod
-  public onGotPointerCapture(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onGotPointerCapture(event, ctx));
+  public onGotPointerCapture(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onGotPointerCapture(event, ctx));
   }
 
   @boundMethod
-  public onLostPointerCapture(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onLostPointerCapture(event, ctx));
+  public onLostPointerCapture(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onLostPointerCapture(event, ctx));
   }
 
   @boundMethod
-  public onAnimationStart(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onAnimationStart(event, ctx));
+  public onAnimationStart(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onAnimationStart(event, ctx));
   }
 
   @boundMethod
-  public onAnimationEnd(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onAnimationEnd(event, ctx));
+  public onAnimationEnd(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onAnimationEnd(event, ctx));
   }
 
   @boundMethod
-  public onAnimationIteration(event: DefaultEvent<Model>, ctx: Context<ID, CommandEnum, SelectionProp>): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onAnimationIteration(event, ctx));
+  public onAnimationIteration(event: DefaultEvent<Model>, ctx: AkronContext): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onAnimationIteration(event, ctx));
   }
 
   @boundMethod
-  public onCustom(
-    event: DefaultEvent<Model>,
-    ctx: Context<ID, CommandEnum, SelectionProp>,
-    widgetEventProperty: any
-  ): void {
-    this.eventMap.get(ctx.state)?.some(handler => handler.onCustom(event, ctx, widgetEventProperty));
+  public onCustom(event: DefaultEvent<Model>, ctx: AkronContext, widgetEventProperty: any): void {
+    this.eventMap.get(ctx.getState())?.some(handler => handler.onCustom(event, ctx, widgetEventProperty));
   }
 }
 export default EventManager;

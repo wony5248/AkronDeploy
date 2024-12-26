@@ -1,6 +1,5 @@
-import CommandProps from '../../command/common/CommandProps';
+import CommandProps from '../common/CommandProps';
 import WidgetModel from 'models/node/WidgetModel';
-import CommandEnum from '../../command/common/CommandEnum';
 import SelectionEnum from 'models/store/selection/SelectionEnum';
 
 /**
@@ -24,7 +23,7 @@ export interface SectionSelectionProp {
 /**
  * UX에서 사용되는 기본 CommandProps
  */
-type WidgetCommandProps = CommandProps<CommandEnum, SelectionProp> & {
+type WidgetCommandProps = CommandProps & {
   sectionSelectionProp?: SectionSelectionProp;
 };
 

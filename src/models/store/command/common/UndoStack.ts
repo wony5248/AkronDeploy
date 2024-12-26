@@ -6,19 +6,19 @@ import Command from './Command';
  * Command 들을 stack 형태로 보관하는 class 입니다.
  * 모든 undoable 한 command 들은 execution 후 undo stack 에 보관되어야 합니다.
  */
-class UndoStack<ID, CommandEnum, SelectionProp> {
+class UndoStack {
   /**
    * Undo stack 입니다. Execute 된 command 를 보관합니다.
    * Stack 의 이름이나, 실제로는 deque 형태로 동작합니다. Command 가 계속 push 되면 stack size 를 넘어가면서 FIFO 형태로 command 가 pop 됩니다.
    */
   @observable.shallow
-  private undoStack: Array<Command<ID, CommandEnum, SelectionProp>>;
+  private undoStack: Array<Command>;
 
   /**
    * Undo 된 command 를 보관하는 redo stack 입니다. Command execute 시 clear 됩니다.
    */
   @observable.shallow
-  private redoStack: Array<Command<ID, CommandEnum, SelectionProp>>;
+  private redoStack: Array<Command>;
 
   /**
    * Undo stack 의 max size 를 의미합니다.
@@ -30,8 +30,8 @@ class UndoStack<ID, CommandEnum, SelectionProp> {
    */
   public constructor(size = 20) {
     makeObservable(this);
-    this.undoStack = [] as Array<Command<ID, CommandEnum, SelectionProp>>;
-    this.redoStack = [] as Array<Command<ID, CommandEnum, SelectionProp>>;
+    this.undoStack = [] as Array<Command>;
+    this.redoStack = [] as Array<Command>;
     this.size = size;
   }
 
@@ -62,9 +62,9 @@ class UndoStack<ID, CommandEnum, SelectionProp> {
    * @param command Execute 된 command
    */
   @action.bound
-  public push(command: Command<ID, CommandEnum, SelectionProp>): void {
+  public push(command: Command): void {
     // clear redo stack
-    this.redoStack = [] as Array<Command<ID, CommandEnum, SelectionProp>>;
+    this.redoStack = [] as Array<Command>;
     // push command to undo stack
     this.undoStack.push(command);
     // erase oldest command if stack is full
@@ -77,7 +77,7 @@ class UndoStack<ID, CommandEnum, SelectionProp> {
    * 현재 command 를 return 합니다
    */
   @action.bound
-  public cur(): Command<ID, CommandEnum, SelectionProp> | undefined {
+  public cur(): Command | undefined {
     const command = this.undoStack[this.undoStack.length - 1];
     if (command === undefined) {
       return undefined;
@@ -92,7 +92,7 @@ class UndoStack<ID, CommandEnum, SelectionProp> {
    * @returns Undo 해야 할 command, undo stack 이 비어있다면 undefined
    */
   @action.bound
-  public prev(): Command<ID, CommandEnum, SelectionProp> | undefined {
+  public prev(): Command | undefined {
     // pop command from undo stack
     const command = this.undoStack.pop();
     if (command === undefined) {
@@ -111,7 +111,7 @@ class UndoStack<ID, CommandEnum, SelectionProp> {
    * @returns Redo 해야 할 command, redo stack 이 비어있다면 undefined
    */
   @action.bound
-  public next(): Command<ID, CommandEnum, SelectionProp> | undefined {
+  public next(): Command | undefined {
     // pop command from redo stack
     const command = this.redoStack.pop();
     if (command === undefined) {
@@ -128,15 +128,15 @@ class UndoStack<ID, CommandEnum, SelectionProp> {
    */
   @action.bound
   public clear(): void {
-    this.undoStack = [] as Array<Command<ID, CommandEnum, SelectionProp>>;
-    this.redoStack = [] as Array<Command<ID, CommandEnum, SelectionProp>>;
+    this.undoStack = [] as Array<Command>;
+    this.redoStack = [] as Array<Command>;
   }
 
   /**
    * Undo stack pop
    */
   @action.bound
-  public pop(): Command<ID, CommandEnum, SelectionProp> | undefined {
+  public pop(): Command | undefined {
     const command = this.undoStack.pop();
     return command;
   }
@@ -149,7 +149,7 @@ class UndoStack<ID, CommandEnum, SelectionProp> {
   public redoStackHasTag(tag: string): number {
     let count = this.redoStack.length + 1;
     let result = -1;
-    this.redoStack.forEach((c: Command<ID, CommandEnum, SelectionProp>) => {
+    this.redoStack.forEach((c: Command) => {
       count -= 1;
       if (c.getTag() === tag) {
         result = count;
@@ -166,7 +166,7 @@ class UndoStack<ID, CommandEnum, SelectionProp> {
   public undoStackHasTag(tag: string): number {
     let count = 0;
     let result = -1;
-    this.undoStack.forEach((c: Command<ID, CommandEnum, SelectionProp>) => {
+    this.undoStack.forEach((c: Command) => {
       count += 1;
       if (c.getTag() === tag) {
         result = count;

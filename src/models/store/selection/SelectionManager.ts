@@ -66,24 +66,17 @@ export default class SelectionManager {
   @action.bound
   public updateSelectionContainer(ctx: AkronContext): void {
     // Update selection
-    const commandID = ctx.commandProps?.commandID;
+    const commandID = ctx.getCommandProps()?.commandID;
     let newSelectionContainer: SelectionContainer;
-
+    const editModeLastSelection = ctx.getEditModeLastSelectionContainer();
     if (commandID !== undefined) {
       switch (commandID) {
         case CommandEnum.UNDO:
-          ctx.prevSelectionContainer = ctx.selectionContainer;
+          ctx.setPrevSelectionContainer(ctx.getSelectionContainer());
           // 최초 상태에서는 selection update하지 않음
-          if (ctx.command?.getOldSelectionContainer() !== undefined) {
-            ctx.selectionContainer = ctx.command?.getOldSelectionContainer() as SelectionContainer;
-          }
           break;
         case CommandEnum.REDO:
-          ctx.prevSelectionContainer = ctx.selectionContainer;
-          // 최후 상태에서는 selection update하지 않음
-          if (ctx.command?.getNewSelectionContainer() !== undefined) {
-            ctx.selectionContainer = ctx.command?.getNewSelectionContainer() as SelectionContainer;
-          }
+          ctx.setPrevSelectionContainer(ctx.getSelectionContainer());
           break;
         case CommandEnum.DELETE_WIDGET:
           //   this.updateSelectionByDeleteWidget(ctx);
@@ -99,7 +92,7 @@ export default class SelectionManager {
           //     break;
           //   }
 
-          const oldSelectionContainer = ctx.command?.getOldSelectionContainer();
+          const oldSelectionContainer = ctx.getCommand()?.getOldSelectionContainer();
           if (oldSelectionContainer === undefined) {
             break;
           }
@@ -120,43 +113,13 @@ export default class SelectionManager {
           break;
         }
         case CommandEnum.CHANGE_APP_MODE:
-          switch (ctx.appModeContainer.getAppMode()) {
-            case 'EDIT_DIALOG_WIDGET':
-              // 사용자 정의 컴포넌트 또는 다이얼로그 만들기 작업 모드로 변경될 때 기존 selection을
-              // editModeLastSelectionContainer 별도로 저장.
-              if (ctx.editModeLastSelectionContainer !== undefined) {
-                ctx.editModeLastSelectionContainer = ctx.selectionContainer;
-              }
-              if (ctx.editingWidgetModel !== undefined) {
-                newSelectionContainer = new SelectionContainer();
-                ctx.command?.setNewSelectionContainer(newSelectionContainer);
-                ctx.prevSelectionContainer = undefined;
-                ctx.selectionContainer = newSelectionContainer;
-
-                // selectableModelList set
-                const widgetModels = ctx.commandProps?.selectionProp?.widgetModels;
-                if (widgetModels !== undefined) {
-                  widgetModels.forEach(model => {
-                    newSelectionContainer.initSelectableWidgetModels(model);
-                  });
-                  newSelectionContainer.setWidgetModelSelectable();
-                }
-
-                this.udpateSelectionContainerByEditingWidgetModel(ctx);
-
-                // undoStack 초기화
-                // if (isEditDialogWidgetMode(ctx.appModeContainer)) {
-                //   ctx.editBusinessDialogWidgetModeUndoStack.clear();
-                // }
-                ctx.lastRegisteredEditUndoStackTag = '';
-              }
-              break;
+          switch (ctx.getAppModeContainer().getAppMode()) {
             case 'EDIT_APP':
               // EDIT_APP 모드로 변경될 때, editModeLastSelectionContainer 있으면, 현재 selection으로 변경.
-              if (ctx.editModeLastSelectionContainer !== undefined) {
-                ctx.selectionContainer = ctx.editModeLastSelectionContainer;
-                ctx.prevSelectionContainer = undefined; // 이전 selection은 사용자 정의 컴포넌트 수정 시 남아있던 것임. 모드 변경으로 사라짐에 따라 undefined 처리
-                ctx.editModeLastSelectionContainer = undefined;
+              if (ctx.getEditModeLastSelectionContainer() !== undefined) {
+                ctx.getCommand()?.setNewSelectionContainer(editModeLastSelection);
+                ctx.setPrevSelectionContainer(undefined); // 이전 selection은 사용자 정의 컴포넌트 수정 시 남아있던 것임. 모드 변경으로 사라짐에 따라 undefined 처리
+                ctx.setEditModeLastSelectionContainer(undefined);
               }
               break;
             default:
@@ -164,9 +127,9 @@ export default class SelectionManager {
           }
           break;
         case CommandEnum.SELECT_SECTION:
-          if (ctx.commandProps?.sectionSelectionProp !== undefined) {
+          if (ctx.getCommandProps()?.sectionSelectionProp !== undefined) {
             // 구역 선택 시 선택중인 page는 바뀌지 않음
-            const editingPage = ctx.selectionContainer?.getEditingPage();
+            const editingPage = ctx.getSelectionContainer()?.getEditingPage();
             const selectedPages: WidgetModel[] = editingPage !== undefined ? [editingPage] : [];
             // const pageSection = ctx.commandProps?.sectionSelectionProp.pageSection;
 
@@ -178,9 +141,9 @@ export default class SelectionManager {
               newSelectionContainer.setSelectedPage(selectedPages[0]);
               newSelectionContainer.setWidgetSelection(selectedPages[0]);
             }
-            ctx?.command?.setNewSelectionContainer(newSelectionContainer);
-            ctx.prevSelectionContainer = ctx.selectionContainer;
-            ctx.selectionContainer = newSelectionContainer;
+            ctx?.getCommand()?.setNewSelectionContainer(newSelectionContainer);
+            ctx.setPrevSelectionContainer(ctx.getSelectionContainer());
+            ctx.getCommand()?.setNewSelectionContainer(newSelectionContainer);
           }
           break;
         default: {
@@ -198,7 +161,7 @@ export default class SelectionManager {
   @action.bound
   public updateFloatingObject(ctx: AkronContext): void {
     // 1. Update floating check
-    const { selectionContainer } = ctx;
+    const selectionContainer = ctx.getSelectionContainer();
     if (!this.checkToUpdateFloating(selectionContainer)) {
       return;
     }
@@ -246,7 +209,7 @@ export default class SelectionManager {
    */
   @action.bound
   private updateNewFloatingObject(ctx: AkronContext): void {
-    const { selectionContainer } = ctx;
+    const selectionContainer = ctx.getSelectionContainer();
     selectionContainer?.setSelected(true);
   }
 
@@ -256,8 +219,8 @@ export default class SelectionManager {
    * @param ctx 앱의 상태.
    */
   private udpateSelectionContainerByEditingWidgetModel(ctx: AkronContext): void {
-    const { selectionContainer, editingWidgetModel } = ctx;
-
+    const selectionContainer = ctx.getSelectionContainer();
+    const editingWidgetModel = ctx.getEditingWidgetModel();
     if (selectionContainer) {
       selectionContainer.setWidgetSelection(editingWidgetModel);
       selectionContainer.setSelectedPage(editingWidgetModel);

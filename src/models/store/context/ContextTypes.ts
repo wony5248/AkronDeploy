@@ -1,15 +1,17 @@
 import { BaseWidgetModel, Nullable } from '@akron/runner';
 import AppModel from 'models/node/AppModel';
 import { WidgetID } from 'models/node/WidgetModel';
-import WidgetCommandProps from 'models/store/command/common/WidgetCommandProps';
+import WidgetCommandProps from 'models/store/command/widget/WidgetCommandProps';
 import AppModeContainer from 'models/store/container/AppModeContainer';
 import ClipboardContainer from 'models/store/container/ClipboardContainer';
+import CompositeComponentContainer from 'models/store/container/CompositeComponentContainer';
 import HitContainer from 'models/store/container/HitContainer';
 import PropContainer from 'models/store/container/PropContainer';
 import SelectionContainer from 'models/store/container/SelectionContainer';
 import WidgetEditInfoContainer from 'models/store/container/WidgetEditInfoContainer';
 import EventState from 'models/store/event/EventState';
 import { NavigateFunction } from 'react-router-dom';
+import { AppInfo } from 'store/app/AppInfo';
 import EditorUIStore from 'store/app/EditorUIStore';
 import ContextMenuContainer from 'store/context-menu/ContextMenuContainer';
 import { ContextMenu } from 'store/context-menu/ContextMenuTypes';
@@ -25,7 +27,7 @@ import { LeftToolPaneType } from 'store/toolpane/ToolPaneComponentInfo';
 export interface ContextDefaultInterface {
   doNotImplementThisFunctionExceptAppContext: () => void;
   getAppID: () => WidgetID;
-  //   getAppInfo: () => AppInfo;
+  getAppInfo: () => AppInfo;
   //   getDataStore: () => DataStoreBase;
   //   getCustomFunctionStore: () => CustomFunctionStoreBase;
   //   getServiceStore: () => ServiceStoreBase;
@@ -61,13 +63,13 @@ export interface ContextBaseInitializeProp {
   //   serviceHandlerStore: ServiceHandlerStoreBase;
   //   newMetaDataContainer: NewMetaDataContainer;
   newAppModel: AppModel;
-  //   appInfo: AppInfo;
+  appInfo: AppInfo;
   //   businessContainer: BusinessContainerBase;
   //   newBusinessContainer: NewBusinessContainer;
   //   dataBindingContainer: DataBindingContainer;
   //   globalThemeContainer: GlobalThemeContainer;
   //   compThemeContainer: CompThemeContainer;
-  //   compositeComponentContainer: CompositeComponentContainer;
+  compositeComponentContainer: CompositeComponentContainer;
   //   newOSObjectContainer: NewOSObjectContainer;
   //   outerServiceStore: OuterServiceStoreBase;
   //   highLevelStudiosContainer: HighLevelStudiosContainer;
@@ -86,7 +88,7 @@ export interface ReadOnlyContextBaseProp {
 export interface EditableContextBaseProp {
   newAppModel: AppModel;
   appID: number;
-  //   appInfo: AppInfo;
+  appInfo: AppInfo;
   //   newMetaDataContainer: NewMetaDataContainer;
   //   appStylesContainer: AppStylesContainer;
   //   businessContainer: BusinessContainerBase;
@@ -126,7 +128,6 @@ export interface ContextInitializeProp extends ContextBaseInitializeProp {
   // fileContainer: FileContainer;
   // insertedPuxLibraryInfoMap: InsertedPuxLibraryInfoMap;
   // libraryContainer: LibraryContainer;
-  // highLevelStudiosContainer: HighLevelStudiosContainer;
 }
 
 /**

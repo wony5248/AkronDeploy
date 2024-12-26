@@ -2,21 +2,18 @@ import { boundMethod } from 'autobind-decorator';
 import CommandMapper from './CommandMapper';
 import CommandExecutor from './CommandExecutor';
 import CommandEnum from './CommandEnum';
-import { SelectionProp } from './WidgetCommandProps';
-import { WidgetID } from 'models/node/WidgetModel';
 import Command from './Command';
 import AkronContext from 'models/store/context/AkronContext';
 
-export interface AkronCommandManager extends CommandManager<WidgetID, CommandEnum, SelectionProp> {}
 /**
  * Command 수행을 담당하는 class 입니다.
  * Document model 의 제어는 Command manager 안에서만 가능합니다.
  */
-class CommandManager<ID, CommandEnum, SelectionProp> {
+class CommandManager {
   /**
    * Command ID 에 대한 command handler list 를 가지고 있는 mapper 입니다. 상황에 따라 map 구성이 달라질 수 있습니다.
    */
-  private commandMap: CommandMapper<ID, CommandEnum, SelectionProp>;
+  private commandMap: CommandMapper;
 
   /**
    * Command 를 실제 실행하는 객체입니다.
@@ -26,7 +23,7 @@ class CommandManager<ID, CommandEnum, SelectionProp> {
   /**
    * 생성자
    */
-  public constructor(map: CommandMapper<ID, CommandEnum, SelectionProp>) {
+  public constructor(map: CommandMapper) {
     this.commandMap = map;
     this.commandExecutor = new CommandExecutor();
   }
@@ -55,7 +52,6 @@ class CommandManager<ID, CommandEnum, SelectionProp> {
     }
 
     ctx.setCommand(new Command(ctx));
-
     // compose simple commands
     this.commandMap
       .get(commandProps.commandID)
