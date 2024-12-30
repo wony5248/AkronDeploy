@@ -16,6 +16,7 @@ import {
   widgetSelectionView,
   widgetSelectionViewHandleSquare,
 } from 'styles/editor/WidgetSelection';
+import checkWidgetInParent from 'util/WidgetUtil';
 
 /**
  * Selection을 render하기 위해 필요한 인자들
@@ -172,13 +173,12 @@ const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props
   }
 
   // 자식 컴포넌트로 삽입 가능하거나 속성으로 추가가 가능할 때 하이라이트
-  const isChildableWidgetOrLayout =
-    basicChildableWidgetTypeNamesSet.has(model.getWidgetType()) || model.getWidgetCategory() === 'Layout';
-  const isReactNodeProp = editorStore.getMetaDataContainer().getReactNodeTypePropMap().get(model.getWidgetType());
+  const isChildableWidgetOrLayout = model.getWidgetCategory() === 'Layout';
+  // const isReactNodeProp = editorStore.getMetaDataContainer().getReactNodeTypePropMap().get(model.getWidgetType());
   const isInnerPageLayout = model.getWidgetType() === 'InnerPageLayout';
 
   if (
-    (isChildableWidgetOrLayout || isReactNodeProp) &&
+    isChildableWidgetOrLayout /* || isReactNodeProp*/ &&
     !isInnerPageLayout &&
     model.getProperties().dragHovered === true
   ) {
@@ -286,18 +286,18 @@ const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props
   const renderChildrenSelection = () => {
     // ESLint가 mutually recursive한 함수들(a()가 b()를 호출, b()가 a()를 호출)을 제대로 처리 못함 -> 이 줄 한해서 off.
     // ConditionalLayout은 현재 렌더링하는 FragmentLayout 하위 widget의 selection view만 렌더링
-    if (checkConditionalLayout(model)) {
-      const childWidgetModels = model.mapChild(childWidgetModel => childWidgetModel);
-      const renderedChildIndex = model.getProperties().content.flag.value ? 0 : 1;
+    // if (checkConditionalLayout(model)) {
+    //   const childWidgetModels = model.mapChild(childWidgetModel => childWidgetModel);
+    //   const renderedChildIndex = model.getProperties().content.flag.value ? 0 : 1;
 
-      return childWidgetModels[renderedChildIndex]?.mapChild(grandChild => (
-        // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        <WidgetSelectionViewBaseComponent key={grandChild.getID()} model={grandChild} />
-      ));
-    }
-    if (model.isRepeatableLayoutWidgetType()) {
-      return null;
-    }
+    //   return childWidgetModels[renderedChildIndex]?.mapChild(grandChild => (
+    //     // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    //     <WidgetSelectionViewBaseComponent key={grandChild.getID()} model={grandChild} />
+    //   ));
+    // }
+    // if (model.isRepeatableLayoutWidgetType()) {
+    //   return null;
+    // }
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     return model.mapChild(child => <WidgetSelectionViewComponent key={child.getID()} model={child} />);
   };
@@ -307,11 +307,7 @@ const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props
   };
 
   // Selection이 불필요한 영역은 렌더링하지 않습니다.
-  if (
-    !checkWidgetInParent(model) &&
-    !checkBusinessOrPageDialogModel(model.getParent()) &&
-    !model.getProperties().selected
-  ) {
+  if (!checkWidgetInParent(model) && model.getParent().getWidgetType() !== 'Page' && !model.getProperties().selected) {
     return <></>;
   }
 

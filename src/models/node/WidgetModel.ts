@@ -196,20 +196,6 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
   }
 
   /**
-   * repeatable layout Type 확인 합니다.
-   */
-  public isRepeatableLayoutWidgetType() {
-    if (
-      super.widgetType === 'RepeatableLayout' ||
-      super.widgetType === 'InfiniteLayout' ||
-      super.widgetType === 'BasicSelect'
-    ) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
    * sibling 사이에서 나의 index값 반환.
    * parent가 없거나 child가 아닌 경우 -1 반환.
    */

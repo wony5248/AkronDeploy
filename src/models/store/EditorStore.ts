@@ -39,6 +39,14 @@ export interface EditorStoreInitParams {
   startPageID?: number;
 }
 
+export enum SaveState {
+  SAVING,
+  SAVE_ERROR,
+  SAVE_COMPLETE,
+  RESAVING,
+  RESAVE_ERROR,
+}
+
 /**
  * Editor Page 내에서 사용될 전역 Store Class 입니다.
  * Editor Page를 렌더하기 위해 사용되는 모든 기능을 전반적으로 관리합니다.
@@ -51,6 +59,8 @@ class EditorStore {
   private readonly commandManager: CommandManager;
 
   private readonly selectionManager: SelectionManager;
+
+  private saveState: SaveState;
 
   protected editorUIStore: EditorUIStore;
 
@@ -75,20 +85,21 @@ class EditorStore {
     this.tooltipStore = new TooltipStore();
     this.widgetLayerContainer = new WidgetLayerContainer();
     let eventState = EventState.DEFAULT;
-    this.ctx = new AkronContext({
-      appID: params.appID,
-      appInfo: params.appInfo,
-      newAppModel: params.appModel,
-      eventState,
-      appName: params.appName,
-      contextMenuContainer: params.contextMenuContainer,
-      startPageID: params.startPageID || -1,
-      startPageURL: params.startPageURL || '',
-      activeLeftToolPaneType: params.activeLeftToolPaneType,
-      appModeContainer,
-      compositeComponentContainer: params.compositeComponentContainer,
-      editorUIStore: this.editorUIStore,
-    });
+    (this.saveState = SaveState.SAVE_COMPLETE),
+      (this.ctx = new AkronContext({
+        appID: params.appID,
+        appInfo: params.appInfo,
+        newAppModel: params.appModel,
+        eventState,
+        appName: params.appName,
+        contextMenuContainer: params.contextMenuContainer,
+        startPageID: params.startPageID || -1,
+        startPageURL: params.startPageURL || '',
+        activeLeftToolPaneType: params.activeLeftToolPaneType,
+        appModeContainer,
+        compositeComponentContainer: params.compositeComponentContainer,
+        editorUIStore: this.editorUIStore,
+      }));
   }
 
   /**
@@ -162,14 +173,14 @@ class EditorStore {
    * editingPageRefPosition 값 셋팅.
    */
   @action
-  setEditingPageRefPosition(x: number, y: number, width: number, height: number) {
+  public setEditingPageRefPosition(x: number, y: number, width: number, height: number) {
     this.getCtxAsAppContext().setEditingPageRefPosition({ x, y, width, height });
   }
 
   /**
    * editingPageRefPosition 값을 가져옴.
    */
-  getEditingPageRefPosition() {
+  public getEditingPageRefPosition() {
     return this.getCtxAsAppContext().getEditingPageRefPosition();
   }
 
@@ -178,7 +189,7 @@ class EditorStore {
    *
    * @returns context의 zoom ratio.
    */
-  getZoomRatio(): number {
+  public getZoomRatio(): number {
     return this.getCtxAsAppContext().getZoomRatio();
   }
 
@@ -186,8 +197,24 @@ class EditorStore {
    * zoom Ratio set.
    */
   @action
-  setZoomRatio(zoomRatio: number) {
+  public setZoomRatio(zoomRatio: number) {
     this.getCtxAsAppContext().setZoomRatio(zoomRatio);
+  }
+
+  /**
+   * saveState getter
+   */
+  @boundMethod
+  public getSaveState(): SaveState {
+    return this.saveState;
+  }
+
+  /**
+   * SaveState setter
+   */
+  @boundMethod
+  public setSaveState(state: SaveState): void {
+    this.saveState = state;
   }
 
   /**
