@@ -1,5 +1,6 @@
 import { BaseWidgetModel, Nullable } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
+import { action } from 'mobx';
 import AppModel from 'models/node/AppModel';
 import { WidgetID } from 'models/node/WidgetModel';
 import Command from 'models/store/command/common/Command';
@@ -18,10 +19,11 @@ import {
   DragObjectType,
   MouseModeType,
 } from 'models/store/context/ContextTypes';
-import EditableContext from 'models/store/context/EditableContext';
+import EditableContext, { PageRefPosition } from 'models/store/context/EditableContext';
 import EventState from 'models/store/event/EventState';
 import { NavigateFunction } from 'react-router-dom';
 import { AppInfo } from 'store/app/AppInfo';
+import EditorUIStore from 'store/app/EditorUIStore';
 import { ContextMenu } from 'store/context-menu/ContextMenuTypes';
 
 /**
@@ -134,12 +136,7 @@ export default class AkronContext {
       //   startPageID: initProp.startPageID,
       //   startPageURL: initProp.startPageURL,
       // }),
-      editorUIStore: this.createEditorUIStore(
-        initProp.customPropertyContentRenderer,
-        initProp.activeLeftToolPaneType,
-        // 하이레벨 스튜디오의 경우 요소 추가 부분이 열린 상태로 시작.
-        undefined
-      ),
+      editorUIStore: initProp.editorUIStore,
       contextMenuContainer: initProp.contextMenuContainer,
       // fileMessageContainer: this.createFileMessageContainer(),
       // fileContainer: initProp.fileContainer,
@@ -177,10 +174,10 @@ export default class AkronContext {
   /**
    * AppID를 반환합니다
    */
-  // @boundMethod
-  // public getAppID(): WidgetID {
-  //   return this.appReadOnlyContext.getAppID();
-  // }
+  @boundMethod
+  public getAppID(): WidgetID {
+    return this.appEditableContext.getAppID();
+  }
 
   /**
    * AppWidgetModel을 반환합니다
@@ -839,4 +836,27 @@ export default class AkronContext {
   // public getHighLevelStudiosContainer(): HighLevelStudiosContainer {
   //   return this.appEditableContext.getHighLevelStudiosContainer();
   // }
+
+  /**
+   * EditorUIStore
+   */
+  @boundMethod
+  public getEditorUIStore(): EditorUIStore {
+    return this.appEditableContext.getEditorUIStore();
+  }
+
+  /**
+   * editingPageRefPosition 값 셋팅.
+   */
+  @action
+  public setEditingPageRefPosition(pageRefPosition: PageRefPosition) {
+    this.appEditableContext.setEditingPageRefPosition(pageRefPosition);
+  }
+
+  /**
+   * editingPageRefPosition 값을 가져옴.
+   */
+  public getEditingPageRefPosition() {
+    return this.appEditableContext.getEditingPageRefPosition();
+  }
 }

@@ -1,4 +1,11 @@
-import { BaseWidgetModel, IWidgetCommonProperties, Nullable, WidgetCategory, WidgetTypeEnum } from '@akron/runner';
+import {
+  BaseWidgetModel,
+  dError,
+  IWidgetCommonProperties,
+  Nullable,
+  WidgetCategory,
+  WidgetTypeEnum,
+} from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { action, makeObservable, observable, override } from 'mobx';
 import { OperationMessage } from 'models/message/OperationMessage';
@@ -148,6 +155,44 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
   @action
   public setProperties(properties: Properties) {
     super.setProperties(properties);
+  }
+
+  /**
+   * Widget의 style 속성을 반환합니다.
+   * Length 타입과 같이 depth가 한 번 더 있는 경우,
+   * 해당 값들을 나머지 변수로 가져오기 위함입니다.
+   */
+  public getStyleProperties(propCategory: string) {
+    switch (propCategory) {
+      case 'x': {
+        return super.properties.style.x;
+      }
+      case 'y': {
+        return super.properties.style.y;
+      }
+      case 'width': {
+        return super.properties.style.width;
+      }
+      case 'height': {
+        return super.properties.style.height;
+      }
+      case 'maxWidth': {
+        return super.properties.style.maxWidth;
+      }
+      case 'maxHeight': {
+        return super.properties.style.maxHeight;
+      }
+      case 'minWidth': {
+        return super.properties.style.minWidth;
+      }
+      case 'minHeight': {
+        return super.properties.style.minHeight;
+      }
+      default: {
+        dError('Property is not exist.');
+        return null;
+      }
+    }
   }
 
   /**

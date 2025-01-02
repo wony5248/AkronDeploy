@@ -4,6 +4,8 @@ import SelectionContainer from '../container/SelectionContainer';
 import WidgetSelection from './WidgetSelection';
 import AkronContext from 'models/store/context/AkronContext';
 import WidgetModel from 'models/node/WidgetModel';
+import { isDefined } from '@akron/runner';
+import { writeNodeState } from 'components/toolpane/TreeNodeComponent';
 
 /**
  * 사용자의 Selection 상태를 보여주기 위한 Class
@@ -147,7 +149,59 @@ export default class SelectionManager {
           }
           break;
         default: {
-          // const widgetModels = ctx.commandProps?.selectionProp?.widgetModels;
+          const widgetModels = ctx.getCommandProps()?.selectionProp?.widgetModels;
+          if (isDefined(widgetModels)) {
+            newSelectionContainer = new SelectionContainer();
+            widgetModels?.forEach(model => {
+              let currentWidgetModel: WidgetModel | undefined = model.getParent();
+
+              while (
+                isDefined(currentWidgetModel) &&
+                currentWidgetModel?.getWidgetType() !==
+                  'Page' /*&& !checkBusinessOrPageDialogModel(currentWidgetModel)*/
+              ) {
+                writeNodeState(ctx.getAppID(), (currentWidgetModel as WidgetModel).getID(), true);
+                currentWidgetModel = currentWidgetModel?.getParent();
+              }
+              ctx.getEditorUIStore().treeRerender();
+              newSelectionContainer.setWidgetSelection(model);
+            });
+
+            const thumbnailModels = ctx.getCommandProps()?.selectionProp?.thumbnailModels;
+            if (isDefined(thumbnailModels)) {
+              thumbnailModels?.forEach(model => {
+                newSelectionContainer.setSelectedPage(model);
+              });
+              if (ctx.getCommandProps()?.selectionProp?.editingPageModel) {
+                newSelectionContainer.setEditingPage(ctx.getCommandProps()?.selectionProp?.editingPageModel);
+              }
+            } else if (ctx.getCommandProps()?.selectionProp?.editingPageModel) {
+              newSelectionContainer.setEditingPage(ctx.getCommandProps()?.selectionProp?.editingPageModel);
+              newSelectionContainer.setSelectedPage(ctx.getCommandProps()?.selectionProp?.editingPageModel);
+            } else if (isDefined(ctx.getSelectionContainer()?.getEditingPage())) {
+              newSelectionContainer.setEditingPage(ctx.getSelectionContainer()?.getEditingPage());
+              newSelectionContainer.setSelectedPage(ctx.getSelectionContainer()?.getEditingPage());
+            }
+
+            ctx?.getCommand()?.setNewSelectionContainer(newSelectionContainer);
+            ctx.setPrevSelectionContainer(ctx.getSelectionContainer());
+            ctx.getPrevSelectionContainer()?.clearSelectableWidgetModels();
+            ctx.getCommand()?.setNewSelectionContainer(newSelectionContainer);
+
+            // selectableModelList set
+            widgetModels?.forEach(model => {
+              newSelectionContainer.initSelectableWidgetModels(model);
+            });
+            newSelectionContainer.setWidgetModelSelectable();
+          } else if (ctx.getCommandProps()?.reUpdateSelection) {
+            const clonedSelectionContainer = this.cloneSelectionContainer(ctx.getSelectionContainer());
+            if (isDefined(clonedSelectionContainer)) {
+              ctx.getCommand()?.setNewSelectionContainer(clonedSelectionContainer);
+              ctx.setPrevSelectionContainer(ctx.getSelectionContainer());
+              ctx.getCommand()?.setNewSelectionContainer(clonedSelectionContainer);
+            }
+          }
+          break;
         }
       }
     }
