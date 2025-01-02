@@ -123,7 +123,7 @@ class EditableContext extends EditableContextBase {
    * 문서에 포함된 file을 저장할 때의 저장 상태를 나타냅니다.
    * FileUpdateRepository 참고
    */
-  @observable
+  // @observable
   // private fileSaveState: FileSaveState;
 
   /**
