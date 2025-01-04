@@ -22,10 +22,10 @@ export default function checkWidgetInParent(targetModel: WidgetModel): boolean {
   const topLeft = { x: refX, y: refY };
   const bottomRight = { x: refX + refWidth, y: refY + refHeight };
 
-  if (parentTopLeft.x > topLeft.x || parentTopLeft.y > topLeft.y){ 
+  if (parentTopLeft.x > topLeft.x || parentTopLeft.y > topLeft.y) {
     return false;
   }
-  if (parentBottomRight.x < bottomRight.x || parentBottomRight.y < bottomRight.y){
+  if (parentBottomRight.x < bottomRight.x || parentBottomRight.y < bottomRight.y) {
     return false;
   }
   return true;
