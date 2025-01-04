@@ -137,6 +137,13 @@ class EditorStore {
   }
 
   /**
+   * 현재 appModel 반환.
+   */
+  public getAppModel(): AppModel | undefined {
+    return this.ctx.getNewAppModel();
+  }
+
+  /**
    * 현재 선택된 widget들을 가져옴.
    */
   @boundMethod

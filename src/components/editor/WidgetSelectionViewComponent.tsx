@@ -186,7 +186,7 @@ const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props
   }
 
   // 이동 중에 겹쳐진 widget을 알기 위해 현재 widget의 mouse event 받지 않음
-  const pointerEvents = model.getProperties().editingState === WidgetEditingState.MOVE ? 'none' : 'auto';
+  const pointerEvents = model.getEditingState() === WidgetEditingState.MOVE ? 'none' : 'auto';
 
   // const {
   //     handleMouseDownCapture,
@@ -397,6 +397,7 @@ const PageWidgetSelectionViewComponent: React.FC<Props> = observer((props: Props
   return (
     <div
       // Page 하위에 그려지므로, 페이지와 같은 크기의 render 영역을 그려줌. Composite 편집시에도 동일
+      id={`Page-${model.getID()}`}
       css={widgetSelectionOverlay}
       // onMouseDownCapture={handleMouseDownCapture}
       // onMouseDown={handleMouseDown}
@@ -425,7 +426,7 @@ const WidgetSelectionViewComponent: React.FC<Props> = ({ model }: Props) => {
   const editorStore = useEditorStore();
   const isTopWidget = editorStore.getEditingWidgetModel()?.getID() === model.getID();
 
-  if (modelType === 'App' || model.getProperties().editingState === WidgetEditingState.FLOATING) {
+  if (modelType === 'App' || model.getEditingState() === WidgetEditingState.FLOATING) {
     return null;
   }
   if (modelType === 'Page' || (modelType === 'BusinessDialog' && isTopWidget)) {

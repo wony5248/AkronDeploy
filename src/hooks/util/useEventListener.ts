@@ -181,60 +181,80 @@ const useEventListener: Hook = node => {
    * hitItemContainer 생성/변경용 으로만 사용됩니다.
    */
   const handleClick: MouseHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new MouseEvent(e, node);
     // editorStore.handleClick(event);
   };
 
   const handleDoubleClick: MouseHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new MouseEvent(e, node);
     // editorStore.handleDoubleClick(event);
   };
 
   const handleMouseDown: MouseHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new MouseEvent(e, node);
     // editorStore.handleMouseDown(event);
   };
 
   const handleMouseMove: MouseHandlerType = e => {
-    if (checkDontResave()) return;
+    if (checkDontResave()) {
+      return;
+    }
     const event = new MouseEvent(e, node);
     // editorStore.handleMouseMove(event);
   };
 
   const handleMouseOut: MouseHandlerType = e => {
-    if (checkDontResave()) return;
+    if (checkDontResave()) {
+      return;
+    }
     const event = new MouseEvent(e, node);
     // editorStore.handleMouseOut(event);
   };
 
   const handleMouseOver: MouseHandlerType = e => {
-    if (checkDontResave()) return;
+    if (checkDontResave()) {
+      return;
+    }
     const event = new MouseEvent(e, node);
     // editorStore.handleMouseOver(event);
   };
 
   const handleMouseUp: MouseHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new MouseEvent(e, node);
     // editorStore.handleMouseUp(event);
   };
 
   const handleMouseDownCapture: MouseHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new MouseEvent(e, node);
     // editorStore.handleMouseDownCapture(event);
   };
 
   const handleMouseUpCapture: MouseHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new MouseEvent(e, node);
     // editorStore.handleMouseUpCapture(event);
   };
   const handleMouseMoveCapture: MouseHandlerType = e => {
-    if (checkDontResave()) return;
+    if (checkDontResave()) {
+      return;
+    }
     if (e.buttons === 1) {
       const event = new MouseEvent(e, node);
       // editorStore.handleMouseMoveCapture(event);
@@ -242,127 +262,169 @@ const useEventListener: Hook = node => {
   };
 
   const handleMouseEnter: MouseHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new MouseEvent(e, node);
     // editorStore.handleMouseEnter(event);
   };
 
   const handleMouseLeave: MouseHandlerType = e => {
-    if (checkDontResave()) return;
+    if (checkDontResave()) {
+      return;
+    }
     const event = new MouseEvent(e, node);
     // editorStore.handleMouseLeave(event);
   };
 
   const handleContextMenu: MouseHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new MouseEvent(e, node);
     // editorStore.handleContextMenu(event);
   };
 
   const handleWheel: WheelHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new WheelEvent(e, node);
     // editorStore.handleWheel(event);
   };
 
   const handleKeyDown: KeyHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new KeyEvent(e, node);
     // editorStore.handleKeyDown(event);
   };
 
   const handleKeyUp: KeyHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new KeyEvent(e, node);
     // editorStore.handleKeyUp(event);
   };
 
   const handleKeyPressed: KeyHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new KeyEvent(e, node);
     // editorStore.handleKeyPressed(event);
   };
 
   const handleBeforeInput: FormHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new FormEvent(e, node);
     // editorStore.handleBeforeInput(event);
   };
 
   const handleInput: FormHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new FormEvent(e, node);
     // editorStore.handleInput(event);
   };
 
   const handleFocus: FocusHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new FocusEvent(e, node);
     // editorStore.handleFocus(event);
   };
 
   const handleBlur: FocusHandlerType = e => {
-    if (checkDontResave()) return;
+    if (checkDontResave()) {
+      return;
+    }
     const event = new FocusEvent(e, node);
     // editorStore.handleBlur(event);
   };
 
   const handleCompositionUpdate: CompositionHandelrType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new CompositionEvent(e, node);
     // editorStore.handleCompositionUpdate(event);
   };
 
   const handleDrag: DragHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new DragEvent(e, node);
     // editorStore.handleDrag(event);
   };
 
   const handleDragStart: DragHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new DragEvent(e, node);
     // editorStore.handleDragStart(event);
   };
 
   const handleDragEnd: DragHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new DragEvent(e, node);
     // editorStore.handleDragEnd(event);
   };
 
   const handleDragEnter: DragHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new DragEvent(e, node);
     // editorStore.handleDragEnter(event);
   };
 
   const handleDragLeave: DragHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new DragEvent(e, node);
     // editorStore.handleDragLeave(event);
   };
 
   const handleDragOver: DragHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new DragEvent(e, node);
     // editorStore.handleDragOver(event);
   };
 
   const handleScroll: DragHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new UIEvent(e, node);
     // editorStore.handleScroll(event);
   };
 
   const handleDrop: DragHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new DragEvent(e, node);
     // editorStore.handleDrop(event);
   };
 
   const handleOnChange: FormHandlerType = (e, ...eventParams) => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     let value: any;
     const widgetModelEvent = eventTypeMap.get(node.getWidgetType());
     if (isDefined(widgetModelEvent) && widgetModelEvent.get('onChange')) {
@@ -385,145 +447,193 @@ const useEventListener: Hook = node => {
   };
 
   const handleOnContextMenu: MouseHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new MouseEvent(e, node);
     // editorStore.handleOnContextMenu(event);
   };
 
   const handleInvalid: FormHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new FormEvent(e, node);
     // editorStore.handleInvalid(event);
   };
 
   const handleReset: FormHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new FormEvent(e, node);
     // editorStore.handleReset(event);
   };
 
   const handleSearch: FormHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new FormEvent(e, node);
     // editorStore.handleSearch(event);
   };
 
   const handleSelect: FormHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new FormEvent(e, node);
     // editorStore.handleSelect(event);
   };
 
   const handleSubmit: FormHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new FormEvent(e, node);
     // editorStore.handleSubmit(event);
   };
 
   const handleCopy: ClipboardHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new ClipboardEvent(e, node);
     // editorStore.handleCopy(event);
   };
 
   const handleCut: ClipboardHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new ClipboardEvent(e, node);
     // editorStore.handleCut(event);
   };
 
   const handlePaste: ClipboardHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new ClipboardEvent(e, node);
     // editorStore.handlePaste(event);
   };
 
   const handleTouchStart: TouchHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new TouchEvent(e, node);
     // editorStore.handleTouchStart(event);
   };
 
   const handleTouchEnd: TouchHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new TouchEvent(e, node);
     // editorStore.handleTouchEnd(event);
   };
 
   const handleTouchMove: TouchHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new TouchEvent(e, node);
     // editorStore.handleTouchMove(event);
   };
 
   const handlePointerDown: PointerHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new PointerEvent(e, node);
     // editorStore.handlePointerDown(event);
   };
 
   const handlePointerMove: PointerHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new PointerEvent(e, node);
     // editorStore.handlePointerMove(event);
   };
 
   const handlePointerUp: PointerHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new PointerEvent(e, node);
     // editorStore.handlePointerUp(event);
   };
 
   const handlePointerCancel: PointerHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new PointerEvent(e, node);
     // editorStore.handlePointerCancel(event);
   };
 
   const handlePointerEnter: PointerHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new PointerEvent(e, node);
     // editorStore.handlePointerEnter(event);
   };
 
   const handlePointerLeave: PointerHandlerType = e => {
-    if (checkDontResave()) return;
+    if (checkDontResave()) {
+      return;
+    }
     const event = new PointerEvent(e, node);
     // editorStore.handlePointerLeave(event);
   };
 
   const handlePointerOver: PointerHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new PointerEvent(e, node);
     // editorStore.handlePointerOver(event);
   };
 
   const handleGotPointerCapture: PointerHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new PointerEvent(e, node);
     // editorStore.handleGotPointerCapture(event);
   };
 
   const handleLostPointerCapture: PointerHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new PointerEvent(e, node);
     // editorStore.handleLostPointerCapture(event);
   };
 
   const handleAnimationStart: AnimationHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new AnimationEvent(e, node);
     // editorStore.handleAnimationStart(event);
   };
 
   const handleAnimationEnd: AnimationHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new AnimationEvent(e, node);
     // editorStore.handleAnimationEnd(event);
   };
 
   const handleAnimationIteration: AnimationHandlerType = e => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const event = new AnimationEvent(e, node);
     // editorStore.handleAnimationIteration(event);
   };
@@ -564,7 +674,9 @@ const useEventListener: Hook = node => {
   // RuntimeEventHandler에서 BC Event register를 위한 metadata가 필요하므로 EventProperty 파라미터로 넘김
 
   const handleCustom: CustomHandlerType = (eventName, e, ...eventParams) => {
-    if (checkResave()) return;
+    if (checkResave()) {
+      return;
+    }
     const widgetModelEvent = eventTypeMap.get(node.getWidgetType());
     if (isDefined(widgetModelEvent) && widgetModelEvent.get(eventName)) {
       const targetEventInfo = widgetModelEvent.get(eventName);

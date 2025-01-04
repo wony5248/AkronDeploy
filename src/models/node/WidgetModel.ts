@@ -9,6 +9,7 @@ import {
 import { boundMethod } from 'autobind-decorator';
 import { action, makeObservable, observable, override } from 'mobx';
 import { OperationMessage } from 'models/message/OperationMessage';
+import { WidgetEditingState } from 'models/store/command/widget/WidgetModelTypes';
 import IdContainerController from 'models/store/container/IdContainerController';
 
 export type WidgetID = number;
@@ -38,6 +39,14 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
   private selectable: boolean;
 
   /**
+   * 현재 이동/리사이징 중인지 상태.
+   * 위젯마다가 아닌 글로벌한 상태값이 필요할 때 사용.
+   * widgetEditInfoContainer의 editingState와 중복 사용을 확인해봐야함
+   */
+  @observable
+  private editingState: WidgetEditingState;
+
+  /**
    * 생성자
    */
   constructor(args: IWidgetModelInitProps<Properties>) {
@@ -52,6 +61,7 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
     makeObservable(this);
     this.rerenderSwitch = false;
     this.selectable = false;
+    this.editingState = WidgetEditingState.NONE;
   }
 
   /**
@@ -74,6 +84,21 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
 
   public getSelectable(): boolean {
     return this.selectable;
+  }
+
+  /**
+   * state getter.
+   */
+  public getEditingState(): WidgetEditingState {
+    return this.editingState;
+  }
+
+  /**
+   * state setter.
+   */
+  @action
+  public setEditingState(editingState: WidgetEditingState) {
+    this.editingState = editingState;
   }
 
   /**
@@ -376,7 +401,6 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
    * });
    */
   @boundMethod
-  @override
   public forEachChildWithIndex(fn: (child: WidgetModel, index: number) => void) {
     super.forEachChildWithIndex(fn as (child: BaseWidgetModel, index: number) => void);
   }
@@ -390,7 +414,6 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
    * });
    */
   @boundMethod
-  @override
   public forEachChild(fn: (child: WidgetModel) => void) {
     super.forEachChild(fn as (child: BaseWidgetModel) => void);
   }
@@ -404,7 +427,6 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
    * });
    */
   @boundMethod
-  @override
   public mapChild<T>(fn: (child: WidgetModel) => T): T[] {
     return super.mapChild(fn as (child: BaseWidgetModel) => T);
   }

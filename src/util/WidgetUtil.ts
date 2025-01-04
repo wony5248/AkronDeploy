@@ -13,14 +13,20 @@ export default function checkWidgetInParent(targetModel: WidgetModel): boolean {
   const parentRefWidth = targetModel.getParent()?.getRefWidth() ?? 1;
   const parentRefHeight = targetModel.getParent()?.getRefHeight() ?? 1;
 
-  if (!refX || !refY || !refWidth || !refHeight) return false;
+  if (!refX || !refY || !refWidth || !refHeight) {
+    return false;
+  }
 
   const parentTopLeft = { x: parentRefX, y: parentRefY };
   const parentBottomRight = { x: parentRefX + parentRefWidth, y: parentRefY + parentRefHeight };
   const topLeft = { x: refX, y: refY };
   const bottomRight = { x: refX + refWidth, y: refY + refHeight };
 
-  if (parentTopLeft.x > topLeft.x || parentTopLeft.y > topLeft.y) return false;
-  if (parentBottomRight.x < bottomRight.x || parentBottomRight.y < bottomRight.y) return false;
+  if (parentTopLeft.x > topLeft.x || parentTopLeft.y > topLeft.y) {
+    return false;
+  }
+  if (parentBottomRight.x < bottomRight.x || parentBottomRight.y < bottomRight.y) {
+    return false;
+  }
   return true;
 }

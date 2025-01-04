@@ -1,6 +1,8 @@
+import PageListComponent, { PageItem } from 'components/toolpane/PageListComponent';
 import ToolPaneTitleComponent from 'components/toolpane/ToolPaneTitleComponent';
 import useEditorStore from 'hooks/useEditorStore';
 import { observer } from 'mobx-react-lite';
+import WidgetModel from 'models/node/WidgetModel';
 import * as React from 'react';
 import { ForwardedRef } from 'react';
 import { pageSorterViewComponent } from 'styles/toolpane/LeftToolpane';
@@ -10,6 +12,7 @@ import { pageSorterViewComponent } from 'styles/toolpane/LeftToolpane';
  */
 const PageSorterViewComponent = React.forwardRef((_, ref: ForwardedRef<HTMLDivElement>) => {
   const editorStore = useEditorStore();
+  const appModel = editorStore.getAppModel();
   // const widgetModel = editorStore.getEditingWidgetModel();
   // const prop = widgetModel.getProperties().content;
 
@@ -51,6 +54,16 @@ const PageSorterViewComponent = React.forwardRef((_, ref: ForwardedRef<HTMLDivEl
   //     });
   //     sorterViewRender = <PageListComponent pageList={pageItemList} />;
   // }
+  const pageItemList: PageItem[] = [];
+  appModel?.mapChild(child => {
+    const pageItem: PageItem = {
+      id: child.getID(),
+      content: child as WidgetModel,
+      type: 'page',
+    };
+    pageItemList.push(pageItem);
+  });
+  let sorterViewRender = <PageListComponent pageList={pageItemList} />;
 
   return (
     <div css={pageSorterViewComponent} ref={ref}>
@@ -63,6 +76,7 @@ const PageSorterViewComponent = React.forwardRef((_, ref: ForwardedRef<HTMLDivEl
         showPlusButton
         plusButtonLogicType="AddPage"
       />
+      {sorterViewRender}
       {/* <PageSorterViewHotKeyWrapper>{sorterViewRender}</PageSorterViewHotKeyWrapper> */}
     </div>
   );
