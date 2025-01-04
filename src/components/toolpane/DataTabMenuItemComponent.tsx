@@ -1,7 +1,7 @@
 import useEditorStore from 'hooks/useEditorStore';
 import { observer } from 'mobx-react-lite';
 import { DataTabIndex } from 'store/app/EditorUIStore';
-import { pageThumbnail, pageThumbnailName, pageThumbnailTitle } from 'styles/toolpane/PageWidgetList';
+import { pageThumbnail, pageThumbnailName, pageThumbnailTitle } from 'styles/toolpane/PageList';
 
 /**
  * DataTabMenuItemComponent Props
@@ -29,7 +29,7 @@ const DataTabMenuItemComponent: React.FC<IProps> = (props: IProps) => {
       <div css={pageThumbnailTitle}>
         {/* <ImageResourceComponent css={pageThumbnailIndex} id={imgID} w={'16px'} h={'16px'} /> */}
         <button style={{ width: '16px', height: '16px' }} />
-        <label css={pageThumbnailName}>{labelString}</label>
+        <label css={pageThumbnailName(false)}>{labelString}</label>
       </div>
     </div>
   );

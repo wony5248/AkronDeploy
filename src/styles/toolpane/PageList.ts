@@ -1,3 +1,4 @@
+/** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import { appPrimaryColor150, appPrimaryColor200, basicColorFill600, basicColorFill900 } from 'styles/Color';
 import { selectionOverlayZIndex } from 'styles/MUIZIndex';
@@ -22,14 +23,15 @@ export const pageThumbnail = (isSelected: boolean) => css`
   padding-top: 5px;
   padding-bottom: 5px;
   border-radius: 8px;
+
   background-color: ${isSelected ? appPrimaryColor200 : 'transparent'};
 
   &:hover {
-    background-color: ${appPrimaryColor150};
+    border-color: ${appPrimaryColor150};
   }
 `;
 
-export const pageThumbnailImg = css`
+export const pageThumbnailImg = (isSelected: boolean) => css`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -41,22 +43,17 @@ export const pageThumbnailImg = css`
   border: solid 2px #e6e6e6;
   border-radius: 6px;
 
-  &.isSelected {
-    border-color: #6d71f9;
-    border-width: 3px;
-  }
+  border-color: ${isSelected ? '#6d71f9' : ''};
+  border-width: ${isSelected ? '3px' : ''};
 
   &:hover {
     border-color: #6d71f9;
   }
 `;
 
-export const pageThumbnailArrow = css`
+export const pageThumbnailArrow = (hidden: boolean) => css`
   display: inline;
-
-  &.hidden {
-    visibility: hidden;
-  }
+  visibility: ${hidden ? 'hidden' : 'visible'};
 `;
 
 export const pageThumbnailTitle = css`
@@ -66,18 +63,16 @@ export const pageThumbnailTitle = css`
   min-height: 16px;
 `;
 
-export const pageThumbnailIndex = css`
+export const pageThumbnailIndex = (hidden: boolean) => css`
   font-size: 12px;
   color: ${basicColorFill600};
   letter-spacing: 0;
   font-weight: 600;
 
-  &.hidden {
-    text-decoration: line-through;
-  }
+  text-decoration: ${hidden ? 'line-through' : 'none'};
 `;
 
-export const pageThumbnailName = css`
+export const pageThumbnailName = (hidden: boolean) => css`
   font-size: 12px;
   color: ${basicColorFill900};
   letter-spacing: 0;
@@ -88,9 +83,7 @@ export const pageThumbnailName = css`
   overflow: hidden;
   white-space: nowrap;
 
-  &.hidden {
-    text-decoration: line-through;
-  }
+  text-decoration: ${hidden ? 'line-through' : 'none'};
 `;
 
 export const pageThumbnailIcon = css`
@@ -100,7 +93,7 @@ export const pageThumbnailIcon = css`
   margin-left: auto;
 `;
 
-export const pageSection = css`
+export const pageSection = (isSelected: boolean) => css`
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
@@ -109,9 +102,7 @@ export const pageSection = css`
   padding-left: 10px;
   border-radius: 8px;
 
-  &.isSelected {
-    background-color: ${appPrimaryColor200};
-  }
+  background-color: ${isSelected ? appPrimaryColor200 : 'transparent'};
 `;
 
 export const pageSectionLabel = css`
@@ -120,7 +111,8 @@ export const pageSectionLabel = css`
   padding-left: 8px;
 `;
 
-export const ghostItem = css`
+// pageThumbnailTitle, pageThumbnailImg -> hidden
+export const ghostItem = (isHidden: boolean) => css`
   background-color: #eeeffd;
   width: 140px;
   height: 8px;
@@ -128,14 +120,7 @@ export const ghostItem = css`
   border-bottom: #6d71f9 solid 1px;
   margin-top: 15px;
   margin-bottom: 15px;
-
-  .pageThumbnailTitle {
-    display: none;
-  }
-
-  .pageThumbnailImg {
-    display: none;
-  }
+  display: ${isHidden ? 'none' : ''};
 `;
 
 export const pageChosenMulti = css`

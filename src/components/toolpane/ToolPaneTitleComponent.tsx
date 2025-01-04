@@ -73,7 +73,7 @@ const ToolPaneTitleComponent: React.FC<IProps> = ({
         {titleID === 'MSG_CM_TLP_TITLE_SERVICE_MAPPING' && (
           <button css={toolPanePopupButton} type={'button'} aria-label={'Back'} onClick={onClickBackButton}>
             {/* <ImageResourceComponent id={'IC_TOOLPANE_ARROW_BACK'} w={'16px'} h={'16px'} /> */}
-            <button style={{ width: '16px', height: '16px' }} />
+            <div style={{ width: '16px', height: '16px' }} />
           </button>
         )}
       </div>
@@ -82,13 +82,13 @@ const ToolPaneTitleComponent: React.FC<IProps> = ({
         {showPopupButton && (
           <button css={toolPanePopupButton} type={'button'} aria-label={'Popup'} onClick={onClickPopupButton}>
             {/* <ImageResourceComponent id={'IC_L_TOOLPANE_SEPARATION'} w={'16px'} h={'16px'} /> */}
-            <button style={{ width: '16px', height: '16px' }} />
+            <div style={{ width: '16px', height: '16px' }} />
           </button>
         )}
         {showCloseButton && (
           <button css={toolPaneCloseButton} type={'button'} aria-label={'Close'} onClick={onClickCloseButton}>
             {/* <ImageResourceComponent id={'IC_L_TOOLPANE_CLOSE'} w={'16px'} h={'16px'} /> */}
-            <button style={{ width: '16px', height: '16px' }} />
+            <div style={{ width: '16px', height: '16px' }} />
           </button>
         )}
         {showPlusButton && (
@@ -99,7 +99,7 @@ const ToolPaneTitleComponent: React.FC<IProps> = ({
             onClick={onClickPlusButton}
           >
             {/* <ImageResourceComponent id={'IC_TOOLPANE_PAGEADD'} w={'16px'} h={'16px'} /> */}
-            <button style={{ width: '16px', height: '16px' }} />
+            <div style={{ width: '16px', height: '16px' }} />
           </button>
         )}
       </div>

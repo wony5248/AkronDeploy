@@ -32,7 +32,7 @@ const TreeToolPaneComponent = React.forwardRef((_, ref: ForwardedRef<HTMLDivElem
           <div css={reverseViewer} /*onMouseLeave={() => store.setTargetModel(undefined)}*/>
             {/* {topWidgetModels?.mapChild(
                             widgetModel =>
-                                widgetModel.getProperties().editingState !== WidgetEditingState.FLOATING && (
+                                widgetModel.getEditingState() !== WidgetEditingState.FLOATING && (
                                     <TreeNodeComponent
                                         key={widgetModel.getID()}
                                         widgetModel={widgetModel}
