@@ -10,6 +10,7 @@ import ClipboardContainer from 'models/store/container/ClipboardContainer';
 import HitContainer from 'models/store/container/HitContainer';
 import PropContainer from 'models/store/container/PropContainer';
 import SelectionContainer from 'models/store/container/SelectionContainer';
+import UpdateMessageContainer from 'models/store/container/UpdateMessageContainer';
 import WidgetEditInfoContainer from 'models/store/container/WidgetEditInfoContainer';
 import {
   ContextBaseInitializeProp,
@@ -20,6 +21,7 @@ import {
   MouseModeType,
 } from 'models/store/context/ContextTypes';
 import EditableContext, { PageRefPosition } from 'models/store/context/EditableContext';
+import { SaveState } from 'models/store/EditorStore';
 import EventState from 'models/store/event/EventState';
 import { NavigateFunction } from 'react-router-dom';
 import { AppInfo } from 'store/app/AppInfo';
@@ -131,7 +133,7 @@ export default class AkronContext {
       widgetEditInfoContainer: this.createWidgetEditInfoContainer(),
       // errorBoundaryContainer: this.createErrorBoundaryContainer(),
       // smartGuideContainer: this.createSmartGuideContainer(),
-      // updateMessageContainer: this.createUpdateMessageContainer(),
+      updateMessageContainer: this.createUpdateMessageContainer(),
       // pageContainer: this.createPageContainer({
       //   startPageID: initProp.startPageID,
       //   startPageURL: initProp.startPageURL,
@@ -271,6 +273,22 @@ export default class AkronContext {
   @boundMethod
   public setCommand(command: Command | undefined): void {
     this.appEditableContext.setCommand(command);
+  }
+
+  /**
+   * UpdateMessageContainer 초기값을 생성해 반환합니다
+   */
+  @boundMethod
+  public createUpdateMessageContainer(): UpdateMessageContainer {
+    return new UpdateMessageContainer();
+  }
+
+  /**
+   * UpdateMessageContainer을 반환합니다
+   */
+  @boundMethod
+  public getUpdateMessageContainer(): UpdateMessageContainer {
+    return this.appEditableContext.getUpdateMessageContainer();
   }
 
   /**
@@ -427,6 +445,14 @@ export default class AkronContext {
   @boundMethod
   public setState(state: EventState): void {
     this.appEditableContext.setEventState(state);
+  }
+
+  /**
+   * NeedSaveState를 설정합니다
+   */
+  @boundMethod
+  public setNeedSaveState(needSaveState: boolean): void {
+    this.appEditableContext.setNeedSaveState(needSaveState);
   }
 
   /**

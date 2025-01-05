@@ -219,3 +219,14 @@ export interface IPropInstance {
   objectTypeMetaId: number | null;
   isList: boolean;
 }
+
+/**
+ * section interface 입니다.
+ */
+export interface PageSection {
+  name: string;
+  id: number;
+  isExpanded: boolean;
+  pageCount: number;
+  isSelected: boolean;
+}
