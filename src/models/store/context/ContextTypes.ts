@@ -10,6 +10,7 @@ import PropContainer from 'models/store/container/PropContainer';
 import SelectionContainer from 'models/store/container/SelectionContainer';
 import UpdateMessageContainer from 'models/store/container/UpdateMessageContainer';
 import WidgetEditInfoContainer from 'models/store/container/WidgetEditInfoContainer';
+import { SaveState } from 'models/store/EditorStore';
 import EventState from 'models/store/event/EventState';
 import { NavigateFunction } from 'react-router-dom';
 import { AppInfo } from 'store/app/AppInfo';
@@ -155,7 +156,7 @@ export interface EditableContextProp extends EditableContextBaseProp {
   //   commandController?: CommandController;
   //   previewCommandCompositor?: CommandCompositor;
   //   commandMode: CommandMode;
-  //   saveState: SaveState;
+  saveState: SaveState;
   //   fileSaveState: FileSaveState;
   zoomRatio: number;
   previewZoomRatio: number;

@@ -1,9 +1,10 @@
+import { IWidgetCommonProperties } from '@akron/runner';
 import { makeObservable } from 'mobx';
 import WidgetModel, { IWidgetModelInitProps } from 'models/node/WidgetModel';
 
 interface AppModelInitProps extends IWidgetModelInitProps<null> {}
 
-class AppModel extends WidgetModel<null> {
+class AppModel extends WidgetModel<IWidgetCommonProperties> {
   //   /**
   //    * DeviceInfo
   //    */

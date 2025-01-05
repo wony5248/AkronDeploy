@@ -14,6 +14,7 @@ import UpdateMessageContainer from 'models/store/container/UpdateMessageContaine
 import WidgetEditInfoContainer from 'models/store/container/WidgetEditInfoContainer';
 import { EditableContextProp } from 'models/store/context/ContextTypes';
 import EditableContextBase from 'models/store/context/EditableContextBase';
+import { SaveState } from 'models/store/EditorStore';
 import EventState from 'models/store/event/EventState';
 import EditorUIStore from 'store/app/EditorUIStore';
 import ContextMenuContainer from 'store/context-menu/ContextMenuContainer';
@@ -126,6 +127,12 @@ class EditableContext extends EditableContextBase {
    */
   // @observable
   // private fileSaveState: FileSaveState;
+
+  /**
+   * 저장 작업 진행중일 때, 해당 저장 작업 이후 다시 저장 작업이 필요한지를 나타냅니다.
+   */
+  @observable
+  private saveState: SaveState;
 
   /**
    * 저장 작업 진행중일 때, 해당 저장 작업 이후 다시 저장 작업이 필요한지를 나타냅니다.
@@ -321,6 +328,7 @@ class EditableContext extends EditableContextBase {
     this.appModeContainer = initProp.appModeContainer;
     this.needSaveState = initProp.needSaveState;
     this.commandProps = initProp.commandProps;
+    this.saveState = initProp.saveState;
     // this.command = initProp.commandController;
     // this.previewCommandCompositor = initProp.previewCommandCompositor;
     // this.commandMode = initProp.commandMode;
@@ -379,7 +387,23 @@ class EditableContext extends EditableContextBase {
    * EventState를 반환합니다
    */
   @boundMethod
-  public getEventstate(): EventState {
+  public getSaveState(): SaveState {
+    return this.saveState;
+  }
+
+  /**
+   * EventState를 설정합니다
+   */
+  @boundMethod
+  public setSaveState(saveState: SaveState): void {
+    this.saveState = saveState;
+  }
+
+  /**
+   * EventState를 반환합니다
+   */
+  @boundMethod
+  public getEventState(): EventState {
     return this.state;
   }
 

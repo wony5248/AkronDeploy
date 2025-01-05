@@ -112,7 +112,7 @@ export default class AkronContext {
       commandProps: this.createCommandProps(),
       // commandController: this.createCommand(),
       // commandMode: this.createCommandMode(),
-      // saveState: this.createSaveState(),
+      saveState: this.createSaveState(),
       // fileSaveState: this.createFileSaveState(),
       zoomRatio: this.createZoomRatio(),
       previewZoomRatio: this.createPreviewZoomRatio(),
@@ -390,6 +390,30 @@ export default class AkronContext {
   }
 
   /**
+   * SaveState 초기값을 생성해 반환합니다
+   */
+  @boundMethod
+  public createSaveState(): SaveState {
+    return SaveState.SAVE_COMPLETE;
+  }
+
+  /**
+   * SaveState를 반환합니다
+   */
+  @boundMethod
+  public getSaveState(): SaveState {
+    return this.appEditableContext.getSaveState();
+  }
+
+  /**
+   * SaveState를 반환합니다
+   */
+  @boundMethod
+  public setSaveState(saveState: SaveState): void {
+    this.appEditableContext.setSaveState(saveState);
+  }
+
+  /**
    * NeedSaveState 초기값을 생성해 반환합니다
    */
   @boundMethod
@@ -435,7 +459,7 @@ export default class AkronContext {
    */
   @boundMethod
   public getState(): EventState {
-    return this.appEditableContext.getEventstate();
+    return this.appEditableContext.getEventState();
   }
 
   /**
@@ -453,6 +477,14 @@ export default class AkronContext {
   @boundMethod
   public setNeedSaveState(needSaveState: boolean): void {
     this.appEditableContext.setNeedSaveState(needSaveState);
+  }
+
+  /**
+   * NeedSaveState를 반환합니다
+   */
+  @boundMethod
+  public getNeedSaveState(): boolean {
+    return this.appEditableContext.getNeedSaveState();
   }
 
   /**
