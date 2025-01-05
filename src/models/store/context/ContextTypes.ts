@@ -8,8 +8,8 @@ import CompositeComponentContainer from 'models/store/container/CompositeCompone
 import HitContainer from 'models/store/container/HitContainer';
 import PropContainer from 'models/store/container/PropContainer';
 import SelectionContainer from 'models/store/container/SelectionContainer';
+import UpdateMessageContainer from 'models/store/container/UpdateMessageContainer';
 import WidgetEditInfoContainer from 'models/store/container/WidgetEditInfoContainer';
-import { PageRefPosition } from 'models/store/context/EditableContext';
 import EventState from 'models/store/event/EventState';
 import { NavigateFunction } from 'react-router-dom';
 import { AppInfo } from 'store/app/AppInfo';
@@ -177,7 +177,7 @@ export interface EditableContextProp extends EditableContextBaseProp {
   widgetEditInfoContainer: WidgetEditInfoContainer;
   //   errorBoundaryContainer: ErrorBoundaryContainer;
   //   smartGuideContainer: SmartGuideContainer;
-  //   updateMessageContainer: UpdateMessageContainer;
+  updateMessageContainer: UpdateMessageContainer;
   //   pageContainer: PageContainer;
   editorUIStore: EditorUIStore;
   //   outerServiceStore: OuterServiceStore;

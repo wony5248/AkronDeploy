@@ -3,7 +3,7 @@ import { AkronEventMapper } from './event/EventMapper';
 import { createContext } from 'react';
 import { AkronCommandMapper } from './command/common/CommandMapper';
 import CommandProps from './command/common/CommandProps';
-import { action } from 'mobx';
+import { action, runInAction } from 'mobx';
 import CommandManager from './command/common/CommandManager';
 import SelectionManager from 'models/store/selection/SelectionManager';
 import EditorUIStore from 'store/app/EditorUIStore';
@@ -16,11 +16,12 @@ import ContextMenuContainer from 'store/context-menu/ContextMenuContainer';
 import AkronContext from 'models/store/context/AkronContext';
 import EventState from 'models/store/event/EventState';
 import { LeftToolPaneType } from 'store/toolpane/ToolPaneComponentInfo';
-import { BaseWidgetModel, Nullable } from '@akron/runner';
+import { BaseWidgetModel, isUndefined, Nullable } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { AppInfo } from 'store/app/AppInfo';
 import CompositeComponentContainer from 'models/store/container/CompositeComponentContainer';
 import WidgetModel from 'models/node/WidgetModel';
+import CommandEnum from 'models/store/command/common/CommandEnum';
 
 /**
  * Editor Store 생성자 파라미터 Interface 입니다.
@@ -59,6 +60,8 @@ class EditorStore {
   private readonly commandManager: CommandManager;
 
   private readonly selectionManager: SelectionManager;
+
+  private saveTimerId: undefined | NodeJS.Timeout;
 
   private saveState: SaveState;
 
@@ -109,10 +112,20 @@ class EditorStore {
   public handleCommandEvent(commandProps: WidgetCommandProps): void {
     const ctx = this.getCtxAsAppContext();
     this.initContext(commandProps);
-    this.commandManager.execute(ctx);
+    this.commandManager.execute(this.ctx);
     this.selectionManager.updateSelection(this.getCtxAsAppContext());
     // this.updateProperties(this.getCtxAsAppContext());
-    // this.saveApp();
+    this.saveApp();
+  }
+
+  /**
+   * 문서에 변경 사항이 생길 경우 0.5초마다 자동 저장하는 핸들러
+   */
+  @boundMethod
+  public handleSave(commandProps: WidgetCommandProps): void {
+    this.initContext(commandProps);
+    this.commandManager.execute(this.getCtxAsAppContext());
+    this.saveTimerId = undefined;
   }
 
   /**
@@ -217,11 +230,115 @@ class EditorStore {
   }
 
   /**
+   * NeedSaveState setter
+   */
+  @boundMethod
+  public setNeedSaveState(state: boolean): void {
+    runInAction(() => {
+      this.getCtxAsAppContext().setNeedSaveState(state);
+    });
+  }
+
+  /**
    * SaveState setter
    */
   @boundMethod
   public setSaveState(state: SaveState): void {
     this.saveState = state;
+  }
+
+  /**
+   * updateMessage를 전송합니다.
+   */
+  @boundMethod
+  public sendUpdateMessage(): void {
+    const ctx = this.getCtxAsAppContext();
+    const updateMessageContainer = this.ctx.getUpdateMessageContainer();
+
+    if (this.saveTimerId) {
+      clearTimeout(this.saveTimerId);
+      updateMessageContainer.setTransformed(false);
+    }
+
+    if (
+      !updateMessageContainer.getTransformed() &&
+      (updateMessageContainer.hasMessage() || updateMessageContainer.getAPIMessages().length > 0) // length api 뚫기
+    ) {
+      if (this.getSaveState() === SaveState.SAVE_COMPLETE) {
+        updateMessageContainer.setTransformed(true);
+
+        this.saveTimerId = global.setTimeout(() => {
+          this.setSaveState(SaveState.SAVING);
+          this.handleSave({ commandID: CommandEnum.SAVE });
+        }, 500);
+      } else {
+        this.setNeedSaveState(true);
+      }
+    }
+  }
+
+  /**
+   * updateMessage를 생성합니다.
+   */
+  public makeUpdateMessage(): void {
+    const command = this.ctx.getCommand();
+    const commandProps = this.ctx.getCommandProps();
+    const updateMessageContainer = this.ctx;
+    if (isUndefined(updateMessageContainer) || command === undefined || commandProps === undefined) {
+      return;
+    }
+
+    // let updateMessages = command.make();
+    // switch (commandProps.commandID) {
+    //   case CommandEnum.UNDO:
+    //     updateMessages = command.();
+    //     break;
+    //   case CommandEnum.REDO:
+    //     updateMessages = command.makeReApplyUpdateMessages();
+    //     break;
+    //   default:
+    //     updateMessages = command.makeApplyUpdateMessages();
+    //     break;
+    // }
+    // this.appendServerMessage(this.getCtxAsAppContext());
+    // if (updateMessages.length === 0) {
+    //   return;
+    // }
+
+    // const ctxAs = this.getCtxAsAppContext();
+    // const id = ctxAs.appID;
+
+    // updateMessageContainer.appendUpdateMessages(updateMessages, id);
+  }
+
+  /**
+   * App의 변경 사항을 메시지로 만들어 서버로 보냅니다.
+   */
+  @boundMethod
+  private saveApp(): void {
+    // if (!(this.ctx.getSaveState() === SaveState.SAVE_ERROR || this.ctx.getSaveState() === SaveState.RESAVE_ERROR)) {
+    //   AppRepositorySAS.sendUpdateMessage(this.ctx).then(result => {
+    //     runInAction(() => {
+    //       // eslint-disable-next-line no-empty
+    //       if (result === 'nonUpdate') {
+    //       } else if (result === 'updateError') {
+    //         if (this.ctx.getSaveState() === SaveState.RESAVING) {
+    //           this.ctx.setSaveState(SaveState.RESAVE_ERROR);
+    //         } else {
+    //           this.ctx.setSaveState(SaveState.SAVE_ERROR);
+    //         }
+    //       } else if (result === 'updateComplete') {
+    //         this.ctx.setSaveState(SaveState.SAVE_COMPLETE);
+    //         const resetDate = new Date();
+    //         this.ctx.setLastSavedTime(resetDate);
+    //         if (this.ctx.getNeedSaveState()) {
+    //           this.ctx.setSaveState(SaveState.SAVING);
+    //           this.saveApp(this.ctx);
+    //         }
+    //       }
+    //     });
+    //   });
+    // }
   }
 
   /**

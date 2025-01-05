@@ -10,6 +10,7 @@ import HitContainer from 'models/store/container/HitContainer';
 import PropContainer from 'models/store/container/PropContainer';
 import SelectionContainer from 'models/store/container/SelectionContainer';
 import SubToolpaneContainer from 'models/store/container/SubToolpaneContainer';
+import UpdateMessageContainer from 'models/store/container/UpdateMessageContainer';
 import WidgetEditInfoContainer from 'models/store/container/WidgetEditInfoContainer';
 import { EditableContextProp } from 'models/store/context/ContextTypes';
 import EditableContextBase from 'models/store/context/EditableContextBase';
@@ -136,8 +137,8 @@ class EditableContext extends EditableContextBase {
    * UpdateMessage를 보관합니다.
    * 전송이 될 경우, Message를 비우고, 다시 생성하여 채웁니다.
    */
-  // @observable
-  // private updateMessageContainer: UpdateMessageContainer;
+  @observable
+  private updateMessageContainer: UpdateMessageContainer;
 
   /**
    * 마지막으로 문서가 저장된 시간을 나타냅니다.
@@ -344,7 +345,7 @@ class EditableContext extends EditableContextBase {
     this.widgetEditInfoContainer = initProp.widgetEditInfoContainer;
     // this.errorBoundaryContainer = initProp.errorBoundaryContainer;
     // this.smartGuideContainer = initProp.smartGuideContainer;
-    // this.updateMessageContainer = initProp.updateMessageContainer;
+    this.updateMessageContainer = initProp.updateMessageContainer;
     // this.pageContainer = initProp.pageContainer;
     this.editorUIStore = initProp.editorUIStore;
     this.contextMenuContainer = initProp.contextMenuContainer;
@@ -942,21 +943,21 @@ class EditableContext extends EditableContextBase {
   //   this.errorBoundaryContainer = errorBoundaryContainer;
   // }
 
-  // /**
-  //  * UpdateMessageContainer을 반환합니다
-  //  */
-  // @boundMethod
-  // public getUpdateMessageContainer(): UpdateMessageContainer {
-  //   return this.updateMessageContainer;
-  // }
+  /**
+   * UpdateMessageContainer을 반환합니다
+   */
+  @boundMethod
+  public getUpdateMessageContainer(): UpdateMessageContainer {
+    return this.updateMessageContainer;
+  }
 
-  // /**
-  //  * UpdateMessageContainer을 설정합니다
-  //  */
-  // @boundMethod
-  // public setUpdateMessageContainer(updateMessageContainer: UpdateMessageContainer): void {
-  //   this.updateMessageContainer = updateMessageContainer;
-  // }
+  /**
+   * UpdateMessageContainer을 설정합니다
+   */
+  @boundMethod
+  public setUpdateMessageContainer(updateMessageContainer: UpdateMessageContainer): void {
+    this.updateMessageContainer = updateMessageContainer;
+  }
 
   // /**
   //  * PageContainer을 반환합니다
