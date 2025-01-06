@@ -1,26 +1,28 @@
+import useEditorStore from 'hooks/useEditorStore';
 import { observer } from 'mobx-react-lite';
 import { deviceButton } from 'styles/ribbon-menu/DeviceButton';
+import { getDeviceSize } from 'util/DeviceUtil';
 
 /**
  * Device 정보 변경 버튼.
  */
 const DeviceButtonComponent: React.FC = () => {
-  // const appStore = useEditorStore();
+  const editorStore = useEditorStore();
 
-  // const deviceInfo = appStore.getDeviceInfo();
-  // const deviceSize = getDeviceSize(deviceInfo);
+  const deviceInfo = editorStore.getDeviceInfo();
+  const deviceSize = getDeviceSize(deviceInfo);
 
   return (
     <button
       css={deviceButton}
       type={'button'}
       onClick={() => {
-        // appStore.setDialog(ribbonDialogContentMap.UpdateDevice, true);
+        // editorStore.setDialog(ribbonDialogContentMap.UpdateDevice, true);
       }}
     >
-      {/* {`${deviceInfo.deviceType !== 'Custom' ? deviceInfo.deviceName : 'Custom'} . ${deviceSize.width}*${
-                deviceSize.height
-            }`} */}
+      {`${deviceInfo.deviceType !== 'Custom' ? deviceInfo.deviceName : 'Custom'} . ${deviceSize.width}*${
+        deviceSize.height
+      }`}
     </button>
   );
 };
