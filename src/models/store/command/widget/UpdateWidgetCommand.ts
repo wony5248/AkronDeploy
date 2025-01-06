@@ -13,7 +13,7 @@ import { ContentType, ObjectType } from 'models/store/command/widget/WidgetModel
 class UpdateWidgetCommand extends SimpleCommand {
   private model: WidgetModel;
 
-  private propId: WidgetPropID; // 변경하고자 하는 속성명
+  private propId: WidgetPropID | undefined; // 변경하고자 하는 속성명
 
   private propValue: any; // 변경하고자 하는 속성 값
 
@@ -30,8 +30,8 @@ class UpdateWidgetCommand extends SimpleCommand {
    */
   public constructor(
     model: WidgetModel,
-    propId: WidgetPropID,
     propValue: any,
+    propId?: WidgetPropID,
     eventHandler?: HandlerID[]
     // nonBindableDataReferenceContainer?: NonBindableDataReferenceContainer
   ) {
