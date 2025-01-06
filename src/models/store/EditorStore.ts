@@ -22,6 +22,7 @@ import { AppInfo } from 'store/app/AppInfo';
 import CompositeComponentContainer from 'models/store/container/CompositeComponentContainer';
 import WidgetModel from 'models/node/WidgetModel';
 import CommandEnum from 'models/store/command/common/CommandEnum';
+import AppParser, { AppJson } from 'models/parser/AppParser';
 import { defaultDeviceInfo, DeviceInfo } from 'util/DeviceUtil';
 
 /**
@@ -33,7 +34,8 @@ export interface EditorStoreInitParams {
   appName: string;
   appModeContainer: AppModeContainer;
   commandMapper: AkronCommandMapper;
-  appID: number;
+  appJson: AppJson;
+  appInfo: AppInfo;
   contextMenuContainer: ContextMenuContainer;
   activeLeftToolPaneType?: LeftToolPaneType;
   selectAtFirst: boolean;
@@ -78,13 +80,9 @@ class EditorStore {
   /**
    * 생성자
    */
-  constructor(
-    params: EditorStoreInitParams & {
-      appModel: AppModel;
-      appInfo: AppInfo;
-      compositeComponentContainer: CompositeComponentContainer;
-    }
-  ) {
+  constructor(params: EditorStoreInitParams) {
+    const appParser = new AppParser(params.appJson);
+    const appModel = appParser.getAppModel();
     this.eventManager = new EventManager(params.eventMapper);
     this.commandManager = new CommandManager(params.commandMapper);
     this.selectionManager = new SelectionManager();
@@ -96,9 +94,9 @@ class EditorStore {
     this.deviceInfo = params.deviceInfo ?? defaultDeviceInfo;
     (this.saveState = SaveState.SAVE_COMPLETE),
       (this.ctx = new AkronContext({
-        appID: params.appID,
+        appID: appModel.getID(),
         appInfo: params.appInfo,
-        newAppModel: params.appModel,
+        newAppModel: appModel,
         eventState,
         appName: params.appName,
         contextMenuContainer: params.contextMenuContainer,
@@ -106,7 +104,7 @@ class EditorStore {
         startPageURL: params.startPageURL || '',
         activeLeftToolPaneType: params.activeLeftToolPaneType,
         appModeContainer,
-        compositeComponentContainer: params.compositeComponentContainer,
+        compositeComponentContainer: new CompositeComponentContainer(),
         editorUIStore: this.editorUIStore,
       }));
   }

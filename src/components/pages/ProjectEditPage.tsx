@@ -12,6 +12,13 @@ import TitleBarComponent from 'components/common/TitleBarComponent';
 import AppNameComponent from 'components/pages/AppNameComponent';
 import RibbonMenuComponent from 'components/ribbon-menu/RibbonMenuComponent';
 import { dragThumbnail, main } from 'styles/Main';
+import { useParams } from 'react-router-dom';
+import AppRepository from 'models/repository/AppRepository';
+import AsyncComponent from 'components/common/AsyncComponent';
+import LoadingComponent from 'components/common/LoadingComponent';
+import AppModeContainer from 'models/store/container/AppModeContainer';
+import CommandMapper from 'models/store/command/common/CommandMapper';
+import EventMapper from 'models/store/event/EventMapper';
 // import AsyncComponent from 'components/common/AsyncComponent';
 // import LoadingComponent from 'components/common/LoadingComponent';
 
@@ -78,8 +85,32 @@ const MainPageContent: React.FC = observer(() => {
  * 실제 프로젝트 수정에 관련된 모든 내용은 해당 컴포넌트에서 동작합니다.
  */
 const MainPageComponent = () => {
-  const [contextMenuContainer] = useState(() => new ContextMenuContainer());
+  const { appId } = useParams();
+  const getAppData = async () => {
+    const appJson = await AppRepository.getAppJson(Number(appId));
+
+    const params: EditorStoreInitParams = {
+      eventMapper: new EventMapper(),
+      mode: 'EDIT_APP',
+      appName: '',
+      appModeContainer: new AppModeContainer(),
+      commandMapper: new CommandMapper(),
+      appJson,
+      appInfo: {
+        type: 'ux',
+        name: '',
+        width: undefined,
+        height: undefined,
+      },
+      contextMenuContainer: new ContextMenuContainer(),
+      selectAtFirst: false,
+    };
+
+    return params;
+  };
+
   const render = (params: EditorStoreInitParams) => {
+    const [contextMenuContainer] = useState(() => new ContextMenuContainer());
     const editorStore = new EditorStore(params);
     return (
       <EditorStoreProvider value={editorStore}>
@@ -94,16 +125,7 @@ const MainPageComponent = () => {
     );
   };
 
-  // TODO: API로 서버에서 앱 첫 렌더를 위한 내용 받아오는거 작성 필요
-  // return (
-  //   <AsyncComponent
-  //     fallback={<LoadingComponent />}
-  //     func={() => }
-  //     render={render}
-  //   ></AsyncComponent>
-  // );
-
-  return <>{render({})}</>;
+  return <AsyncComponent fallback={<LoadingComponent />} func={getAppData} render={render}></AsyncComponent>;
 };
 
 MainPageComponent.displayName = 'ProjectEditPage';

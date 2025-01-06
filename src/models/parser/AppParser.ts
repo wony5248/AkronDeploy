@@ -1,19 +1,10 @@
-import {
-  BaseWidgetModel,
-  Nullable,
-  WidgetTypeEnum,
-  isDefined,
-  dError,
-  isNotNull,
-  dWarn,
-  isNull,
-  isUndefined,
-  WidgetCategory,
-  IWidgetCommonProperties,
-} from '@akron/runner';
+import { dError, dWarn, isDefined, isNotNull, isNull, isUndefined, Nullable, WidgetTypeEnum } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import WidgetModel from 'models/node/WidgetModel';
-import { WidgetEditingState } from 'models/store/command/widget/WidgetModelTypes';
+
+export type AppJson = {
+  components: NodeJson[];
+};
 
 /**
  * Node serialize 에 필요한 JSON 타입입니다.
@@ -23,34 +14,12 @@ export interface NodeJson {
   componentID: number;
   componentType: string;
   name: string;
+  contentsData: string;
+  stylesData: string;
   parentID: number | undefined;
   childID: number | undefined | null;
   nextID: number | undefined | null;
-  contentsData: string;
-  stylesData: string;
-  referenceString: string | undefined | null;
-  referenceDtoString: string | undefined | null;
-  widgetCustomPropsMap: string | undefined | null;
-  widgetCustomStatesMap: string | undefined | null;
 }
-
-export type AppJson = {
-  components: NodeJson[];
-};
-
-/**
- * ComponentType의 정보를 포함하고 있습니다. 타입과 카테고리를 저장합니다.
- */
-export interface ComponentTypeInfo {
-  componentType: string;
-  // componentType: AnyWidgetType | OSobjectWidgetType;
-  componentCategory: WidgetCategory;
-}
-
-/**
- * ComponentTypeName : ComponentTypeID를 저장하는 map입니다.
- */
-export const ComponentToTypeMap = new Map<string, ComponentTypeInfo>();
 
 /**
  * 파싱 간 정보를 전달하는 context 자료구조 입니다.
@@ -67,7 +36,7 @@ export interface AppParserContext {
   /*
    * 파싱할 node 의 부모 node 입니다. undefined 인 경우, root 입니다.
    */
-  parentNode?: BaseWidgetModel | undefined;
+  parentNode?: WidgetModel | undefined;
 }
 
 /**
@@ -77,12 +46,12 @@ class AppParser {
   /**
    * parser 가 생성한 node 입니다.
    */
-  private node?: BaseWidgetModel;
+  private node?: WidgetModel;
 
   /*
    * AppWidget 입니다. 하위의 child들을 붙입니다.
    */
-  private rootNode?: BaseWidgetModel;
+  private rootNode?: WidgetModel;
 
   /**
    * 중복 파싱을 막기 위한 Widget ID set 입니다.
@@ -105,64 +74,12 @@ class AppParser {
     this.ctx = this.createCtx(appJson.components);
     this.parse();
   }
+
   /**
    * 생성된 AppModel을 반환합니다.
    */
   public getAppModel() {
-    return this.rootNode as BaseWidgetModel;
-  }
-  /**
-   * App WidgetModel을 생성하는 함수입니다.
-   */
-  private createApp(item: NodeJson): WidgetModel {
-    const { contentsData, stylesData } = item;
-    const style = JSON.parse(stylesData);
-    // const themeInfo = JSON.parse(contentData.themeInfo);
-    let content = JSON.parse(contentsData);
-    // let sectionList: PageSection[] = [];
-    let sectionList: any[] = [];
-    if (isDefined(content.sectionList?.value)) {
-      sectionList = content.sectionList?.value;
-      sectionList = sectionList.map(section => ({
-        ...section,
-        isExpanded: true,
-        isSelected: false,
-      }));
-    }
-    content = {
-      ...content,
-      sectionList: sectionList.length > 0 ? { locked: content.sectionList?.locked, value: sectionList } : undefined,
-      deviceInfo: isDefined(content.deviceInfo)
-        ? content.deviceInfo
-        : {
-            index: 1,
-            deviceType: 'Mobile',
-            deviceName: 'Iphone 14 Pro Max',
-            orientation: 'vertical',
-            deviceFrame: false,
-          },
-    };
-    const componentTypeInfo = ComponentToTypeMap.get(item.componentType);
-    const widget = new WidgetModel<IWidgetCommonProperties>({
-      widgetCategory: componentTypeInfo?.componentCategory as WidgetCategory,
-      widgetType: item.componentType as string,
-      id: item.componentID,
-      name: item.name,
-      properties: {
-        contentsData,
-        stylesData,
-        content,
-        themeInfo: {
-          colorType: 'THEME',
-          paletteIndex: 0,
-        },
-        selected: false,
-        editingState: WidgetEditingState.NONE,
-        textEditing: false,
-        dragHovered: false,
-      },
-    });
-    return widget;
+    return this.rootNode as WidgetModel;
   }
 
   /**
@@ -198,7 +115,7 @@ class AppParser {
     const contents = JSON.parse(contentsData);
     const styles = JSON.parse(stylesData);
 
-    return new BaseWidgetModel({
+    return new WidgetModel({
       id: componentID,
       widgetCategory: '',
       widgetType: componentType as WidgetTypeEnum,
@@ -213,8 +130,8 @@ class AppParser {
   /**
    * node 생성 작업을 수행합니다. node 를 parent 에 append 합니다.
    */
-  private onCreateNode(node: BaseWidgetModel, ctx: AppParserContext): void {
-    if (isDefined(ctx.parentNode)) {
+  private onCreateNode(node: WidgetModel, ctx: AppParserContext): void {
+    if (!!ctx.parentNode) {
       node.append(ctx.parentNode);
       return;
     }
@@ -230,8 +147,8 @@ class AppParser {
    * @param item desrialize 해야 할 JSON object
    * @returns 파싱된 node instance
    */
-  private parseNode(item: NodeJson): BaseWidgetModel | undefined {
-    let node: BaseWidgetModel;
+  private parseNode(item: NodeJson): WidgetModel | undefined {
+    let node: WidgetModel;
 
     if (this.widgetIDSet.has(item.componentID)) {
       // 간헐적으로 Widget tree가 꼬여서 서큘러가 되는 이슈가 있음
@@ -263,20 +180,20 @@ class AppParser {
    * 자식 node들을 찾아 parse() 를 호출합니다.
    */
   @boundMethod
-  private parseChildNode(parentNode: BaseWidgetModel, firstChildID: number): void {
+  private parseChildNode(parentNode: WidgetModel, firstChildID: number): void {
     const cachedParent = this.ctx.parentNode;
 
     // 형제들 간에 중복 있는 경우 무한루프 걸리는 것을 방지.
     const siblingIDSet: Set<number> = new Set();
 
     for (this.ctx.id = firstChildID; isNotNull(this.ctx.id); ) {
-      if (this.ctx.id) {
+      if (!!this.ctx.id) {
         siblingIDSet.add(this.ctx.id);
       }
 
       this.ctx.parentNode = parentNode;
 
-      if (this.ctx.id) {
+      if (!!this.ctx.id) {
         const childItem = this.getJson(this.ctx.id);
         this.parse();
         const nextID = childItem?.nextID;
@@ -296,7 +213,7 @@ class AppParser {
   }
 
   private parse() {
-    if (this.ctx.id === null || this.ctx.id === undefined) {
+    if (!this.ctx.id) {
       dWarn(`AppParser: ctx.id is ${this.ctx.id}.`);
       return;
     }
@@ -309,7 +226,7 @@ class AppParser {
 
     // dLog(this.node);
     // parse child
-    if (isNull(item.childID) || isUndefined(item.childID) || isUndefined(this.node)) {
+    if (!item.childID || !this.node) {
       return;
     }
 

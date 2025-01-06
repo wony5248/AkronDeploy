@@ -48,7 +48,7 @@ export default [
     rules: {
       'prettier/prettier': ['error', prettierConfig],
 
-      'no-implicit-coercion': 'error',
+      'no-implicit-coercion': 'warn',
       'no-warning-comments': [
         'warn',
         {
