@@ -6,6 +6,7 @@ import AppModeContainer from 'models/store/container/AppModeContainer';
 import ClipboardContainer from 'models/store/container/ClipboardContainer';
 import CompositeComponentContainer from 'models/store/container/CompositeComponentContainer';
 import HitContainer from 'models/store/container/HitContainer';
+import IdContainerController from 'models/store/container/IdContainerController';
 import PropContainer from 'models/store/container/PropContainer';
 import SelectionContainer from 'models/store/container/SelectionContainer';
 import UpdateMessageContainer from 'models/store/container/UpdateMessageContainer';
@@ -134,6 +135,13 @@ export interface ContextInitializeProp extends ContextBaseInitializeProp {
 }
 
 /**
+ * 프로젝트의 스크롤 위치
+ */
+export interface PageScroll {
+  left: number;
+  top: number;
+}
+/**
  * MouseModeType
  */
 export type MouseModeType = 'Normal' | 'InsertContainer';
@@ -160,7 +168,7 @@ export interface EditableContextProp extends EditableContextBaseProp {
   //   fileSaveState: FileSaveState;
   zoomRatio: number;
   previewZoomRatio: number;
-  //   pageScroll: PageScroll;
+  pageScroll: PageScroll;
   isFitWindow: boolean;
   dragObject: DragObjectType;
   mouseMode: MouseModeType;
@@ -182,7 +190,7 @@ export interface EditableContextProp extends EditableContextBaseProp {
   //   pageContainer: PageContainer;
   editorUIStore: EditorUIStore;
   //   outerServiceStore: OuterServiceStore;
-  //   collaborationContainerController: CollaborationContainerController;
+  idContainerController: IdContainerController;
   contextMenuContainer: ContextMenuContainer;
   //   fileMessageContainer: FileMessageContainer;
   //   registeredLibraryInfoMap: RegisteredLibraryInfoMap;

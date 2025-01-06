@@ -260,7 +260,7 @@ const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props
         // id={`SuperUX-${getWidgetElementID(model)}-resizehandle-${handle}`}
         id={`SuperUX-${model.getWidgetCategory()}${model.getID()}-resizehandle-${handle}`}
         // computed하지 않은 값이므로 index를 key로 써도 무방함
-        // eslint-disable-next-line react/no-array-index-key
+
         key={index.toString()}
         css={widgetSelectionViewHandleSquare}
         style={{
@@ -295,10 +295,10 @@ const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props
     //     <WidgetSelectionViewBaseComponent key={grandChild.getID()} model={grandChild} />
     //   ));
     // }
-    // if (model.isRepeatableLayoutWidgetType()) {
-    //   return null;
-    // }
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    if (model.isRepeatableLayoutWidgetType()) {
+      return null;
+    }
+
     return model.mapChild(child => <WidgetSelectionViewComponent key={child.getID()} model={child} />);
   };
 
@@ -386,7 +386,7 @@ const PageWidgetSelectionViewComponent: React.FC<Props> = observer((props: Props
   // child Selection들 render
   const renderChildrenSelection = () => {
     // ESLint가 mutually recursive한 함수들(a()가 b()를 호출, b()가 a()를 호출)을 제대로 처리 못함 -> 이 줄 한해서 off.
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+
     return model.mapChild(child => <WidgetSelectionViewComponent key={child.getID()} model={child} />);
   };
 

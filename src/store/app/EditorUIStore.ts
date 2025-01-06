@@ -52,7 +52,7 @@ export default class EditorUIStore {
 
   // 트리 Rerender Flag
   @observable
-  private treeRerenderFlag: boolean = false;
+  private treeRerenderFlag = false;
 
   // // Editor 영역에서 사용될 snackBar Msg
   @observable

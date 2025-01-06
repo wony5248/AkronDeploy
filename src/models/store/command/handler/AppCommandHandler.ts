@@ -482,7 +482,6 @@ class AppCommandHandler extends CommandHandler {
     if (!(ctx.getSaveState() === SaveState.SAVE_ERROR || ctx.getSaveState() === SaveState.RESAVE_ERROR)) {
       AppRepository.sendUpdateMessage(ctx).then(result => {
         runInAction(() => {
-          // eslint-disable-next-line no-empty
           if (result === 'nonUpdate') {
           } else if (result === 'updateError') {
             if (ctx.getSaveState() === SaveState.RESAVING) {
