@@ -7,6 +7,7 @@ import { observer } from 'mobx-react-lite';
 import WidgetModel from 'models/node/WidgetModel';
 import { Fragment } from 'react';
 import { editor, editorArea } from 'styles/editor/EditorStyle';
+import { getDeviceSize } from 'util/DeviceUtil';
 
 /**
  * Editor Page 내에서 TopBar를 제외하고 Edit을 담당하는 내용을 나타내는 컴포넌트입니다.
@@ -38,7 +39,7 @@ const EditorComponent: React.FC = () => {
   // RUNTIME_PREVIEW 모드인 경우 AppWidget 부터 보여줌
   // FIXME: 다른 app mode 고려해서 조건문 수정
   if (isEditMode) {
-    targetWidgetModel = editorStore.getEditingPageModel() ?? editingWidgetModel.getFirstChild(); // FIX ME : Composite widget 편집 모드에서 들어갔다 나왔을 경우 첫번째 페이지 가져오도록 임시처리.
+    targetWidgetModel = editorStore.getEditingPageModel() ?? editingWidgetModel?.getFirstChild(); // FIX ME : Composite widget 편집 모드에서 들어갔다 나왔을 경우 첫번째 페이지 가져오도록 임시처리.
   } else {
     // targetWidgetModel = editingWidgetModel;
     // // PageComponent를 저장하는 Map 생성
@@ -62,7 +63,7 @@ const EditorComponent: React.FC = () => {
 
   // const businessDialogModel = editorStore.getBusinessDialogWidgetMap().get(uiStore.getBusinessDialogWidgetModelID());
 
-  // const deviceSizeStyle = getDeviceSize(editorStore.getDeviceInfo());
+  const deviceSizeStyle = getDeviceSize(editorStore.getDeviceInfo());
 
   const ctx = editorStore.getCtx();
   // const widgetPropContainer = ctx.propContainer.getWidgetPropContainer();
@@ -121,7 +122,17 @@ const EditorComponent: React.FC = () => {
                       {widgetPropContainer.getIsSmartGuide() ? getTotalSmartGuideJSXElements(x, y, w, h, '') : null}
                     </svg>
                   </div> */}
-                  <WidgetCreatorComponent widgetModel={targetWidgetModel} />
+                  {/* <WidgetCreatorComponent widgetModel={targetWidgetModel} /> */}
+                  {/* <PageWidgetComponent
+                    id={`${targetWidgetModel.getID()}`}
+                    content={targetWidgetModel.getProperties().content}
+                    widgetStyle={{
+                      ...deviceSizeStyle,
+                    }}
+                    model={targetWidgetModel}
+                    defaultEvent={{}}
+                  ></PageWidgetComponent> */}
+                  <WidgetSelectionOverlayComponent model={targetWidgetModel} />
                 </div>
               ) : (
                 <WidgetCreatorComponent widgetModel={targetWidgetModel} />
@@ -154,7 +165,6 @@ const EditorComponent: React.FC = () => {
           {/* {isRuntimePreviewMode(editorStore.getAppModeContainer()) && (
             <PageNavigationButtonComponent startPageModel={targetWidgetModel} />
           )} */}
-          <WidgetSelectionOverlayComponent model={targetWidgetModel} />
         </div>
       )}
       {/* <ContainerGuideline /> */}

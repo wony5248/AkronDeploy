@@ -22,6 +22,7 @@ import { AppInfo } from 'store/app/AppInfo';
 import CompositeComponentContainer from 'models/store/container/CompositeComponentContainer';
 import WidgetModel from 'models/node/WidgetModel';
 import CommandEnum from 'models/store/command/common/CommandEnum';
+import { defaultDeviceInfo, DeviceInfo } from 'util/DeviceUtil';
 
 /**
  * Editor Store 생성자 파라미터 Interface 입니다.
@@ -38,6 +39,7 @@ export interface EditorStoreInitParams {
   selectAtFirst: boolean;
   startPageURL?: string;
   startPageID?: number;
+  deviceInfo?: DeviceInfo;
 }
 
 export enum SaveState {
@@ -65,11 +67,14 @@ class EditorStore {
 
   private saveState: SaveState;
 
+  private deviceInfo: DeviceInfo;
+
   protected editorUIStore: EditorUIStore;
 
   protected tooltipStore: TooltipStore;
 
   protected widgetLayerContainer: WidgetLayerContainer;
+
   /**
    * 생성자
    */
@@ -88,6 +93,7 @@ class EditorStore {
     this.tooltipStore = new TooltipStore();
     this.widgetLayerContainer = new WidgetLayerContainer();
     let eventState = EventState.DEFAULT;
+    this.deviceInfo = params.deviceInfo ?? defaultDeviceInfo;
     (this.saveState = SaveState.SAVE_COMPLETE),
       (this.ctx = new AkronContext({
         appID: params.appID,
@@ -245,6 +251,13 @@ class EditorStore {
   @boundMethod
   public setSaveState(state: SaveState): void {
     this.saveState = state;
+  }
+
+  /**
+   * deviceInfo 반환
+   */
+  public getDeviceInfo(): DeviceInfo {
+    return this.deviceInfo;
   }
 
   /**

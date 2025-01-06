@@ -14,4 +14,5 @@ export const deviceButton = css`
   font-size: 12px;
   font-weight: 400;
   text-align: center;
+  background-color: transparent;
 `;
