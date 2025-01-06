@@ -1,13 +1,11 @@
 import { IWidgetCommonProperties, BaseWidgetModel, isUndefined, dError, isDefined, DeepReadonly } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { runInAction } from 'mobx';
-import PageModel from 'models/node/PageModel';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
 import CommandEnum from 'models/store/command/common/CommandEnum';
 import CommandHandler from 'models/store/command/common/CommandHandler';
 import WidgetCommandProps, { SelectionProp } from 'models/store/command/widget/WidgetCommandProps';
 import NewAppendWidgetCommand from 'models/store/command/widget/AppendWidgetCommand';
-import NewRemoveWidgetCommand from 'models/store/command/widget/RemoveWidgetCommand';
 import {
   AnyWidgetType,
   InsertableWidgetType,

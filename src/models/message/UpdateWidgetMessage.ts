@@ -1,4 +1,4 @@
-import { WidgetCategory, isDefined, isNotNull } from '@akron/runner';
+import { WidgetCategory } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import UpdateMessage from 'models/message/UpdateMessage';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';

@@ -2,7 +2,7 @@
 
 import { AppStore, Nullable } from '@akron/runner';
 import WidgetModel from 'models/node/WidgetModel';
-import { AnyWidgetType } from 'models/store/command/handler/WidgetEditCommandHandler';
+import { AnyWidgetType } from 'models/store/command/widget/WidgetModelTypes';
 import EditorStore from 'models/store/EditorStore';
 import { RibbonProp } from 'store/ribbon-menu/RibbonMenuComponentInfo';
 import { checkWidgetType, isWidgetsCopyable, isWidgetsDeletable } from 'util/WidgetUtil';

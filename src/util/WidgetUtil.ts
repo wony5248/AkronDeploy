@@ -1,8 +1,8 @@
 import { dError, isDefined, isUndefined, Nullable } from '@akron/runner';
 import WidgetModel from 'models/node/WidgetModel';
 import CommandEnum from 'models/store/command/common/CommandEnum';
-import { AnyWidgetType } from 'models/store/command/handler/WidgetEditCommandHandler';
 import RemoveWidgetCommand from 'models/store/command/widget/RemoveWidgetCommand';
+import { AnyWidgetType } from 'models/store/command/widget/WidgetModelTypes';
 import AkronContext from 'models/store/context/AkronContext';
 import EventState from 'models/store/event/EventState';
 import { basicChildableWidgetTypeNamesSet, parentChildEssentialRelationMap } from 'models/widget/ParentChildRelMap';
