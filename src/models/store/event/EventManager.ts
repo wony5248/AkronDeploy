@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { boundMethod } from 'autobind-decorator';
 import EventMapper, { AkronEventMapper } from './EventMapper';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';

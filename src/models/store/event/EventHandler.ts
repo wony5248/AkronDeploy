@@ -1,4 +1,3 @@
-/* eslint-disable */
 import AkronContext from 'models/store/context/AkronContext';
 import { DefaultEvent, DefaultFormEvent } from '@akron/runner';
 

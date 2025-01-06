@@ -1,18 +1,19 @@
 import { BaseWidgetModel, Nullable } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
-import { observable, makeObservable, action } from 'mobx';
+import { observable, makeObservable, action, runInAction } from 'mobx';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
 import Command from 'models/store/command/common/Command';
 import WidgetCommandProps, { SelectionProp } from 'models/store/command/widget/WidgetCommandProps';
 import AppModeContainer from 'models/store/container/AppModeContainer';
 import ClipboardContainer from 'models/store/container/ClipboardContainer';
 import HitContainer from 'models/store/container/HitContainer';
+import IdContainerController from 'models/store/container/IdContainerController';
 import PropContainer from 'models/store/container/PropContainer';
 import SelectionContainer from 'models/store/container/SelectionContainer';
 import SubToolpaneContainer from 'models/store/container/SubToolpaneContainer';
 import UpdateMessageContainer from 'models/store/container/UpdateMessageContainer';
 import WidgetEditInfoContainer from 'models/store/container/WidgetEditInfoContainer';
-import { EditableContextProp } from 'models/store/context/ContextTypes';
+import { DragObjectType, EditableContextProp, MouseModeType, PageScroll } from 'models/store/context/ContextTypes';
 import EditableContextBase from 'models/store/context/EditableContextBase';
 import { SaveState } from 'models/store/EditorStore';
 import EventState from 'models/store/event/EventState';
@@ -116,6 +117,13 @@ class EditableContext extends EditableContextBase {
   private widgetEditInfoContainer: WidgetEditInfoContainer;
 
   /**
+   * WidgetEditModelInfoContainer
+   * App에 배치 된 Widget을 끌어서 이동/리사이즈 할 유지되어야 하는 정보들을 보관합니다.
+   */
+  @observable
+  private readonly idContainerController: IdContainerController;
+
+  /**
    * ErrorBoundaryContainer
    * 속성 값 오류로 인해 렌더링 오류가 발생한 WidgetModel들을 관리합니다..
    */
@@ -186,8 +194,8 @@ class EditableContext extends EditableContextBase {
   /**
    * 프로젝트의 스크롤 위치를 나타냅니다
    */
-  // @observable
-  // private pageScroll: PageScroll;
+  @observable
+  private pageScroll: PageScroll;
 
   /**
    * 화면 맞춤 여부를 나타냅니다.
@@ -335,7 +343,7 @@ class EditableContext extends EditableContextBase {
     this.lastRegisteredEditUndoStackTag = initProp.lastRegisteredEditUndoStackTag;
     this.zoomRatio = initProp.zoomRatio;
     this.previewZoomRatio = initProp.previewZoomRatio;
-    // this.pageScroll = initProp.pageScroll;
+    this.pageScroll = initProp.pageScroll;
     this.isFitWindow = initProp.isFitWindow;
     this.dragObject = initProp.dragObject;
     this.mouseMode = initProp.mouseMode;
@@ -357,6 +365,7 @@ class EditableContext extends EditableContextBase {
     // this.pageContainer = initProp.pageContainer;
     this.editorUIStore = initProp.editorUIStore;
     this.contextMenuContainer = initProp.contextMenuContainer;
+    this.idContainerController = initProp.idContainerController;
     // this.fileMessageContainer = initProp.fileMessageContainer;
     // this.registeredLibraryInfoMap = initProp.registeredLibraryInfoMap;
     // this.fileContainer = initProp.fileContainer;
@@ -603,23 +612,23 @@ class EditableContext extends EditableContextBase {
     this.previewZoomRatio = previewZoomRatio;
   }
 
-  // /**
-  //  * 페이지 스크롤 위치를 반환합니다
-  //  */
-  // @boundMethod
-  // public getPageScroll(): PageScroll {
-  //   return this.pageScroll;
-  // }
+  /**
+   * 페이지 스크롤 위치를 반환합니다
+   */
+  @boundMethod
+  public getPageScroll(): PageScroll {
+    return this.pageScroll;
+  }
 
-  // /**
-  //  * 페이지 스크롤 위치를 설정합니다
-  //  */
-  // @boundMethod
-  // public setPageScroll(pageScroll: PageScroll): void {
-  //   runInAction(() => {
-  //     this.pageScroll = pageScroll;
-  //   });
-  // }
+  /**
+   * 페이지 스크롤 위치를 설정합니다
+   */
+  @boundMethod
+  public setPageScroll(pageScroll: PageScroll): void {
+    runInAction(() => {
+      this.pageScroll = pageScroll;
+    });
+  }
 
   /**
    * IsFitWindow를 반환합니다
@@ -637,37 +646,37 @@ class EditableContext extends EditableContextBase {
     this.isFitWindow = isFitWindow;
   }
 
-  // /**
-  //  * DragObject를 반환합니다
-  //  */
-  // @boundMethod
-  // public getDragObject(): DragObjectType {
-  //   return this.dragObject;
-  // }
+  /**
+   * DragObject를 반환합니다
+   */
+  @boundMethod
+  public getDragObject(): DragObjectType {
+    return this.dragObject;
+  }
 
-  // /**
-  //  * DragObject를 설정합니다
-  //  */
-  // @boundMethod
-  // public setDragObject(dragObject: DragObjectType): void {
-  //   this.dragObject = dragObject;
-  // }
+  /**
+   * DragObject를 설정합니다
+   */
+  @boundMethod
+  public setDragObject(dragObject: DragObjectType): void {
+    this.dragObject = dragObject;
+  }
 
-  // /**
-  //  * MouseMode를 반환합니다
-  //  */
-  // @boundMethod
-  // public getMouseMode(): MouseModeType {
-  //   return this.mouseMode;
-  // }
+  /**
+   * MouseMode를 반환합니다
+   */
+  @boundMethod
+  public getMouseMode(): MouseModeType {
+    return this.mouseMode;
+  }
 
-  // /**
-  //  * MouseMode를 설정합니다
-  //  */
-  // @boundMethod
-  // public setMouseMode(mouseMode: MouseModeType): void {
-  //   this.mouseMode = mouseMode;
-  // }
+  /**
+   * MouseMode를 설정합니다
+   */
+  @boundMethod
+  public setMouseMode(mouseMode: MouseModeType): void {
+    this.mouseMode = mouseMode;
+  }
 
   /**
    * ContextMenu를 반환합니다
@@ -784,6 +793,22 @@ class EditableContext extends EditableContextBase {
   // public setUndoRedoProp(undoRedoProps: IUndoRedoProps): void {
   //   this.undoRedoProps = undoRedoProps;
   // }
+
+  /**
+   * HitContainer을 반환합니다
+   */
+  @boundMethod
+  public getIdContainerController(): IdContainerController {
+    return this.idContainerController;
+  }
+
+  /**
+   * HitContainer을 설정합니다
+   */
+  @boundMethod
+  public setHitContainerController(hitContainer: HitContainer<BaseWidgetModel>): void {
+    this.hitContainer = hitContainer;
+  }
 
   /**
    * HitContainer을 반환합니다

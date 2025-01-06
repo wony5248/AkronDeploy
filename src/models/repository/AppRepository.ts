@@ -481,7 +481,7 @@ class AppRepository {
     const updateMessages = updateMessageContainer.getUpdateMessages() as UpdateMessage[];
     const apiMessages = updateMessageContainer.getAPIMessages();
     const newContentsMessages = new Array<ContentMessageLog>();
-    let reSaveMessage: string = '';
+    let reSaveMessage = '';
     let executeApiMessages: Array<APIMessage> = [];
 
     if (ctx.getSaveState() === SaveState.RESAVING) {
@@ -523,7 +523,7 @@ class AppRepository {
     let apiResponse: boolean | undefined;
     let head = executeApiMessages.shift();
     while (head) {
-      apiResponse = await head(); // eslint-disable-line
+      apiResponse = await head();
       if (!apiResponse) {
         executeApiMessages.unshift(head);
         updateMessageContainer.setReExecuteAPIMessages(executeApiMessages);
@@ -537,11 +537,19 @@ class AppRepository {
     }
 
     if (messageResponse === undefined) {
-      if (apiResponse === undefined) return 'nonUpdate';
-      if (apiResponse === true) return 'updateComplete';
+      if (apiResponse === undefined) {
+        return 'nonUpdate';
+      }
+      if (apiResponse === true) {
+        return 'updateComplete';
+      }
     } else if (messageResponse === true) {
-      if (apiResponse === true) return 'updateComplete';
-      if (apiResponse === undefined) return 'updateComplete';
+      if (apiResponse === true) {
+        return 'updateComplete';
+      }
+      if (apiResponse === undefined) {
+        return 'updateComplete';
+      }
     }
     return 'updateError';
   }
@@ -803,11 +811,6 @@ class AppRepository {
   /**
    * 현재 앱에서 어떤 컴포넌트들이 어떤 파일들을 사용하는지 가져오기.
    */
-  @boundMethod
-  private async getRegisteredFileInfos(appID: number): Promise<Array<IGetRegisteredFileInfosOutput>> {
-    const response = await API.get(`/file/media?appID=${appID}`);
-    return response.data;
-  }
 
   /**
    * 새로운 템플릿 생성하여 서버로 POST합니다.
@@ -1474,6 +1477,12 @@ class AppRepository {
   @boundMethod
   public async updateVariableTypeRef(dtos: IUpdateVariableTypeRef[]): Promise<void> {
     const response = await API.put(`/dataStore/updateVariableTypeRef`, dtos);
+  }
+
+  @boundMethod
+  private async getRegisteredFileInfos(appID: number): Promise<Array<IGetRegisteredFileInfosOutput>> {
+    const response = await API.get(`/file/media?appID=${appID}`);
+    return response.data;
   }
 }
 

@@ -157,7 +157,7 @@ class WidgetEditInfoContainer {
   /**
    * Aspect Ratio Lock 여부
    */
-  @observable private isAspectRatioLocked: boolean = false;
+  @observable private isAspectRatioLocked = false;
 
   /**
    * Aspect Ratio

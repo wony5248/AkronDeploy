@@ -2,12 +2,14 @@ import { BaseWidgetModel, Nullable } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { action } from 'mobx';
 import AppModel from 'models/node/AppModel';
-import { WidgetID } from 'models/node/WidgetModel';
+import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
 import Command from 'models/store/command/common/Command';
 import WidgetCommandProps from 'models/store/command/widget/WidgetCommandProps';
 import AppModeContainer from 'models/store/container/AppModeContainer';
 import ClipboardContainer from 'models/store/container/ClipboardContainer';
 import HitContainer from 'models/store/container/HitContainer';
+import { IdList } from 'models/store/container/IdContainer';
+import IdContainerController from 'models/store/container/IdContainerController';
 import PropContainer from 'models/store/container/PropContainer';
 import SelectionContainer from 'models/store/container/SelectionContainer';
 import UpdateMessageContainer from 'models/store/container/UpdateMessageContainer';
@@ -19,6 +21,7 @@ import {
   EditableContextProp,
   DragObjectType,
   MouseModeType,
+  PageScroll,
 } from 'models/store/context/ContextTypes';
 import EditableContext, { PageRefPosition } from 'models/store/context/EditableContext';
 import { SaveState } from 'models/store/EditorStore';
@@ -67,7 +70,7 @@ export default class AkronContext {
     // an empty function
   }
 
-  /**
+  /** TODO
    * AppContextBaseInitilizeProp을 기반으로 ReadOnlyContext의 생성자 prop을 생성해 반환합니다
    * FIXME: 임시로 몇 가지 넣어뒀으나, EditableContext에서 분리해 해당 Context로 추가하는 작업이 필요합니다
    */
@@ -116,7 +119,7 @@ export default class AkronContext {
       // fileSaveState: this.createFileSaveState(),
       zoomRatio: this.createZoomRatio(),
       previewZoomRatio: this.createPreviewZoomRatio(),
-      // pageScroll: this.createPageScroll(),
+      pageScroll: this.createPageScroll(),
       isFitWindow: this.createIsFitWindow(),
       dragObject: this.createDragObject(),
       mouseMode: this.createMouseMode(),
@@ -131,6 +134,7 @@ export default class AkronContext {
       clipboardContainer: this.createClipboardContainer(),
       propContainer: this.createPropContainer(),
       widgetEditInfoContainer: this.createWidgetEditInfoContainer(),
+      idContainerController: this.createIdContainerController({ componentId: 1 }, 0, 0, 0),
       // errorBoundaryContainer: this.createErrorBoundaryContainer(),
       // smartGuideContainer: this.createSmartGuideContainer(),
       updateMessageContainer: this.createUpdateMessageContainer(),
@@ -318,6 +322,22 @@ export default class AkronContext {
   }
 
   /**
+   * ID containers initializer
+   */
+  @boundMethod
+  public createIdContainerController(idList: IdList, gap: number, order: number, users: number): IdContainerController {
+    return new IdContainerController({ idList, gap, order, users });
+  }
+
+  /**
+   * HitContainer을 반환합니다
+   */
+  @boundMethod
+  public getIdContainerController(): IdContainerController {
+    return this.appEditableContext.getIdContainerController();
+  }
+
+  /**
    * WidgetEditInfoContainer을 설정합니다
    */
   @boundMethod
@@ -395,6 +415,110 @@ export default class AkronContext {
   @boundMethod
   public createSaveState(): SaveState {
     return SaveState.SAVE_COMPLETE;
+  }
+
+  /**
+   * PageScroll 초기값을 생성해 반환합니다
+   */
+  @boundMethod
+  public createPageScroll(): PageScroll {
+    return { top: -1, left: -1 };
+  }
+
+  /**
+   * PageScroll을 반환합니다
+   */
+  @boundMethod
+  public getPageScroll(): PageScroll {
+    return this.appEditableContext.getPageScroll();
+  }
+
+  /**
+   * PageScroll을 설정합니다
+   */
+  @boundMethod
+  public setPageScroll(pageScroll: PageScroll): void {
+    this.appEditableContext.setPageScroll(pageScroll);
+  }
+
+  /**
+   * IsFitWindow를 반환합니다
+   */
+  @boundMethod
+  public getIsFitWindow(): boolean {
+    return this.appEditableContext.getIsFitWindow();
+  }
+
+  /**
+   * isFitWindow를 설정합니다
+   */
+  @boundMethod
+  public setIsFitWindow(isFitWindow: boolean): void {
+    this.appEditableContext.setIsFitWindow(isFitWindow);
+  }
+
+  /**
+   * DragObject를 반환합니다
+   */
+  @boundMethod
+  public getDragObject(): DragObjectType {
+    return this.appEditableContext.getDragObject();
+  }
+
+  /**
+   * DragObject를 설정합니다
+   */
+  @boundMethod
+  public setDragObject(dragObject: DragObjectType): void {
+    this.appEditableContext.setDragObject(dragObject);
+  }
+
+  /**
+   * MouseMode를 반환합니다
+   */
+  @boundMethod
+  public getMouseMode(): MouseModeType {
+    return this.appEditableContext.getMouseMode();
+  }
+
+  /**
+   * MouseMode를 설정합니다
+   */
+  @boundMethod
+  public setMouseMode(mouseMode: MouseModeType): void {
+    this.appEditableContext.setMouseMode(mouseMode);
+  }
+
+  /**
+   * ContextMenu를 반환합니다
+   */
+  @boundMethod
+  public getContextMenu(): ContextMenu | null {
+    return this.appEditableContext.getContextMenu();
+  }
+
+  /**
+   * ContextMenu를 설정합니다
+   */
+  @boundMethod
+  public setContextMenu(contextMenu: ContextMenu | null): void {
+    this.appEditableContext.setContextMenu(contextMenu);
+  }
+
+  /**
+   * Saved를 반환합니다
+   */
+  @boundMethod
+  public getSaved(): boolean {
+    return this.appEditableContext.getSaved();
+  }
+
+  /**
+   * Saved를 설정합니다
+   */
+  @boundMethod
+  public setSaved(saved: boolean): void {
+    this.appEditableContext.setSaved(saved);
   }
 
   /**
@@ -549,6 +673,22 @@ export default class AkronContext {
   @boundMethod
   public createDialogOpen(): boolean {
     return false;
+  }
+
+  /**
+   * dragDesModel getter
+   */
+  @boundMethod
+  public getDragDesModel(): WidgetModel | undefined {
+    return this.appEditableContext.getDragDesModel();
+  }
+
+  /**
+   * dragDesModel setter
+   */
+  @boundMethod
+  public setDragDesModel(dragDesModel: WidgetModel | undefined): void {
+    this.appEditableContext.setDragDesModel(dragDesModel);
   }
 
   /**

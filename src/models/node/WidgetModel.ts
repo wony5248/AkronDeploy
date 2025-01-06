@@ -32,6 +32,8 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
   @observable
   private rerenderSwitch: boolean;
 
+  @observable private widgetType: string;
+
   /**
    * GX widgetModel 중 선택 가능한 model
    * FIXME: 필요한건가?
@@ -61,6 +63,7 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
     makeObservable(this);
     this.rerenderSwitch = false;
     this.selectable = false;
+    this.widgetType = args.widgetType;
     this.editingState = WidgetEditingState.NONE;
   }
 
@@ -84,6 +87,14 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
 
   public getSelectable(): boolean {
     return this.selectable;
+  }
+
+  public isRepeatableLayoutWidgetType() {
+    return Boolean(
+      this.widgetType === 'RepeatableLayout' ||
+        this.widgetType === 'InfiniteLayout' ||
+        this.widgetType === 'BasicSelect'
+    );
   }
 
   /**
