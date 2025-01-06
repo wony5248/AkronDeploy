@@ -1,4 +1,14 @@
-import { dError, dWarn, isDefined, isNotNull, isNull, isUndefined, Nullable, WidgetTypeEnum } from '@akron/runner';
+import {
+  dError,
+  dWarn,
+  isDefined,
+  isNotNull,
+  isUndefined,
+  IWidgetContentProperties,
+  IWidgetStyleProperties,
+  Nullable,
+  WidgetTypeEnum,
+} from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import WidgetModel from 'models/node/WidgetModel';
 
@@ -14,8 +24,8 @@ export interface NodeJson {
   componentID: number;
   componentType: string;
   name: string;
-  contentsData: string;
-  stylesData: string;
+  contentsData: IWidgetContentProperties;
+  stylesData: IWidgetStyleProperties;
   parentID: number | undefined;
   childID: number | undefined | null;
   nextID: number | undefined | null;
@@ -112,8 +122,8 @@ class AppParser {
    */
   private createComponent(item: NodeJson) {
     const { componentID, componentType, name, contentsData, stylesData } = item;
-    const contents = JSON.parse(contentsData);
-    const styles = JSON.parse(stylesData);
+    const contents = contentsData;
+    const styles = stylesData;
 
     return new WidgetModel({
       id: componentID,

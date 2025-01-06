@@ -110,7 +110,7 @@ const MainPageComponent = () => {
   };
 
   const render = (params: EditorStoreInitParams) => {
-    const [contextMenuContainer] = useState(() => new ContextMenuContainer());
+    const contextMenuContainer = new ContextMenuContainer();
     const editorStore = new EditorStore(params);
     return (
       <EditorStoreProvider value={editorStore}>

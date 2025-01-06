@@ -13,7 +13,7 @@ class API {
    * 생성자
    */
   public constructor() {
-    this.baseUrl = 'http://127.0.0.1:3000';
+    this.baseUrl = 'http://192.168.31.127:3000';
     axios.defaults.baseURL = this.baseUrl;
   }
 
