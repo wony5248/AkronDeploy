@@ -4,6 +4,8 @@ import CommandExecutor from './CommandExecutor';
 import CommandEnum from './CommandEnum';
 import Command from './Command';
 import AkronContext from 'models/store/context/AkronContext';
+import AkronCommandMapper from 'models/store/command/akron/AkronCommandMapper';
+import CommandHandlerFactory from 'models/store/command/factory/CommandHandlerFactory';
 
 /**
  * Command 수행을 담당하는 class 입니다.
@@ -53,6 +55,7 @@ class CommandManager {
 
     ctx.setCommand(new Command(ctx));
     // compose simple commands
+
     this.commandMap
       .get(commandProps.commandID)
       ?.some(handler => (ctx.getCommandProps() ? handler.processCommand(commandProps, ctx) : true));

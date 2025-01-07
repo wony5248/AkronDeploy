@@ -17,7 +17,7 @@ export const PageThumbnailContextMenuData: ContextMenuProp[] = [
     variant: 'SmallMenuItem',
     mainText: '새 페이지',
     commandType: 'Page',
-    commandPropName: 'AddPage',
+    commandPropName: 'WIDGET_RESIZE_END',
   },
   {
     id: 'TOOLPANE_PAGE_DUPLICATE_PAGE',

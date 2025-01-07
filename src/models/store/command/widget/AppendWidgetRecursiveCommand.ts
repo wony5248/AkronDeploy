@@ -1,10 +1,9 @@
 import { action } from 'mobx';
 import { boundMethod } from 'autobind-decorator';
-import { BaseWidgetModel } from '@akron/runner';
+import { BaseWidgetModel, isUndefined } from '@akron/runner';
 import { IOperationMessage } from 'models/message/OperationMessageType';
 import SimpleCommand from 'models/store/command/common/SimpleCommand';
 import { ContentType } from 'models/store/command/widget/WidgetModelTypes';
-import { isUndefined } from 'util';
 import AkronContext from 'models/store/context/AkronContext';
 import WidgetModel from 'models/node/WidgetModel';
 

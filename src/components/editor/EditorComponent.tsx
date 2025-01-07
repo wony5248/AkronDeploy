@@ -39,7 +39,7 @@ const EditorComponent: React.FC = () => {
   // RUNTIME_PREVIEW 모드인 경우 AppWidget 부터 보여줌
   // FIXME: 다른 app mode 고려해서 조건문 수정
   if (isEditMode) {
-    targetWidgetModel = editorStore.getEditingPageModel() ?? editingWidgetModel?.getFirstChild(); // FIX ME : Composite widget 편집 모드에서 들어갔다 나왔을 경우 첫번째 페이지 가져오도록 임시처리.
+    // targetWidgetModel = editorStore.getEditingPageModel() ?? editingWidgetModel.getFirstChild(); // FIX ME : Composite widget 편집 모드에서 들어갔다 나왔을 경우 첫번째 페이지 가져오도록 임시처리.
   } else {
     // targetWidgetModel = editingWidgetModel;
     // // PageComponent를 저장하는 Map 생성

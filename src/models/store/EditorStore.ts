@@ -24,6 +24,7 @@ import WidgetModel from 'models/node/WidgetModel';
 import CommandEnum from 'models/store/command/common/CommandEnum';
 import AppParser, { AppJson } from 'models/parser/AppParser';
 import { defaultDeviceInfo, DeviceInfo } from 'util/DeviceUtil';
+import CommandHandlerFactory from 'models/store/command/factory/CommandHandlerFactory';
 
 /**
  * Editor Store 생성자 파라미터 Interface 입니다.
@@ -284,8 +285,8 @@ class EditorStore {
     ) {
       if (this.getSaveState() === SaveState.SAVE_COMPLETE) {
         updateMessageContainer.setTransformed(true);
-
-        this.saveTimerId = global.setTimeout(() => {
+        console.log(global);
+        this.saveTimerId = setTimeout(() => {
           this.setSaveState(SaveState.SAVING);
           this.handleSave({ commandID: CommandEnum.SAVE });
         }, 500);
@@ -301,32 +302,59 @@ class EditorStore {
   public makeUpdateMessage(): void {
     const command = this.ctx.getCommand();
     const commandProps = this.ctx.getCommandProps();
-    const updateMessageContainer = this.ctx;
-    if (isUndefined(updateMessageContainer) || command === undefined || commandProps === undefined) {
+    const updateMessageContainer = this.ctx.getUpdateMessageContainer();
+    if (updateMessageContainer === undefined || command === undefined || commandProps === undefined) {
       return;
     }
 
-    // let updateMessages = command.make();
-    // switch (commandProps.commandID) {
-    //   case CommandEnum.UNDO:
-    //     updateMessages = command.();
-    //     break;
-    //   case CommandEnum.REDO:
-    //     updateMessages = command.makeReApplyUpdateMessages();
-    //     break;
-    //   default:
-    //     updateMessages = command.makeApplyUpdateMessages();
-    //     break;
-    // }
-    // this.appendServerMessage(this.getCtxAsAppContext());
-    // if (updateMessages.length === 0) {
-    //   return;
-    // }
+    let updateMessages = command.makeApplyUpdateMessages();
+    switch (commandProps.commandID) {
+      case CommandEnum.UNDO:
+        updateMessages = command.makeUnApplyUpdateMessages();
+        break;
+      case CommandEnum.REDO:
+        updateMessages = command.makeReApplyUpdateMessages();
+        break;
+      default:
+        updateMessages = command.makeApplyUpdateMessages();
+        break;
+    }
+    this.appendServerMessage(this.getCtxAsAppContext());
+    if (updateMessages.length === 0) {
+      return;
+    }
 
-    // const ctxAs = this.getCtxAsAppContext();
-    // const id = ctxAs.appID;
+    const ctxAs = this.getCtxAsAppContext();
+    const id = ctxAs.getAppID();
 
-    // updateMessageContainer.appendUpdateMessages(updateMessages, id);
+    updateMessageContainer.appendUpdateMessages(updateMessages, id);
+  }
+
+  /**
+   * serverMessage를 처리합니다.
+   */
+  private async appendServerMessage(ctx: AkronContext): Promise<void> {
+    const command = this.ctx.getCommand();
+    const commandProps = this.ctx.getCommandProps();
+    const updateMessageContainer = this.ctx.getUpdateMessageContainer();
+    if (command === undefined || commandProps === undefined) {
+      return;
+    }
+    let serverMessages;
+    switch (commandProps.commandID) {
+      case CommandEnum.UNDO:
+        serverMessages = command.makeUnApplyMessages();
+        break;
+      case CommandEnum.REDO:
+        serverMessages = command.makeReApplyMessages();
+        break;
+      default:
+        serverMessages = command.makeApplyMessages();
+        break;
+    }
+    for (let i = 0; i < serverMessages.length; i += 1) {
+      updateMessageContainer.appendApiMessage(serverMessages[i]);
+    }
   }
 
   /**
@@ -334,29 +362,11 @@ class EditorStore {
    */
   @boundMethod
   private saveApp(): void {
-    // if (!(this.ctx.getSaveState() === SaveState.SAVE_ERROR || this.ctx.getSaveState() === SaveState.RESAVE_ERROR)) {
-    //   AppRepositorySAS.sendUpdateMessage(this.ctx).then(result => {
-    //     runInAction(() => {
-    //       // eslint-disable-next-line no-empty
-    //       if (result === 'nonUpdate') {
-    //       } else if (result === 'updateError') {
-    //         if (this.ctx.getSaveState() === SaveState.RESAVING) {
-    //           this.ctx.setSaveState(SaveState.RESAVE_ERROR);
-    //         } else {
-    //           this.ctx.setSaveState(SaveState.SAVE_ERROR);
-    //         }
-    //       } else if (result === 'updateComplete') {
-    //         this.ctx.setSaveState(SaveState.SAVE_COMPLETE);
-    //         const resetDate = new Date();
-    //         this.ctx.setLastSavedTime(resetDate);
-    //         if (this.ctx.getNeedSaveState()) {
-    //           this.ctx.setSaveState(SaveState.SAVING);
-    //           this.saveApp(this.ctx);
-    //         }
-    //       }
-    //     });
-    //   });
-    // }
+    // 1. Update message
+    this.makeUpdateMessage();
+
+    // 2. Send to server
+    this.sendUpdateMessage();
   }
 
   /**

@@ -1,5 +1,5 @@
 // import CommandMessage from 'ux/model/message/CommandMessage';
-import { OperationMessage } from '../../../message/OperationMessage';
+import { IOperationMessage } from 'models/message/OperationMessageType';
 
 /**
  * Document 를 제어하는 가장 작은 단위입니다.
@@ -28,21 +28,21 @@ abstract class SimpleCommand {
   /**
    * do 동작에 맞는 update message를 생성합니다.
    */
-  public makeApplyUpdateMessage(): OperationMessage[] | OperationMessage | undefined {
+  public makeApplyUpdateMessage(): IOperationMessage[] | IOperationMessage | undefined {
     return undefined;
   }
 
   /**
    * undo 동작에 맞는 update message를 생성해 리턴합니다.
    */
-  public makeUnApplyUpdateMessage(): OperationMessage[] | OperationMessage | undefined {
+  public makeUnApplyUpdateMessage(): IOperationMessage[] | IOperationMessage | undefined {
     return undefined;
   }
 
   /**
    * redo 동작에 맞는 update message를 생성해 리턴합니다.
    */
-  public makeReApplyUpdateMessage(): OperationMessage[] | OperationMessage | undefined {
+  public makeReApplyUpdateMessage(): IOperationMessage[] | IOperationMessage | undefined {
     return undefined;
   }
 
