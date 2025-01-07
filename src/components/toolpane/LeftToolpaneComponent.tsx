@@ -1,3 +1,4 @@
+import ComponentInsertToolPane from 'components/toolpane/ComponentInsertToolPane';
 import LeftToolPaneResizingBar from 'components/toolpane/LeftToolPaneResizingBar';
 import PageSorterViewComponent from 'components/toolpane/PageSorterViewComponent';
 import TreeToolPaneComponent from 'components/toolpane/TreeToolPaneComponent';
@@ -13,6 +14,7 @@ const LeftToolpaneComponent: React.FC = () => {
   const [initialY, setInitialY] = useState(0);
   const [isResizing, setIsResizing] = useState(false);
   const { ref, handlePointerMove, handlePointerDown, handlePointerUp, handleMouseMove } = useToolpaneResize();
+  const [addLibraryDialogOpen, SetAddLibraryDialogOpen] = useState(false);
 
   const minTopToolPaneHeight = 100;
 
@@ -70,7 +72,7 @@ const LeftToolpaneComponent: React.FC = () => {
           <TreeToolPaneComponent ref={bottomToolPane} />
         </div>
       </div>
-      {/* <ComponentInsertToolPane setAddLibraryDialogOpen={SetAddLibraryDialogOpen} /> */}
+      <ComponentInsertToolPane setAddLibraryDialogOpen={SetAddLibraryDialogOpen} />
       {/* <AddLibraryDialogComponent
                 open={addLibraryDialogOpen}
                 onClick={onClickAddLibrary}

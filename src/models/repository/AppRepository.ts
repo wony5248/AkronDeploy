@@ -89,13 +89,13 @@ export interface ILibraryInfo {
   categoryInfo: string;
   userCreated: string;
   appWidgetModel: WidgetModel;
-  componentItemList: IPublishedGXComponentItem[];
+  componentItemList: IPublishedComponentItem[];
 }
 
 /**
  * 서버에서 받아온 앱의 정보를 나타냅니다.
  */
-export interface IPublishedGXComponentItem {
+export interface IPublishedComponentItem {
   appID?: number;
   componentName: string;
   thumbnailFileName: string;
