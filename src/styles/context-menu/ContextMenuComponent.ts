@@ -31,6 +31,8 @@ export const contextMenuItemSmall = css`
   font-size: 11px;
   line-height: 14px;
   border-radius: 6px;
+  border: transparent;
+  background-color: transparent;
 
   color: #222938;
 
@@ -69,6 +71,8 @@ export const contextMenuItemLarge = css`
   font-weight: 400;
   font-size: 11px;
   line-height: 14px;
+  border: transparent;
+  background-color: transparent;
   border-radius: 6px;
 
   color: #222938;

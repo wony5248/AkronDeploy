@@ -1,6 +1,7 @@
 import { action, makeObservable, observable } from 'mobx';
 import { boundMethod } from 'autobind-decorator';
-import { LeftToolPaneType, RightToolPaneType } from 'store/toolpane/ToolPaneComponentInfo';
+import { LeftToolPaneType, RightToolPaneType, ToolPaneData } from 'store/toolpane/ToolPaneComponentInfo';
+import { IRibbonTab } from 'store/ribbon-menu/RibbonMenuComponentInfo';
 
 export enum WorkAreaTabIndex {
   EDITOR,
@@ -57,6 +58,9 @@ export default class EditorUIStore {
   // // Editor 영역에서 사용될 snackBar Msg
   @observable
   private snackbarMsg = '';
+
+  @observable
+  private toolPaneTabMap: Map<string, IRibbonTab> = new Map();
   //   @observable
   // private businessAlertOpenProperty: boolean;
   //   @observable
@@ -135,6 +139,9 @@ export default class EditorUIStore {
     // this.editOSobject = undefined;
     // this.insertBusinessLogicCommandProps = null;
     // this.contentMode = ContentMode.LIST;
+    ToolPaneData.forEach(tab => {
+      this.toolPaneTabMap.set(tab.id, tab);
+    });
   }
 
   // /**
@@ -221,13 +228,13 @@ export default class EditorUIStore {
     this.treeRerenderFlag = !this.treeRerenderFlag;
   }
 
-  // /**
-  //  * get treeRerenderFlag
-  //  */
-  //   @boundMethod
-  // getTreeRerenderFlag() {
-  //     return this.treeRerenderFlag;
-  // }
+  /**
+   * get treeRerenderFlag
+   */
+  @boundMethod
+  getTreeRerenderFlag() {
+    return this.treeRerenderFlag;
+  }
 
   /**
    * set snackbarMsg
@@ -243,6 +250,13 @@ export default class EditorUIStore {
   @boundMethod
   getEditorSnackBarMsg() {
     return this.snackbarMsg;
+  }
+
+  /**
+   * ToolPane 탭을 가져옴.
+   */
+  public getToolPaneTabItem(id: string) {
+    return this.toolPaneTabMap.get(id);
   }
 
   // /**

@@ -1,7 +1,10 @@
 import LeftToolPaneContentComponent from 'components/toolpane/LeftToolpaneContentComponent';
 import ToolPaneTitleComponent from 'components/toolpane/ToolPaneTitleComponent';
+import TreeNodeComponent from 'components/toolpane/TreeNodeComponent';
 import useEditorStore from 'hooks/useEditorStore';
 import { observer } from 'mobx-react-lite';
+import WidgetModel from 'models/node/WidgetModel';
+import { WidgetEditingState } from 'models/store/command/widget/WidgetModelTypes';
 import { WidgetLayerContainerProvider } from 'models/widget/WidgetLayerContainer';
 import * as React from 'react';
 import { ForwardedRef } from 'react';
@@ -12,7 +15,7 @@ import { reverseViewer } from 'styles/toolpane/LeftToolpane';
  */
 const TreeToolPaneComponent = React.forwardRef((_, ref: ForwardedRef<HTMLDivElement>) => {
   const editorStroe = useEditorStore();
-  // const topWidgetModels = editorStroe.getEditingPageModel();
+  const topWidgetModels = editorStroe.getEditingPageModel() ?? editorStroe.getAppModel()?.getFirstChild();
   // const isPageLocked = topWidgetModels?.getComponentSpecificProperties().locked ?? false;
   const store = editorStroe.getWidgetLayerContainer();
 
@@ -29,17 +32,17 @@ const TreeToolPaneComponent = React.forwardRef((_, ref: ForwardedRef<HTMLDivElem
       />
       <LeftToolPaneContentComponent>
         <WidgetLayerContainerProvider value={store}>
-          <div css={reverseViewer} /*onMouseLeave={() => store.setTargetModel(undefined)}*/>
-            {/* {topWidgetModels?.mapChild(
-                            widgetModel =>
-                                widgetModel.getEditingState() !== WidgetEditingState.FLOATING && (
-                                    <TreeNodeComponent
-                                        key={widgetModel.getID()}
-                                        widgetModel={widgetModel}
-                                        isPageLocked={isPageLocked}
-                                    />
-                                )
-                        )} */}
+          <div css={reverseViewer} onMouseLeave={() => store.setTargetModel(undefined)}>
+            {topWidgetModels?.mapChild(
+              (widgetModel: WidgetModel) =>
+                widgetModel.getEditingState() !== WidgetEditingState.FLOATING && (
+                  <TreeNodeComponent
+                    key={widgetModel.getID()}
+                    widgetModel={widgetModel}
+                    isPageLocked={false /*isPageLocked*/}
+                  />
+                )
+            )}
           </div>
         </WidgetLayerContainerProvider>
       </LeftToolPaneContentComponent>

@@ -161,6 +161,13 @@ class EditorStore {
   }
 
   /**
+   * appID getter.
+   */
+  public getAppID() {
+    return this.ctx.getAppID();
+  }
+
+  /**
    * 현재 선택된 widget들을 가져옴.
    */
   @boundMethod
