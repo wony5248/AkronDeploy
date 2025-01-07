@@ -4,7 +4,7 @@ import { AxiosResponse } from 'axios';
 import API from 'models/API/API';
 import UpdateMessage from 'models/message/UpdateMessage';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
-import { NodeJson } from 'models/parser/AppParser';
+import { AppJson, NodeJson } from 'models/parser/AppParser';
 import { APIMessage } from 'models/store/container/UpdateMessageContainer';
 import AkronContext from 'models/store/context/AkronContext';
 import { SaveState } from 'models/store/EditorStore';
@@ -466,6 +466,15 @@ class AppRepository {
 
   // 추후 ID 생성이 백엔드로 넘어가면 사라질 예정입니다.
   private nextVariableDataID = new Date().getTime();
+
+  @boundMethod
+  public async getAppJson(appId: number): Promise<AppJson> {
+    const inputDTO = {
+      appId,
+    };
+    const response = await API.post('/app/json', inputDTO);
+    return { components: response.data };
+  }
 
   /**
    * FormData를 생성하여 서버로 POST합니다.
