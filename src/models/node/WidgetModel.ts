@@ -8,7 +8,7 @@ import {
 } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { action, makeObservable, observable, override } from 'mobx';
-import { OperationMessage } from 'models/message/OperationMessage';
+import { IOperationMessage } from 'models/message/OperationMessageType';
 import { WidgetEditingState } from 'models/store/command/widget/WidgetModelTypes';
 import IdContainerController from 'models/store/container/IdContainerController';
 
@@ -60,6 +60,7 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
       properties: args.properties,
       ref: args.ref,
     });
+
     makeObservable(this);
     this.rerenderSwitch = false;
     this.selectable = false;
@@ -504,7 +505,7 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
    * Operation Message를 생성합니다.
    */
   @boundMethod
-  public makeOperationMessage(): Nullable<OperationMessage> {
+  public makeOperationMessage(): Nullable<IOperationMessage> {
     return {
       elementId: this.getID(),
       parentId: this.getParent()?.getID(),

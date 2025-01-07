@@ -39,6 +39,30 @@ import { isEditAppMode, isEditWidgetMode } from 'util/AppModeUtil';
 import RenameWidgetCommand from 'models/store/command/widget/RenameWidgetCommand';
 import { WidgetStyle, Position, Length, Constraint } from 'models/widget/WidgetPropTypes';
 
+const widgetModelDemo = new WidgetModel({
+  id: 1000000,
+  widgetType: 'BasicButton',
+  widgetCategory: '',
+  name: 'button',
+  properties: { content: { text: 'afasd' }, style: { backgroundColor: 'black' } },
+});
+
+const widgetModelDemo2 = new WidgetModel({
+  id: 1000001,
+  widgetType: 'BasicButton1',
+  widgetCategory: '',
+  name: 'button',
+  properties: { content: { text: 'afasd' }, style: { backgroundColor: 'black' } },
+});
+
+const widgetModelDemo3 = new WidgetModel({
+  id: 1000002,
+  widgetType: 'BasicButton2',
+  widgetCategory: '',
+  name: 'button',
+  properties: { content: { text: 'afasd' }, style: { backgroundColor: 'black' } },
+});
+
 /**
  * 삽입과 동시에 속성을 특정 값으로 설정해야 할 때 사용.
  * 현재 방식: 속성의 메타데이터 ID를 가지고, 모델의 props에 일치하는 ID의 속성들을 덮어씀.
@@ -223,7 +247,7 @@ export type ResetWidgetContentCommandProps = WidgetCommandProps & {
 /**
  * Widget 끌어서 resize 시작 시 필요한 Props
  */
-type WidgetResizeStartCommandProps = WidgetCommandProps & {
+export type WidgetResizeStartCommandProps = WidgetCommandProps & {
   commandID: CommandEnum.WIDGET_RESIZE_START;
   targetModels: WidgetModel[];
 };
@@ -708,42 +732,6 @@ class WidgetEditCommandHandler extends CommandHandler {
   //     newWidgetModel,
   //     isClone: true,
   //   });
-  // }
-
-  // /**
-  //  * 주어진 type에 해당하는 새 widget을 생성.
-  //  */
-  // @boundMethod
-  // private newCreateNewWidgetModel(
-  //   ctx: AkronContext,
-  //   widgetTypeId: WidgetTypeID,
-  //   widgetType: string,
-  //   widgetName?: string
-  // ) {
-  //   const defaultWidgetModel = ctx.getMetaDataContainer().getDefaultWidgetModelMap().get(widgetTypeId);
-
-  //   if (isUndefined(defaultWidgetModel)) {
-  //     return undefined;
-  //   }
-  //   const newWidgetModel = defaultWidgetModel.cloneNode(ctx.getIdContainerController()) as WidgetModel;
-
-  //   (newWidgetModel as WorkAreaModel | NewWidgetModel).setName(
-  //     widgetName ?? `${widgetType} ${newWidgetModel.getID() % 100}`
-  //   );
-
-  //   if (newWidgetModel instanceof SystemComponentModel) {
-  //     const userDefaultCompThemeId = getUserDefaultCompThemeId(
-  //       ctx.getCompThemeContainer(),
-  //       newWidgetModel.getWidgetTypeId()
-  //     );
-  //     newWidgetModel.setCompThemeId(userDefaultCompThemeId ?? undefined);
-  //   }
-
-  //   // if (newWidgetModel instanceof PublishedComponentModel) {
-  //   //   newWidgetModel.setLibraryType('PGX');
-  //   // }
-
-  //   return newWidgetModel;
   // }
 
   /**
@@ -1444,44 +1432,46 @@ class WidgetEditCommandHandler extends CommandHandler {
     const selectionContainer = ctx.getSelectionContainer();
 
     const { targetModels: widgetModels, deltaX, deltaY, deltaWidth, deltaHeight } = props;
-
+    const models = [widgetModelDemo, widgetModelDemo2, widgetModelDemo3];
+    const model = widgetModelDemo;
     const resizeHandle = widgetEditInfoContainer.getResizeHandle();
 
-    const isPage = widgetModels.find(widgetModel => checkPageModel(widgetModel)) !== undefined;
+    const isPage = models.find(widgetModel => checkPageModel(widgetModel)) !== undefined;
     if (isPage) {
       return;
     }
-
-    if (isUndefined(command)) {
+    if (command === undefined) {
       dError('command is not exist');
       return;
     }
 
-    widgetModels.forEach(widgetModel => {
+    models.forEach(widgetModel => {
       // editingState 변경
       widgetModel.setEditingState(WidgetEditingState.NONE);
 
       // style 변경용 Command 생성
       const widgetProps = widgetModel.getProperties();
-      const targetFloatingModel = widgetEditInfoContainer.getEditingFloatingWidget(widgetModel);
-      if (isUndefined(targetFloatingModel)) {
-        return;
-      }
-      const refPositionMap = widgetEditInfoContainer.getRefPositionMap(targetFloatingModel);
+
+      // const targetFloatingModel = widgetEditInfoContainer.getEditingFloatingWidget(widgetModel);
+
+      // if (isUndefined(targetFloatingModel)) {
+      //   return;
+      // }
+      // const refPositionMap = widgetEditInfoContainer.getRefPositionMap(targetFloatingModel);
 
       // const widgetStyle = widgetProps.getStyle();
 
       // parent의 absolute 값으로 relative 계산
-      const parentWidget = widgetModel.getParent();
-      if (!parentWidget) {
-        return;
-      }
+      // const parentWidget = widgetModel.getParent();
+      // if (!parentWidget) {
+      //   return;
+      // }
 
-      const updatedStyle = this.calculateNewStyle(refPositionMap, deltaWidth, deltaHeight, deltaX, deltaY);
+      // const updatedStyle = this.calculateNewStyle(refPositionMap, deltaWidth, deltaHeight, deltaX, deltaY);
 
-      if (updatedStyle === undefined) {
-        return;
-      }
+      // if (updatedStyle === undefined) {
+      //   return;
+      // }
 
       // 임시 포지션
       // const position = widgetModel.getPosition();
@@ -1515,7 +1505,7 @@ class WidgetEditCommandHandler extends CommandHandler {
       //   top: newTop !== undefined ? { value: newTop, unit: topUnit } : position.top,
       // };
       const updateWidgetCommand = new UpdateWidgetCommand(widgetModel, widgetProps);
-      ctx.getCommand()?.append(updateWidgetCommand);
+      command.append(updateWidgetCommand);
       // for (const [key, value] of Object.entries(updatedStyle.style)) {
       //     const updateWidgetCommand = new UpdateWidgetCommand(widgetModel, key, true, value);
       //     command.append(updateWidgetCommand);
@@ -1558,10 +1548,9 @@ class WidgetEditCommandHandler extends CommandHandler {
         width: newWidth,
         height: newHeight,
       });
-      ctx.getCommand()?.append(updateSizeCommand);
+      command.append(updateSizeCommand);
       // updatePinnedChildren(widgetModel, Number(newWidth.value), Number(newHeight.value), ctx);
     });
-
     runInAction(() => {
       ctx.setMouseMode('Normal');
     });

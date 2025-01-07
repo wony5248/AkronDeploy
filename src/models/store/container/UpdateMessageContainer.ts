@@ -1,5 +1,6 @@
 import { isDefined } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
+import { IOperationMessage } from 'models/message/OperationMessageType';
 import UpdateMessage from 'models/message/UpdateMessage';
 
 /**
@@ -11,7 +12,7 @@ export type APIMessage = () => Promise<boolean>;
  * UpdateMessage를 담는 컨테이너 입니다.
  */
 export default class UpdateMessageContainer {
-  private updateMessages: Array<UpdateMessage>;
+  private updateMessages: Array<IOperationMessage>;
 
   private reUpdateMessages: string;
 
@@ -25,7 +26,7 @@ export default class UpdateMessageContainer {
    * contructor
    */
   public constructor() {
-    this.updateMessages = new Array<UpdateMessage>();
+    this.updateMessages = new Array<IOperationMessage>();
     this.apiMessages = new Array<APIMessage>();
     this.transformed = false;
     this.reUpdateMessages = '';
@@ -36,7 +37,7 @@ export default class UpdateMessageContainer {
    * updateMessage 객체를 채우는 동작을 합니다.
    */
   @boundMethod
-  public appendUpdateMessage(updateMessage: UpdateMessage): void {
+  public appendUpdateMessage(updateMessage: IOperationMessage): void {
     this.updateMessages.push(updateMessage);
   }
 
@@ -52,21 +53,19 @@ export default class UpdateMessageContainer {
    * UpdateMessage를 채우는 동작을 합니다.
    */
   @boundMethod
-  public appendUpdateMessages(updateMessages: UpdateMessage[], appID: number): void {
-    updateMessages.forEach(updateMessage => {
-      updateMessage.setAppID(appID);
-    });
+  public appendUpdateMessages(updateMessages: IOperationMessage[], appID: number): void {
+    // updateMessages.forEach(updateMessage => {
+    //   updateMessage.setAppID(appID);
+    // });
 
     let indicesToRemove: number[] = [];
 
     this.updateMessages.forEach((currentUpdateMessage, index) => {
       updateMessages.forEach(updateMessage => {
         if (
-          isDefined(currentUpdateMessage.getModelID()) &&
-          currentUpdateMessage.getModelID() === updateMessage.getModelID() &&
-          currentUpdateMessage.getBehavior() === updateMessage.getBehavior() &&
-          updateMessage.getBehavior() !== 'ie' &&
-          updateMessage.getBehavior() !== 'de'
+          currentUpdateMessage.behavior === updateMessage.behavior &&
+          updateMessage.behavior !== 'ie' &&
+          updateMessage.behavior !== 'de'
         ) {
           indicesToRemove.push(index);
         }
@@ -95,7 +94,7 @@ export default class UpdateMessageContainer {
    * UpdateMessage array를 반환
    */
   @boundMethod
-  public getUpdateMessages(): UpdateMessage[] {
+  public getUpdateMessages(): IOperationMessage[] {
     return this.updateMessages;
   }
 

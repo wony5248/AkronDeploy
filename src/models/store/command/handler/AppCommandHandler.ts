@@ -1,4 +1,4 @@
-import { IWidgetCommonProperties, isDefined } from '@akron/runner';
+import { IWidgetCommonProperties, isDefined, isUndefined } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { runInAction } from 'mobx';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
@@ -13,7 +13,6 @@ import AkronContext from 'models/store/context/AkronContext';
 import { SaveState } from 'models/store/EditorStore';
 import { PageSection } from 'models/widget/WidgetPropTypes';
 import { AppType } from 'store/app/AppInfo';
-import { isUndefined } from 'util';
 
 const unNamedSection = '이름 없는 구역';
 const defaultSection = '기본 구역';

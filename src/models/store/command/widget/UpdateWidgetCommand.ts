@@ -1,3 +1,4 @@
+import { content } from './../../../../styles/workarea/Content';
 import { action } from 'mobx';
 import { boundMethod } from 'autobind-decorator';
 import { IWidgetCommonProperties, DeepReadonly, isUndefined, dError } from '@akron/runner';
@@ -39,9 +40,9 @@ class UpdateWidgetCommand extends SimpleCommand {
     this.model = model;
     this.propId = propId;
     this.propValue = propValue;
-    this.prevPropValue = this.model.getProperties().get(propId)?.value;
+    this.prevPropValue = this.model.getProperties().content.text;
     this.eventHandler = eventHandler || [];
-    this.prevEventHandler = this.model.getProperties().get(propId)?.eventHandler || [];
+    this.prevEventHandler = this.model.getProperties().content.text || [];
     // this.nonBindableDataReferenceContainer = nonBindableDataReferenceContainer;
   }
 
@@ -50,10 +51,10 @@ class UpdateWidgetCommand extends SimpleCommand {
    */
   @action.bound
   public override apply(): void {
-    const widgetProp = this.model.getProperties().get(this.propId);
+    const widgetProp = this.model.getProperties();
     if (widgetProp) {
-      widgetProp.value = this.propValue;
-      widgetProp.eventHandler = this.eventHandler;
+      widgetProp.content = this.propValue;
+      widgetProp.style = this.propValue;
       this.model.setProperties(widgetProp);
       //  if (this.nonBindableDataReferenceContainer) {
       //      this.updateNonBindableReferenceDataUpdate(this.prevPropValue, this.propValue);

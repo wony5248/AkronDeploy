@@ -2,6 +2,8 @@ import { boundMethod } from 'autobind-decorator';
 import SelectionContainer from '../../container/SelectionContainer';
 import SimpleCommand from './SimpleCommand';
 import AkronContext from 'models/store/context/AkronContext';
+import UpdateMessage from 'models/message/UpdateMessage';
+import { IOperationMessage } from 'models/message/OperationMessageType';
 
 /**
  * 하나의 작업 단위를 나타내는 class 입니다.
@@ -123,6 +125,174 @@ class Command {
   }
 
   /**
+   * Command do 수행에 맞는
+   * server messages를 만드는 작업을 수행합니다.
+   */
+  @boundMethod
+  public makeApplyMessages(): { (): Promise<boolean> }[] {
+    const serverMessages = new Array<{ (): Promise<boolean> }>();
+
+    this.commandList.forEach(command => {
+      const updateMessage = command.getApplyMessage();
+      serverMessages.push(updateMessage);
+    });
+    this.postCommandList.forEach(command => {
+      const updateMessage = command.getApplyMessage();
+      serverMessages.push(updateMessage);
+    });
+
+    return serverMessages;
+  }
+
+  /**
+   * Command 수행에 맞는
+   * update messages를 만드는 작업을 수행합니다.
+   */
+  @boundMethod
+  public makeApplyUpdateMessages(): IOperationMessage[] {
+    const updateMessages = new Array<IOperationMessage>();
+
+    this.commandList.forEach(command => {
+      const updateMessage = command.makeApplyUpdateMessage();
+      if (updateMessage !== undefined) {
+        if (updateMessage instanceof Array) {
+          (updateMessage as IOperationMessage[]).forEach(m => {
+            updateMessages.push(m);
+          });
+        } else {
+          updateMessages.push(updateMessage);
+        }
+      }
+    });
+    this.postCommandList.forEach(command => {
+      const updateMessage = command.makeApplyUpdateMessage();
+      if (updateMessage !== undefined) {
+        if (updateMessage instanceof Array) {
+          (updateMessage as IOperationMessage[]).forEach(m => {
+            updateMessages.push(m);
+          });
+        } else {
+          updateMessages.push(updateMessage);
+        }
+      }
+    });
+
+    return updateMessages;
+  }
+
+  /**
+   * Command undo 수행에 맞는
+   * update messages를 만드는 작업을 수행합니다.
+   */
+  @boundMethod
+  public makeUnApplyUpdateMessages(): IOperationMessage[] {
+    const updateMessages = new Array<IOperationMessage>();
+
+    this.commandList.forEach(command => {
+      const updateMessage = command.makeUnApplyUpdateMessage();
+      if (updateMessage !== undefined) {
+        if (updateMessage instanceof Array) {
+          (updateMessage as IOperationMessage[]).forEach(m => {
+            updateMessages.push(m);
+          });
+        } else {
+          updateMessages.push(updateMessage);
+        }
+      }
+    });
+    this.postCommandList.forEach(command => {
+      const updateMessage = command.makeUnApplyUpdateMessage();
+      if (updateMessage !== undefined) {
+        if (updateMessage instanceof Array) {
+          (updateMessage as IOperationMessage[]).forEach(m => {
+            updateMessages.push(m);
+          });
+        } else {
+          updateMessages.push(updateMessage);
+        }
+      }
+    });
+
+    return updateMessages;
+  }
+
+  /**
+   * Command redo 수행에 맞는
+   * update messages를 만드는 작업을 수행합니다.
+   */
+  @boundMethod
+  public makeReApplyUpdateMessages(): IOperationMessage[] {
+    const updateMessages = new Array<IOperationMessage>();
+
+    this.commandList.forEach(command => {
+      const updateMessage = command.makeReApplyUpdateMessage();
+      if (updateMessage !== undefined) {
+        if (updateMessage instanceof Array) {
+          (updateMessage as IOperationMessage[]).forEach(m => {
+            updateMessages.push(m);
+          });
+        } else {
+          updateMessages.push(updateMessage);
+        }
+      }
+    });
+    this.postCommandList.forEach(command => {
+      const updateMessage = command.makeReApplyUpdateMessage();
+      if (updateMessage !== undefined) {
+        if (updateMessage instanceof Array) {
+          (updateMessage as IOperationMessage[]).forEach(m => {
+            updateMessages.push(m);
+          });
+        } else {
+          updateMessages.push(updateMessage);
+        }
+      }
+    });
+
+    return updateMessages;
+  }
+
+  /**
+   * Command undo 수행에 맞는
+   * server messages를 만드는 작업을 수행합니다.
+   */
+  @boundMethod
+  public makeUnApplyMessages(): { (): Promise<boolean> }[] {
+    const serverMessages = new Array<{ (): Promise<boolean> }>();
+
+    this.commandList.forEach(command => {
+      const updateMessage = command.getUnApplyMessage();
+      serverMessages.push(updateMessage);
+    });
+    this.postCommandList.forEach(command => {
+      const updateMessage = command.getUnApplyMessage();
+      serverMessages.push(updateMessage);
+    });
+
+    return serverMessages;
+  }
+
+  /**
+   * Command redo 수행에 맞는
+   * server messages를 만드는 작업을 수행합니다.
+   */
+  @boundMethod
+  public makeReApplyMessages(): { (): Promise<boolean> }[] {
+    const serverMessages = new Array<{ (): Promise<boolean> }>();
+
+    this.commandList.forEach(command => {
+      const updateMessage = command.getReApplyMessage();
+      serverMessages.push(updateMessage);
+    });
+    this.postCommandList.forEach(command => {
+      const updateMessage = command.getReApplyMessage();
+      serverMessages.push(updateMessage);
+    });
+
+    return serverMessages;
+  }
+
+  /**
    * Simple command 가 있는지 확인합니다.
    *
    * @returns Simple command 가 하나도 없으면 true
@@ -162,6 +332,14 @@ class Command {
   @boundMethod
   public getTag(): string {
     return this.tag;
+  }
+
+  /**
+   * Commands가 가지는 newSelection을 set합니다.
+   */
+  @boundMethod
+  public getCommandList(): SimpleCommand[] {
+    return this.commandList;
   }
 }
 

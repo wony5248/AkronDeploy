@@ -1,4 +1,9 @@
 import useEditorStore from 'hooks/useEditorStore';
+import WidgetRepository from 'models/repository/WidgetRepository';
+import AkronCommandMapper from 'models/store/command/akron/AkronCommandMapper';
+import CommandEnum from 'models/store/command/common/CommandEnum';
+import CommandHandlerFactory from 'models/store/command/factory/CommandHandlerFactory';
+import WidgetCommandProps from 'models/store/command/widget/WidgetCommandProps';
 import {
   leftToolpaneTitle,
   leftToolpaneTitleButton,
@@ -44,18 +49,17 @@ const ToolPaneTitleComponent: React.FC<IProps> = ({
 }: IProps) => {
   const editorStore = useEditorStore();
   const editorUIStore = editorStore.getEditorUIStore();
+
   // const title = useTextResource(titleID);
   let onClickPlusButton;
 
   if (plusButtonLogicType === 'AddPage') {
     onClickPlusButton = () => {
-      // const commandProps: AddPageCommandProps = {
-      //     commandID: CommandEnum.ADD_PAGE,
-      //     widgetType: 'Page',
-      //     widgetID: WidgetRepository.generateWidgetID(),
-      //     pageLevel: 0,
-      // };
-      // editorStore.handleCommandEvent(commandProps);
+      const commandProps: WidgetCommandProps = {
+        commandID: CommandEnum.WIDGET_RESIZE_END,
+        selectionProp: editorStore.getEditingWidgetModel(),
+      };
+      editorStore.handleCommandEvent(commandProps);
     };
   } else if (plusButtonLogicType === 'InsertComponent') {
     onClickPlusButton = () => {

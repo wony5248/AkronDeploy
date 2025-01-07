@@ -2,6 +2,7 @@ import { isDefined, dLog, dError, Nullable, IWidgetCommonProperties } from '@akr
 import { boundMethod } from 'autobind-decorator';
 import { AxiosResponse } from 'axios';
 import API from 'models/API/API';
+import { IOperationMessage } from 'models/message/OperationMessageType';
 import UpdateMessage from 'models/message/UpdateMessage';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
 import { AppJson, NodeJson } from 'models/parser/AppParser';
@@ -487,7 +488,7 @@ class AppRepository {
     const formData = new FormData();
 
     // Append documentContent
-    const updateMessages = updateMessageContainer.getUpdateMessages() as UpdateMessage[];
+    const updateMessages = updateMessageContainer.getUpdateMessages() as IOperationMessage[];
     const apiMessages = updateMessageContainer.getAPIMessages();
     const newContentsMessages = new Array<ContentMessageLog>();
     let reSaveMessage = '';
@@ -512,7 +513,7 @@ class AppRepository {
     let updateResult: boolean | AxiosResponse<any> = true;
     let messageResponse: boolean | undefined;
     if (updateMessages.length > 0 || reSaveMessage.length > 0) {
-      const requestUrl = '/UpdateContentBehavior/putAppContents';
+      const requestUrl = '/app/update';
       updateResult = await API.post<FormData>(requestUrl, formData, {
         headers: { 'Content-Type': 'multipart/form-data', appID: ctx.getAppID() },
       }).catch(() => {
