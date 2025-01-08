@@ -25,14 +25,14 @@ export interface IWidgetModelInitProps<Properties> {
   ref?: React.RefObject<HTMLElement> | undefined;
 }
 
-class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<Properties> {
+class WidgetModel<
+  Properties extends IWidgetCommonProperties = IWidgetCommonProperties,
+> extends BaseWidgetModel<Properties> {
   /**
    * WidgetModel이 바뀌었을 때 re-render가 필요한 곳에서 호출합니다.
    */
   @observable
   private rerenderSwitch: boolean;
-
-  @observable private widgetType: string;
 
   /**
    * GX widgetModel 중 선택 가능한 model
@@ -64,7 +64,6 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
     makeObservable(this);
     this.rerenderSwitch = false;
     this.selectable = false;
-    this.widgetType = args.widgetType;
     this.editingState = WidgetEditingState.NONE;
   }
 
@@ -91,11 +90,7 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
   }
 
   public isRepeatableLayoutWidgetType() {
-    return Boolean(
-      this.widgetType === 'RepeatableLayout' ||
-        this.widgetType === 'InfiniteLayout' ||
-        this.widgetType === 'BasicSelect'
-    );
+    return false;
   }
 
   /**
@@ -174,14 +169,14 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
   }
 
   public getWidgetCategory(): WidgetCategory {
-    return super.getWidgetCategory();
+    return this.widgetCategory;
   }
 
   /**
    * Widget의 속성들을 반환합니다.
    */
   public getProperties(): Properties {
-    return super.getProperties();
+    return this.properties;
   }
 
   /**
@@ -191,7 +186,7 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
    */
   @action
   public setProperties(properties: Properties) {
-    super.setProperties(properties);
+    this.properties = properties;
   }
 
   /**
@@ -202,28 +197,28 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
   public getStyleProperties(propCategory: string) {
     switch (propCategory) {
       case 'x': {
-        return super.properties.style.x;
+        return this.properties.style.x;
       }
       case 'y': {
-        return super.properties.style.y;
+        return this.properties.style.y;
       }
       case 'width': {
-        return super.properties.style.width;
+        return this.properties.style.width;
       }
       case 'height': {
-        return super.properties.style.height;
+        return this.properties.style.height;
       }
       case 'maxWidth': {
-        return super.properties.style.maxWidth;
+        return this.properties.style.maxWidth;
       }
       case 'maxHeight': {
-        return super.properties.style.maxHeight;
+        return this.properties.style.maxHeight;
       }
       case 'minWidth': {
-        return super.properties.style.minWidth;
+        return this.properties.style.minWidth;
       }
       case 'minHeight': {
-        return super.properties.style.minHeight;
+        return this.properties.style.minHeight;
       }
       default: {
         dError('Property is not exist.');
@@ -255,7 +250,7 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
    * set ref.
    */
   public setRef(ref: React.RefObject<Element> | undefined) {
-    super.setRef(ref);
+    this.ref = ref;
   }
 
   /**
@@ -301,7 +296,7 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
    * Widget의 이름을 반환합니다.
    */
   public getName() {
-    return super.getName();
+    return this.name;
   }
 
   /**
@@ -309,7 +304,7 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
    */
   @action
   public setName(name: string) {
-    super.setName(name);
+    this.name = name;
   }
 
   /**
@@ -318,7 +313,7 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
    * 저장 로직 변경시 제거 필요합니다.
    */
   public getWidgetType() {
-    return super.getWidgetType();
+    return this.widgetType;
   }
 
   /**
@@ -513,7 +508,7 @@ class WidgetModel<Properties = IWidgetCommonProperties> extends BaseWidgetModel<
       nextId: this.getNextSibling()?.getID(),
       childId: this.getFirstChild()?.getID(),
       elementType: this.getWidgetType(),
-      // objectType: this.getObjectType(),
+      objectType: 1,
       // contentData: this.getContentJsonString(),
     };
   }
