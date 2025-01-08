@@ -1,4 +1,4 @@
-import { BaseWidgetModel, Nullable } from '@akron/runner';
+import { Nullable } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { observable, makeObservable, action, runInAction } from 'mobx';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
@@ -48,7 +48,7 @@ class EditableContext extends EditableContextBase {
    * (ex. App or Composite)
    */
   @observable
-  private editingNewWidgetModel: BaseWidgetModel;
+  private editingNewWidgetModel: WidgetModel;
 
   /**
    * 현재 event 의 command id 와 handling 에 필요한 요소들을 나타냅니다. 휘발적이며 event 마다 초기화 됩니다.
@@ -66,7 +66,7 @@ class EditableContext extends EditableContextBase {
    * Mouse Event로 드래깅 시 Hit 정보들을 저장하는 Container 입니다.
    */
   @observable
-  private hitContainer: HitContainer<BaseWidgetModel>;
+  private hitContainer: HitContainer<WidgetModel>;
 
   /**
    * 현재 선택된 Selection 정보
@@ -380,7 +380,7 @@ class EditableContext extends EditableContextBase {
    * editingNewWidgetModel 반환합니다
    */
   @boundMethod
-  public getEditingNewWidgetModel(): BaseWidgetModel {
+  public getEditingNewWidgetModel(): WidgetModel {
     return this.editingNewWidgetModel;
   }
 
@@ -388,7 +388,7 @@ class EditableContext extends EditableContextBase {
    * editingNewWidgetModel 설정합니다
    */
   @boundMethod
-  public setEditingNewWidgetModel(editingNewWidgetModel: BaseWidgetModel): void {
+  public setEditingNewWidgetModel(editingNewWidgetModel: WidgetModel): void {
     this.editingNewWidgetModel = editingNewWidgetModel;
   }
 
@@ -806,7 +806,7 @@ class EditableContext extends EditableContextBase {
    * HitContainer을 설정합니다
    */
   @boundMethod
-  public setHitContainerController(hitContainer: HitContainer<BaseWidgetModel>): void {
+  public setHitContainerController(hitContainer: HitContainer<WidgetModel>): void {
     this.hitContainer = hitContainer;
   }
 
@@ -814,7 +814,7 @@ class EditableContext extends EditableContextBase {
    * HitContainer을 반환합니다
    */
   @boundMethod
-  public getHitContainer(): HitContainer<BaseWidgetModel> {
+  public getHitContainer(): HitContainer<WidgetModel> {
     return this.hitContainer;
   }
 
@@ -822,7 +822,7 @@ class EditableContext extends EditableContextBase {
    * HitContainer을 설정합니다
    */
   @boundMethod
-  public setHitContainer(hitContainer: HitContainer<BaseWidgetModel>): void {
+  public setHitContainer(hitContainer: HitContainer<WidgetModel>): void {
     this.hitContainer = hitContainer;
   }
 

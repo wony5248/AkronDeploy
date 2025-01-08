@@ -1,6 +1,6 @@
-import { BaseWidgetModel, Nullable } from '@akron/runner';
+import { Nullable } from '@akron/runner';
 import AppModel from 'models/node/AppModel';
-import { WidgetID } from 'models/node/WidgetModel';
+import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
 import WidgetCommandProps from 'models/store/command/widget/WidgetCommandProps';
 import AppModeContainer from 'models/store/container/AppModeContainer';
 import ClipboardContainer from 'models/store/container/ClipboardContainer';
@@ -179,7 +179,7 @@ export interface EditableContextProp extends EditableContextBaseProp {
   //   undoStack: UndoStack;
   //   undoRedoProps?: IUndoRedoProps;
   lastRegisteredEditUndoStackTag: string;
-  hitContainer: HitContainer<BaseWidgetModel>;
+  hitContainer: HitContainer<WidgetModel>;
   selectionContainer: SelectionContainer;
   clipboardContainer: ClipboardContainer;
   propContainer: PropContainer;

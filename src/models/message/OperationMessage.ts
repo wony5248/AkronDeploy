@@ -1,3 +1,5 @@
+import { WidgetTypeEnum } from '@akron/runner';
+
 /**
  * @interface OperationMessage - operation message를 담고 있는 인터페이스
  * @역할1 다른 유저에게 변경사항을 알리기 위해 사용

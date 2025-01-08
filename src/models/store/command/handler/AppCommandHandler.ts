@@ -191,7 +191,7 @@ class AppCommandHandler extends CommandHandler {
           ...appProp,
           content: {
             ...appProp.content,
-            sectionList: { locked: true, value: [pageSection] },
+            // sectionList: { value: [pageSection] },
           },
         };
         const updateWidgetCommand = new UpdateWidgetCommand(props.appWidgetModel, newAppProp);
@@ -223,10 +223,9 @@ class AppCommandHandler extends CommandHandler {
           ...appProp,
           content: {
             ...appProp.content,
-            sectionList: {
-              locked: true,
-              value: sectionList,
-            },
+            // sectionList: {
+            //   value: sectionList,
+            // },
           },
         };
 

@@ -1,4 +1,4 @@
-import { BaseWidgetModel, Nullable } from '@akron/runner';
+import { Nullable } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { action } from 'mobx';
 import AppModel from 'models/node/AppModel';
@@ -365,7 +365,7 @@ export default class AkronContext {
    * HitContainer을 반환합니다
    */
   @boundMethod
-  public getHitContainer(): HitContainer<BaseWidgetModel> {
+  public getHitContainer(): HitContainer<WidgetModel> {
     return this.appEditableContext.getHitContainer();
   }
 
@@ -373,7 +373,7 @@ export default class AkronContext {
    * HitContainer을 설정합니다
    */
   @boundMethod
-  public setHitContainer(hitContainer: HitContainer<BaseWidgetModel>): void {
+  public setHitContainer(hitContainer: HitContainer<WidgetModel>): void {
     this.appEditableContext.setHitContainer(hitContainer);
   }
 
@@ -381,7 +381,7 @@ export default class AkronContext {
    * HitContainer 초기값을 생성해 반환합니다
    */
   @boundMethod
-  public createHitContainer(): HitContainer<BaseWidgetModel> {
+  public createHitContainer(): HitContainer<WidgetModel> {
     return new HitContainer();
   }
 
@@ -743,7 +743,7 @@ export default class AkronContext {
    * EditingWidgetModel을 반환합니다
    */
   @boundMethod
-  public getEditingWidgetModel(): BaseWidgetModel {
+  public getEditingWidgetModel(): WidgetModel {
     return this.appEditableContext.getEditingNewWidgetModel();
   }
 
@@ -751,7 +751,7 @@ export default class AkronContext {
    * EditingWidgetModel을 설정합니다
    */
   @boundMethod
-  public setEditingWidgetModel(editingWidgetModel: BaseWidgetModel): void {
+  public setEditingWidgetModel(editingWidgetModel: WidgetModel): void {
     this.appEditableContext.setEditingNewWidgetModel(editingWidgetModel);
   }
 

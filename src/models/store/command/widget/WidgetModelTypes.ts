@@ -254,3 +254,5 @@ export type BasicWidgetType = (typeof basicWidgetTypeNames)[number];
 
 export type AnyWidgetType = BasicWidgetType | SpecialWidgetType | LayoutWidgetType | UserCreatedWidgetType;
 export type InsertableWidgetType = Exclude<AnyWidgetType, 'FragmentLayout'>;
+
+export const staticWidgetTypes = new Set<AnyWidgetType>(['App']);

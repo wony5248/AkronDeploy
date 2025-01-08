@@ -17,7 +17,7 @@ class AkronCommandMapper extends CommandMapper {
 
     // Widget
     this.setWidgetEditCommandMap(factory);
-    // this.setWidgetSelectCommandMap(factory);
+    this.setWidgetSelectCommandMap(factory);
 
     // // Widget Layer
     // this.setWidgetLayerCommandMap(factory);
@@ -115,19 +115,19 @@ class AkronCommandMapper extends CommandMapper {
   //     this.commandMap.set(CommandEnum.LAYER_MOVE, [widgetLayerCommandHandler]);
   //   }
 
-  //   /**
-  //    * WidgetSelectHandler에서 처리하는
-  //    * CommandEnum을 등록합니다
-  //    */
-  //   @boundMethod
-  //   private setWidgetSelectCommandMap(factory: CommandHandlerFactory): void {
-  //     const widgetSelectCommandHandler = factory.createWidgetSelectCommandHandler();
-  //     // Widget
-  //     this.commandMap.set(CommandEnum.SELECT_WIDGET, [widgetSelectCommandHandler]);
-  //     this.commandMap.set(CommandEnum.SELECT_PAGE_THUMBNAIL, [widgetSelectCommandHandler]);
-  //     this.commandMap.set(CommandEnum.DRAG_SELECT_WIDGET, [widgetSelectCommandHandler]);
-  //     this.commandMap.set(CommandEnum.SELECT_SECTION, [widgetSelectCommandHandler]);
-  //   }
+  /**
+   * WidgetSelectHandler에서 처리하는
+   * CommandEnum을 등록합니다
+   */
+  @boundMethod
+  private setWidgetSelectCommandMap(factory: CommandHandlerFactory): void {
+    const widgetSelectCommandHandler = factory.createWidgetSelectCommandHandler();
+    // Widget
+    this.commandMap.set(CommandEnum.SELECT_WIDGET, [widgetSelectCommandHandler]);
+    this.commandMap.set(CommandEnum.SELECT_PAGE_THUMBNAIL, [widgetSelectCommandHandler]);
+    this.commandMap.set(CommandEnum.DRAG_SELECT_WIDGET, [widgetSelectCommandHandler]);
+    this.commandMap.set(CommandEnum.SELECT_SECTION, [widgetSelectCommandHandler]);
+  }
 
   //   /**
   //    * Style 관련 CommandHandler에서 처리하는

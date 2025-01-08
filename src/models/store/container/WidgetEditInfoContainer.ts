@@ -1,4 +1,4 @@
-import { Nullable, BaseWidgetModel } from '@akron/runner';
+import { Nullable } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { observable, makeObservable, action } from 'mobx';
 import WidgetModel from 'models/node/WidgetModel';
@@ -142,17 +142,17 @@ class WidgetEditInfoContainer {
   /**
    * 현재 편집의 기준이 되는 widgetModel을 보관
    */
-  private editingWidgetModel: Nullable<BaseWidgetModel>;
+  private editingWidgetModel: Nullable<WidgetModel>;
 
   /**
    * 현재 편집 중인 widgetModel들을 보관
    */
-  private editingWidgetModels: BaseWidgetModel[];
+  private editingWidgetModels: WidgetModel[];
 
   /**
    * event의 대상이 되는 widgetModel을 보관
    */
-  @observable private eventTargetWidgetModel: Nullable<BaseWidgetModel>;
+  @observable private eventTargetWidgetModel: Nullable<WidgetModel>;
 
   /**
    * Aspect Ratio Lock 여부
@@ -175,7 +175,7 @@ class WidgetEditInfoContainer {
    * 툴페인, 브라우저 리사이징 등의 이유로 widget이 DOM과 property의 position 정보가 달라지는 경우에 쓰임
    * 이동, 리사이징이 끝나면 clear됨
    */
-  private refPositionMap: Map<BaseWidgetModel, WidgetPosition>;
+  private refPositionMap: Map<WidgetModel, WidgetPosition>;
 
   /**
    * 리사이즈 시 생성되는 floating widget과 원본 widget을 저장하는 map
@@ -284,7 +284,7 @@ class WidgetEditInfoContainer {
   public constructor() {
     makeObservable(this);
     this.editingWidgetModel = undefined;
-    this.editingWidgetModels = new Array<BaseWidgetModel>();
+    this.editingWidgetModels = new Array<WidgetModel>();
     this.eventTargetWidgetModel = undefined;
     this.refPositionMap = new Map();
     this.fromClientX = 0;
@@ -312,7 +312,7 @@ class WidgetEditInfoContainer {
    * refPositionMap set.
    */
   @boundMethod
-  public setRefPositionMap(widgetModel: BaseWidgetModel, refPosition: WidgetPosition): void {
+  public setRefPositionMap(widgetModel: WidgetModel, refPosition: WidgetPosition): void {
     this.refPositionMap.set(widgetModel, refPosition);
   }
 
@@ -328,7 +328,7 @@ class WidgetEditInfoContainer {
    * refPositionMap get.
    */
   @boundMethod
-  public getRefPositionMap(widgetModel: BaseWidgetModel): WidgetPosition | undefined {
+  public getRefPositionMap(widgetModel: WidgetModel): WidgetPosition | undefined {
     return this.refPositionMap.get(widgetModel);
   }
 
@@ -343,21 +343,21 @@ class WidgetEditInfoContainer {
   /**
    * editingWidgetModel setter
    */
-  public setEditingWidgetModel(widgetModel: Nullable<BaseWidgetModel>): void {
+  public setEditingWidgetModel(widgetModel: Nullable<WidgetModel>): void {
     this.editingWidgetModel = widgetModel;
   }
 
   /**
    * editingWidgetModel getter
    */
-  public getEditingWidgetModel(): Nullable<BaseWidgetModel> {
+  public getEditingWidgetModel(): Nullable<WidgetModel> {
     return this.editingWidgetModel;
   }
 
   /**
    * Append widget model to editingWidgetModels
    */
-  public appendEditingWidgetModel(widgetModel: BaseWidgetModel): void {
+  public appendEditingWidgetModel(widgetModel: WidgetModel): void {
     this.editingWidgetModels.push(widgetModel);
   }
 
@@ -366,13 +366,13 @@ class WidgetEditInfoContainer {
    */
   public clearEditingWidgetModel(): void {
     this.setEditingWidgetModel(undefined);
-    this.setEditingWidgetModels(new Array<BaseWidgetModel>());
+    this.setEditingWidgetModels(new Array<WidgetModel>());
   }
 
   /**
    * editingWidgetModels setter
    */
-  public setEditingWidgetModels(widgetModels: BaseWidgetModel[]): void {
+  public setEditingWidgetModels(widgetModels: WidgetModel[]): void {
     this.editingWidgetModels = widgetModels;
   }
 
@@ -380,7 +380,7 @@ class WidgetEditInfoContainer {
    * editingWidgetModels getter
    */
   @boundMethod
-  public getEditingWidgetModels(): BaseWidgetModel[] {
+  public getEditingWidgetModels(): WidgetModel[] {
     return this.editingWidgetModels;
   }
 
@@ -388,7 +388,7 @@ class WidgetEditInfoContainer {
    * eventTargetWidgetModel setter
    */
   @boundMethod
-  public setEventTargetWidgetModel(graphicModel: Nullable<BaseWidgetModel>): void {
+  public setEventTargetWidgetModel(graphicModel: Nullable<WidgetModel>): void {
     this.eventTargetWidgetModel = graphicModel;
   }
 
@@ -396,7 +396,7 @@ class WidgetEditInfoContainer {
    * eventTargetWidgetModel getter
    */
   @boundMethod
-  public getEventTargetWidgetModel(): Nullable<BaseWidgetModel> {
+  public getEventTargetWidgetModel(): Nullable<WidgetModel> {
     return this.eventTargetWidgetModel;
   }
 

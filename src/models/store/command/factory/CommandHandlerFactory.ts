@@ -3,6 +3,7 @@ import CommandEnum from 'models/store/command/common/CommandEnum';
 import CommandHandler from 'models/store/command/common/CommandHandler';
 import AppCommandHandler from 'models/store/command/handler/AppCommandHandler';
 import WidgetEditCommandHandler from 'models/store/command/handler/WidgetEditCommandHandler';
+import WidgetSelectCommandHandler from 'models/store/command/handler/WidgetSelectionCommandHandler';
 import { SelectionProp } from 'models/store/command/widget/WidgetCommandProps';
 
 /**
@@ -24,12 +25,12 @@ class CommandHandlerFactory {
   //     return new WidgetLayerCommandHandler();
   //   }
 
-  //   /**
-  //    * WidgetEditCommandHandler 반환
-  //    */
-  //   public createWidgetSelectCommandHandler(): CommandHandler {
-  //     return new WidgetSelectCommandHandler();
-  //   }
+  /**
+   * WidgetEditCommandHandler 반환
+   */
+  public createWidgetSelectCommandHandler(): CommandHandler {
+    return new WidgetSelectCommandHandler();
+  }
 
   //   /**
   //    * ClipboardCommandHandler 반환
