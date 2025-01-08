@@ -1,6 +1,6 @@
 import { action } from 'mobx';
 import { boundMethod } from 'autobind-decorator';
-import { BaseWidgetModel, isUndefined } from '@akron/runner';
+import { isUndefined } from '@akron/runner';
 import { IOperationMessage } from 'models/message/OperationMessageType';
 import SimpleCommand from 'models/store/command/common/SimpleCommand';
 import { ContentType } from 'models/store/command/widget/WidgetModelTypes';
@@ -18,29 +18,24 @@ class AppendWidgetRecursiveCommand extends SimpleCommand {
   /**
    * Node tree 에 append 할 target 입니다.
    */
-  private target: BaseWidgetModel;
+  private target: WidgetModel;
 
   /**
    * Target node 의 부모 node 입니다.
    */
-  private parent: BaseWidgetModel;
+  private parent: WidgetModel;
 
   /**
    * Target node 의 next sibling node 입니다. undefined 인 경우 부모의 마지막 child 로 append 됩니다.
    */
-  private nextSibling?: BaseWidgetModel;
+  private nextSibling?: WidgetModel;
 
   //   private ctx: AkronContext;
 
   /**
    * 생성자
    */
-  public constructor(
-    ctx: AkronContext,
-    target: BaseWidgetModel,
-    parent: BaseWidgetModel,
-    nextSibling?: BaseWidgetModel
-  ) {
+  public constructor(ctx: AkronContext, target: WidgetModel, parent: WidgetModel, nextSibling?: WidgetModel) {
     super();
     this.target = target;
     this.parent = parent;
@@ -110,7 +105,7 @@ class AppendWidgetRecursiveCommand extends SimpleCommand {
    * 재귀적으로 Update Operation Message를 생산하여 반환하는 함수입니다.
    */
   private makeOperationMessageRecursive(
-    model: BaseWidgetModel,
+    model: WidgetModel,
     childOpMgs: IOperationMessage[] = [],
     behavior: string
   ): void {

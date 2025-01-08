@@ -9,7 +9,7 @@ import {
 import { boundMethod } from 'autobind-decorator';
 import { action, makeObservable, observable, override } from 'mobx';
 import { IOperationMessage } from 'models/message/OperationMessageType';
-import { WidgetEditingState } from 'models/store/command/widget/WidgetModelTypes';
+import { ContentType, WidgetEditingState } from 'models/store/command/widget/WidgetModelTypes';
 import IdContainerController from 'models/store/container/IdContainerController';
 
 export type WidgetID = number;
@@ -451,6 +451,10 @@ class WidgetModel<
     return super.reduceChild(fn as (accumulator: T, child: BaseWidgetModel) => T, initialValue);
   }
 
+  public getContentType(): ContentType {
+    return ContentType.INVALID;
+  }
+
   /**
    * WidgetModel를 상속받는 Model들의 Clone 함수 입니다.
    * 하위의 모델들을 클론하지 않습니다
@@ -507,7 +511,7 @@ class WidgetModel<
       prevId: this.getPrevSibling()?.getID(),
       nextId: this.getNextSibling()?.getID(),
       childId: this.getFirstChild()?.getID(),
-      elementType: this.getWidgetType(),
+      elementType: this.getContentType(),
       objectType: 1,
       // contentData: this.getContentJsonString(),
     };

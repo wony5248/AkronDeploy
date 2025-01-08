@@ -173,7 +173,7 @@ class EditorStore {
    */
   @boundMethod
   getSelectedWidgets() {
-    return (this.getCtxAsAppContext().getSelectionContainer()?.getSelectedWidgets() as BaseWidgetModel[]) ?? [];
+    return this.getCtxAsAppContext().getSelectionContainer()?.getSelectedWidgets() ?? [];
   }
 
   /**

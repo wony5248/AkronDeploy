@@ -1,4 +1,4 @@
-import { IWidgetCommonProperties, BaseWidgetModel, isUndefined, dError, isDefined, DeepReadonly } from '@akron/runner';
+import { IWidgetCommonProperties, isUndefined, dError, isDefined, DeepReadonly, WidgetTypeEnum } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { runInAction } from 'mobx';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
@@ -41,26 +41,35 @@ import { WidgetStyle, Position, Length, Constraint } from 'models/widget/WidgetP
 
 const widgetModelDemo = new WidgetModel({
   id: 1000000,
-  widgetType: 'BasicButton',
+  widgetType: WidgetTypeEnum.BasicButton,
   widgetCategory: '',
   name: 'button',
-  properties: { content: { text: 'afasd' }, style: { backgroundColor: 'black' } },
+  properties: {
+    content: { text: { value: 'afsdfasd', defaultValue: 'adsfzcv', variableId: 0 } },
+    style: { backgroundColor: { value: 'black', defaultValue: 'black', variableId: 1 } },
+  },
 });
 
 const widgetModelDemo2 = new WidgetModel({
   id: 1000001,
-  widgetType: 'BasicButton1',
+  widgetType: WidgetTypeEnum.BasicButton,
   widgetCategory: '',
   name: 'button',
-  properties: { content: { text: 'afasd' }, style: { backgroundColor: 'black' } },
+  properties: {
+    content: { text: { value: 'afsdfasd', defaultValue: 'adsfzcv', variableId: 0 } },
+    style: { backgroundColor: { value: 'black', defaultValue: 'black', variableId: 1 } },
+  },
 });
 
 const widgetModelDemo3 = new WidgetModel({
   id: 1000002,
-  widgetType: 'BasicButton2',
+  widgetType: WidgetTypeEnum.BasicButton,
   widgetCategory: '',
   name: 'button',
-  properties: { content: { text: 'afasd' }, style: { backgroundColor: 'black' } },
+  properties: {
+    content: { text: { value: 'afsdfasd', defaultValue: 'adsfzcv', variableId: 0 } },
+    style: { backgroundColor: { value: 'black', defaultValue: 'black', variableId: 1 } },
+  },
 });
 
 /**
@@ -567,7 +576,7 @@ class WidgetEditCommandHandler extends CommandHandler {
 
     let initialProps: IWidgetCommonProperties;
     if (props.initializeProperties) {
-      initialProps = props.initializeProperties(ctx.getIdContainerController());
+      initialProps = props.initializeProperties(newWidgetModel.getProperties());
     }
     this.insertGivenWidgetModel(ctx, {
       newWidgetModel,
@@ -577,48 +586,14 @@ class WidgetEditCommandHandler extends CommandHandler {
           ctx.getMouseMode() === 'InsertContainer'
             ? (ctx.getSelectionContainer()?.getEditingPage() ?? this.getParentToInsert(ctx, newWidgetModel))
             : this.getParentToInsert(ctx, newWidgetModel);
-        const parentWidth = parentWidgetModel.getProperties().style.width.absolute;
-        const parentHeight = parentWidgetModel.getProperties().style.height.absolute;
+        const parentWidth = parentWidgetModel.getProperties().style.width.value;
+        const parentHeight = parentWidgetModel.getProperties().style.height.value;
 
         return {
           ...defaultProperties,
           ...initialProps,
           style: {
             ...defaultProperties.style,
-            x: {
-              absolute: props.posX,
-              relative: Math.round((props.posX / parentWidth) * 100),
-              unit: '%',
-            },
-            y: {
-              absolute: props.posY,
-              relative: Math.round((props.posY / parentHeight) * 100),
-              unit: '%',
-            },
-            width: initialProps?.style.width ?? defaultProperties.style.width,
-            height: initialProps?.style.height ?? defaultProperties.style.height,
-            color: initialProps?.style.color ?? defaultProperties.style.color,
-            frameType: 'relative',
-            left: {
-              absolute: props.posX,
-              relative: Math.round((props.posX / parentWidth) * 100),
-              anchor: false,
-            },
-            top: {
-              absolute: props.posY,
-              relative: Math.round((props.posY / parentHeight) * 100),
-              anchor: false,
-            },
-            right: {
-              absolute: parentWidth - props.posX - defaultProperties.style.width.absolute,
-              relative: 100 - Math.round((props.posX / parentWidth) * 100) - defaultProperties.style.width.relative,
-              anchor: false,
-            },
-            bottom: {
-              absolute: parentHeight - props.posY - defaultProperties.style.height.absolute,
-              relative: 100 - Math.round((props.posY / parentHeight) * 100) - defaultProperties.style.height.relative,
-              anchor: false,
-            },
           },
         };
       },
@@ -768,6 +743,7 @@ class WidgetEditCommandHandler extends CommandHandler {
     // const newWidgetModel = defaultWidgetModel.cloneNode(widgetID);
     // newWidgetModel.setName(`${widgetType.replace('Basic', '')} ${widgetID % 100}`);
     // return newWidgetModel;
+    return widgetModelDemo;
   }
 
   /**
@@ -777,11 +753,11 @@ class WidgetEditCommandHandler extends CommandHandler {
   private insertGivenWidgetModel(
     ctx: AkronContext,
     args: {
-      newWidgetModel: BaseWidgetModel;
+      newWidgetModel: WidgetModel;
       isClone: boolean;
       initializeProperties?: (properties: DeepReadonly<IWidgetCommonProperties>) => IWidgetCommonProperties;
       isPositioned?: boolean;
-      parentWidgetModel?: BaseWidgetModel;
+      parentWidgetModel?: WidgetModel;
       libraryID?: number;
       widgetTypeID?: number;
       preserveSelection?: boolean;
@@ -810,13 +786,12 @@ class WidgetEditCommandHandler extends CommandHandler {
 
     const selectedWidgets = ctx.getSelectionContainer()?.getSelectedWidgets();
     const properties = newWidgetModel.getProperties();
-    const { x, y } = findInsertPosition(newWidgetModel, ctx);
     const isParentChildable = selectedWidgets?.length === 1 && checkInsertableItem(selectedWidgets[0], newWidgetModel);
 
     const parentStyle =
-      parentWidgetModel.getWidgetType() === 'FragmentLayout'
-        ? parentWidgetModel.getParent()!.getProperties().style
-        : parentWidgetModel.getProperties().style;
+      // parentWidgetModel.getWidgetType() === 'FragmentLayout'
+      //   ? parentWidgetModel.getParent()!.getProperties().style
+      parentWidgetModel.getProperties().style;
 
     if (isParentChildable) {
       // 단일 선택일 때, 부모가 Layout이거나 Childable한 경우에는 부모 컴포넌트가 알아서 위치를 잡아주므로, x,y값 설정 필요 X.
@@ -826,106 +801,41 @@ class WidgetEditCommandHandler extends CommandHandler {
           ...properties.style,
           x: {
             ...properties.style.x,
-            unit: parentStyle.x.unit,
+            // unit: parentStyle.x.unit,
           },
           y: {
             ...properties.style.y,
-            unit: parentStyle.y.unit,
           },
           width: {
             ...properties.style.width,
-            relative: (Math.abs(properties.style.width.absolute) / parentStyle.width.absolute) * 100,
-            unit: parentStyle.width.unit,
+            value: (Math.abs(properties.style.width.value) / parentStyle.width.value) * 100,
           },
           height: {
             ...properties.style.height,
-            relative: (Math.abs(properties.style.height.absolute) / parentStyle.height.absolute) * 100,
-            unit: parentStyle.height.unit,
           },
           frameType: parentStyle.frameType,
           left: {
             ...properties.style.left,
-            relative: (Math.abs(properties.style.left.absolute) / parentStyle.width.absolute) * 100,
           },
           top: {
             ...properties.style.top,
-            relative: (Math.abs(properties.style.top.absolute) / parentStyle.height.absolute) * 100,
           },
           right: {
             ...properties.style.right,
-            relative:
-              (1 -
-                (Math.abs(properties.style.left.absolute) + Math.abs(properties.style.width.absolute)) /
-                  parentStyle.width.absolute) *
-              100,
           },
           bottom: {
             ...properties.style.bottom,
-            relative:
-              (1 -
-                (Math.abs(properties.style.top.absolute) + Math.abs(properties.style.height.absolute)) /
-                  parentStyle.height.absolute) *
-              100,
           },
         },
       });
     } else if (!args.isPositioned) {
       // size type이 undefined(default)이 아니고 해당 컴포넌트의 MetaData에 명시되어 있는 경우 페이지 반응형에 따라 처리함.
-      const isSized = properties.style.width.type === 'absolute' || properties.style.width.type === 'relative';
+      const isSized = properties.style.width.value === 'absolute' || properties.style.width.value === 'relative';
       if (isSized) {
         newWidgetModel.setProperties({
           ...properties,
           style: {
             ...properties.style,
-            x: {
-              absolute: x,
-              relative: Math.round((x / parentStyle.width.absolute) * 100),
-              unit: '%',
-            },
-            y: {
-              absolute: y,
-              relative: Math.round((y / parentStyle.height.absolute) * 100),
-              unit: '%',
-            },
-            width: {
-              ...properties.style.width,
-              relative: (Math.abs(properties.style.width.absolute) / parentStyle.width.absolute) * 100,
-              unit: properties.style.width.unit,
-              type: properties.style.width.type,
-            },
-            height: {
-              ...properties.style.height,
-              relative: (Math.abs(properties.style.height.absolute) / parentStyle.height.absolute) * 100,
-              unit: properties.style.height.unit,
-              type: properties.style.height.type,
-            },
-            frameType: 'relative',
-            left: {
-              absolute: x,
-              relative: Math.round((x / parentStyle.width.absolute) * 100),
-              anchor: false,
-            },
-            top: {
-              absolute: y,
-              relative: Math.round((y / parentStyle.height.absolute) * 100),
-              anchor: false,
-            },
-            right: {
-              absolute: parentStyle.width.absolute - x - Math.abs(properties.style.width.absolute),
-              relative:
-                ((parentStyle.width.absolute - x - Math.abs(properties.style.width.absolute)) /
-                  parentStyle.width.absolute) *
-                100,
-              anchor: false,
-            },
-            bottom: {
-              absolute: parentStyle.height.absolute - y - Math.abs(properties.style.height.absolute),
-              relative:
-                ((parentStyle.height.absolute - y - Math.abs(properties.style.height.absolute)) /
-                  parentStyle.height.absolute) *
-                100,
-              anchor: false,
-            },
           },
         });
       } else {
@@ -934,27 +844,6 @@ class WidgetEditCommandHandler extends CommandHandler {
           ...properties,
           style: {
             ...properties.style,
-            x: {
-              absolute: x,
-              relative: Math.round((x / parentStyle.width.absolute) * 100),
-              unit: '%',
-            },
-            y: {
-              absolute: y,
-              relative: Math.round((y / parentStyle.height.absolute) * 100),
-              unit: '%',
-            },
-            frameType: 'relative',
-            left: {
-              absolute: x,
-              relative: Math.round((x / parentStyle.width.absolute) * 100),
-              anchor: false,
-            },
-            top: {
-              absolute: y,
-              relative: Math.round((y / parentStyle.height.absolute) * 100),
-              anchor: false,
-            },
           },
         });
       }
@@ -969,6 +858,7 @@ class WidgetEditCommandHandler extends CommandHandler {
     // setCreateProjectButtonProperties(ctx, newWidgetModel);
 
     const appendWidgetCommand = new (isClone ? AppendWidgetRecursiveCommand : AppendWidgetCommand)(
+      ctx,
       newWidgetModel,
       parentWidgetModel,
       parentWidgetModel.getLastChild()?.getNextSibling()
@@ -1124,8 +1014,8 @@ class WidgetEditCommandHandler extends CommandHandler {
    * Context 내에 SelectionProperty 값 생성
    */
   @boundMethod
-  private createWidgetSelectionProp(ctx: AkronContext, newWidgetModel: BaseWidgetModel): void {
-    const editingTopWidgetModel: BaseWidgetModel = ctx.getNewAppModel();
+  private createWidgetSelectionProp(ctx: AkronContext, newWidgetModel: WidgetModel): void {
+    const editingTopWidgetModel: WidgetModel = ctx.getNewAppModel();
     const selectionProp: SelectionProp = {
       selectionType: SelectionEnum.WIDGET,
       widgetModels: [newWidgetModel],
@@ -1773,8 +1663,8 @@ class WidgetEditCommandHandler extends CommandHandler {
         // );
         copiedWidgetModel.setProperties({
           ...copiedWidgetModel.getProperties(),
-          editingState: WidgetEditingState.FLOATING,
         });
+        copiedWidgetModel.setEditingState(WidgetEditingState.FLOATING);
 
         copiedWidgetModel.append(editingPage);
         return copiedWidgetModel;
@@ -1784,7 +1674,7 @@ class WidgetEditCommandHandler extends CommandHandler {
     targetModels.forEach(widgetModel => {
       const curProps = widgetModel.getProperties();
       // 입력값 검증
-      if (!widgetModel || !curProps || curProps.editingState !== WidgetEditingState.NONE) {
+      if (!widgetModel || !curProps || widgetModel.getEditingState() !== WidgetEditingState.NONE) {
         dError('moveWidgetStart assertion failed.');
         return;
       }
@@ -1794,8 +1684,8 @@ class WidgetEditCommandHandler extends CommandHandler {
 
       widgetModel.setProperties({
         ...curProps,
-        editingState: WidgetEditingState.MOVE,
       });
+      widgetModel.setEditingState(WidgetEditingState.MOVE);
     });
     widgetEditInfoContainer.setEditingState(WidgetEditingState.MOVE);
   }
@@ -1826,7 +1716,10 @@ class WidgetEditCommandHandler extends CommandHandler {
       .getSelectionContainer()
       ?.getFloatingWidgetModels()
       .forEach(floatingWidgetModel => {
-        floatingWidgetModel.remove(floatingWidgetModel.getParent());
+        const parent = floatingWidgetModel.getParent();
+        if (isDefined(parent)) {
+          floatingWidgetModel.remove(parent);
+        }
       });
     ctx.getSelectionContainer()?.clearFloatingWidgetModels();
 
@@ -2455,8 +2348,8 @@ class WidgetEditCommandHandler extends CommandHandler {
   private appendSubComponentCommand(
     ctx: AkronContext,
     componentType: string,
-    parentModel: BaseWidgetModel,
-    nextSibling?: BaseWidgetModel
+    parentModel: WidgetModel,
+    nextSibling?: WidgetModel
   ) {
     const idContainerController = ctx.getIdContainerController();
     const model = this.createNewWidgetModel(ctx, componentType, idContainerController.generateComponentId());

@@ -4,6 +4,7 @@ import AkronCommandMapper from 'models/store/command/akron/AkronCommandMapper';
 import CommandEnum from 'models/store/command/common/CommandEnum';
 import CommandHandlerFactory from 'models/store/command/factory/CommandHandlerFactory';
 import WidgetCommandProps from 'models/store/command/widget/WidgetCommandProps';
+import SelectionEnum from 'models/store/selection/SelectionEnum';
 import {
   leftToolpaneTitle,
   leftToolpaneTitleButton,
@@ -57,7 +58,7 @@ const ToolPaneTitleComponent: React.FC<IProps> = ({
     onClickPlusButton = () => {
       const commandProps: WidgetCommandProps = {
         commandID: CommandEnum.WIDGET_RESIZE_END,
-        selectionProp: editorStore.getEditingWidgetModel(),
+        selectionProp: { selectionType: SelectionEnum.WIDGET, widgetModels: [editorStore.getEditingWidgetModel()] },
       };
       editorStore.handleCommandEvent(commandProps);
     };

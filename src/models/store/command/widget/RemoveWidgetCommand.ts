@@ -1,9 +1,10 @@
 import { action } from 'mobx';
 import { boundMethod } from 'autobind-decorator';
-import { BaseWidgetModel, isUndefined } from '@akron/runner';
+import { isUndefined } from '@akron/runner';
 import { IOperationMessage } from 'models/message/OperationMessageType';
 import SimpleCommand from 'models/store/command/common/SimpleCommand';
 import { ContentType } from 'models/store/command/widget/WidgetModelTypes';
+import WidgetModel from 'models/node/WidgetModel';
 
 /**
  * Target node 를 node tree 에서 remove 하는 simple command 입니다.
@@ -12,22 +13,22 @@ class NewRemoveWidgetCommand extends SimpleCommand {
   /**
    * Node tree 에서 remove 할 target 입니다.
    */
-  private target: BaseWidgetModel;
+  private target: WidgetModel;
 
   /**
    * Target node 의 부모 node 입니다.
    */
-  private parent: BaseWidgetModel;
+  private parent: WidgetModel;
 
   /**
    * Target node 의 prev sibling node 입니다. undefined 인 경우 부모의 첫번째 child 로 append 됩니다.
    */
-  private prevSibling?: BaseWidgetModel;
+  private prevSibling?: WidgetModel;
 
   /**
    * Target node 의 next sibling node 입니다. undefined 인 경우 부모의 마지막 child 로 append 됩니다.
    */
-  private nextSibling?: BaseWidgetModel;
+  private nextSibling?: WidgetModel;
 
   /**
    * DB상에 Component data를 남겨둡니다.
@@ -38,16 +39,16 @@ class NewRemoveWidgetCommand extends SimpleCommand {
   /**
    * ReactNode type인 prop으로 들어가는 경우 해당 prop 을 가지고 있는 개체
    */
-  private desModel: BaseWidgetModel | undefined;
+  private desModel: WidgetModel | undefined;
 
   /**
    * 생성자
    */
   public constructor(
-    target: BaseWidgetModel,
-    parent: BaseWidgetModel,
+    target: WidgetModel,
+    parent: WidgetModel,
     keepDB = false,
-    desModel: BaseWidgetModel | undefined = undefined
+    desModel: WidgetModel | undefined = undefined
   ) {
     super();
     this.target = target;
