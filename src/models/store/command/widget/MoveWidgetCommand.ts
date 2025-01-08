@@ -123,7 +123,7 @@ class MoveWidgetCommand extends SimpleCommand {
     updateRelationMessage.prevId = this.destPrevSibling?.getID();
     updateRelationMessage.nextId = this.destNextSibling?.getID();
     updateRelationMessage.oldParentId = this.depParent.getID();
-    updateRelationMessage.behavior = 'ur';
+    updateRelationMessage.behavior = 'ue';
     updateRelationMessage.elementType = ContentType.COMPONENT;
     updateRelationMessage.objectType = ObjectType.DEFAULT;
     return [updateRelationMessage];
@@ -139,7 +139,7 @@ class MoveWidgetCommand extends SimpleCommand {
     updateRelationMessage.prevId = this.depPrevSibling?.getID();
     updateRelationMessage.nextId = this.depNextSibling?.getID();
     updateRelationMessage.oldParentId = this.destParent.getID();
-    updateRelationMessage.behavior = 'ur';
+    updateRelationMessage.behavior = 'ue';
     updateRelationMessage.elementType = ContentType.COMPONENT;
     updateRelationMessage.objectType = ObjectType.DEFAULT;
     return [updateRelationMessage];

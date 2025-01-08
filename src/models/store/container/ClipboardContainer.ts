@@ -1,10 +1,10 @@
-import { BaseWidgetModel } from '@akron/runner';
+import WidgetModel from 'models/node/WidgetModel';
 
 /**
  * WidgetModel과 siblingIndex.
  */
 export interface WidgetModelIndexInfo {
-  widgetModel: BaseWidgetModel;
+  widgetModel: WidgetModel;
   siblingIndex: number;
 }
 
@@ -12,7 +12,7 @@ export interface WidgetModelIndexInfo {
  * WidgetModel과 siblingIndex.
  */
 export interface NewWidgetModelIndexInfo {
-  widgetModel: BaseWidgetModel;
+  widgetModel: WidgetModel;
   siblingIndex: number;
   //   compositeModel?: CompositeModel;
 }

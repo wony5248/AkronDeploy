@@ -2,7 +2,7 @@ import { IWidgetCommonProperties, isDefined, isUndefined } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { runInAction } from 'mobx';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
-import AppRepository from 'models/repository/AppRepository';
+import AppRepository, { UpdateMessageDTO } from 'models/repository/AppRepository';
 import WidgetRepository from 'models/repository/WidgetRepository';
 import CommandEnum from 'models/store/command/common/CommandEnum';
 import CommandHandler from 'models/store/command/common/CommandHandler';
@@ -476,27 +476,20 @@ class AppCommandHandler extends CommandHandler {
    * Model을 기반으로 서버에 보낼 JSON을 생성하여 DB저장하는 로직을 수행
    */
   @boundMethod
-  private saveApp(ctx: AkronContext): void {
-    if (!(ctx.getSaveState() === SaveState.SAVE_ERROR || ctx.getSaveState() === SaveState.RESAVE_ERROR)) {
-      AppRepository.sendUpdateMessage(ctx).then(result => {
-        runInAction(() => {
-          if (result === 'nonUpdate') {
-          } else if (result === 'updateError') {
-            if (ctx.getSaveState() === SaveState.RESAVING) {
-              ctx.setSaveState(SaveState.RESAVE_ERROR);
-            } else {
-              ctx.setSaveState(SaveState.SAVE_ERROR);
-            }
-          } else if (result === 'updateComplete') {
-            ctx.setSaveState(SaveState.SAVE_COMPLETE);
-            // ctx.lastSavedTime = new Date();
-            if (ctx.getNeedSaveState()) {
-              ctx.setSaveState(SaveState.SAVING);
-              this.saveApp(ctx);
-            }
-          }
-        });
-      });
+  private async saveApp(ctx: AkronContext): Promise<void> {
+    const updateMessageContainer = ctx.getUpdateMessageContainer();
+    const updateMessages = updateMessageContainer.getUpdateMessages();
+
+    const inputDTO: UpdateMessageDTO = {
+      appId: ctx.getAppID(),
+      updateMessages,
+    };
+
+    try {
+      await AppRepository.sendUpdateMessage(inputDTO);
+      ctx.setSaveState(SaveState.SAVE_COMPLETE);
+    } catch {
+      ctx.setSaveState(SaveState.SAVE_ERROR);
     }
   }
 

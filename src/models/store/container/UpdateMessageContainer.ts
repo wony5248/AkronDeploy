@@ -1,7 +1,12 @@
-import { isDefined } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { IOperationMessage } from 'models/message/OperationMessageType';
-import UpdateMessage from 'models/message/UpdateMessage';
+import { ContentType } from 'models/store/command/widget/WidgetModelTypes';
+
+export interface UpdateMessage {
+  behavior: string;
+  elementType: ContentType;
+  contentMessage: IOperationMessage;
+}
 
 /**
  * API call을 하는 command들을 담는 message
@@ -12,7 +17,7 @@ export type APIMessage = () => Promise<boolean>;
  * UpdateMessage를 담는 컨테이너 입니다.
  */
 export default class UpdateMessageContainer {
-  private updateMessages: Array<IOperationMessage>;
+  private updateMessages: UpdateMessage[];
 
   private reUpdateMessages: string;
 
@@ -26,7 +31,7 @@ export default class UpdateMessageContainer {
    * contructor
    */
   public constructor() {
-    this.updateMessages = new Array<IOperationMessage>();
+    this.updateMessages = new Array<UpdateMessage>();
     this.apiMessages = new Array<APIMessage>();
     this.transformed = false;
     this.reUpdateMessages = '';
@@ -37,8 +42,8 @@ export default class UpdateMessageContainer {
    * updateMessage 객체를 채우는 동작을 합니다.
    */
   @boundMethod
-  public appendUpdateMessage(updateMessage: IOperationMessage): void {
-    this.updateMessages.push(updateMessage);
+  public appendUpdateMessage(operationMessage: IOperationMessage): void {
+    this.updateMessages.push(this.createUpdateMessage(operationMessage));
   }
 
   /**
@@ -53,7 +58,7 @@ export default class UpdateMessageContainer {
    * UpdateMessage를 채우는 동작을 합니다.
    */
   @boundMethod
-  public appendUpdateMessages(updateMessages: IOperationMessage[], appID: number): void {
+  public appendUpdateMessages(operationMessages: IOperationMessage[]): void {
     // updateMessages.forEach(updateMessage => {
     //   updateMessage.setAppID(appID);
     // });
@@ -61,11 +66,11 @@ export default class UpdateMessageContainer {
     let indicesToRemove: number[] = [];
 
     this.updateMessages.forEach((currentUpdateMessage, index) => {
-      updateMessages.forEach(updateMessage => {
+      operationMessages.forEach(operationMessage => {
         if (
-          currentUpdateMessage.behavior === updateMessage.behavior &&
-          updateMessage.behavior !== 'ie' &&
-          updateMessage.behavior !== 'de'
+          currentUpdateMessage.behavior === operationMessage.behavior &&
+          operationMessage.behavior !== 'ie' &&
+          operationMessage.behavior !== 'de'
         ) {
           indicesToRemove.push(index);
         }
@@ -79,7 +84,9 @@ export default class UpdateMessageContainer {
         this.updateMessages.splice(index, 1);
       });
 
-    this.updateMessages = [...this.updateMessages, ...updateMessages];
+    const newUpdateMessages = operationMessages.map(operationMessage => this.createUpdateMessage(operationMessage));
+
+    this.updateMessages = [...this.updateMessages, ...newUpdateMessages];
   }
 
   /**
@@ -94,7 +101,7 @@ export default class UpdateMessageContainer {
    * UpdateMessage array를 반환
    */
   @boundMethod
-  public getUpdateMessages(): IOperationMessage[] {
+  public getUpdateMessages(): UpdateMessage[] {
     return this.updateMessages;
   }
 
@@ -171,5 +178,14 @@ export default class UpdateMessageContainer {
   @boundMethod
   public clearApiMessage(): void {
     this.apiMessages = [];
+  }
+
+  private createUpdateMessage(operationMessage: IOperationMessage) {
+    const updateMessage: UpdateMessage = {
+      behavior: operationMessage.behavior,
+      elementType: operationMessage.elementType,
+      contentMessage: operationMessage,
+    };
+    return updateMessage;
   }
 }

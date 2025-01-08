@@ -1,5 +1,11 @@
 #!/usr/bin/env sh
 
+# REBASE 상태 감지
+if [ -d "$(git rev-parse --git-path rebase-merge)" ] || [ -d "$(git rev-parse --git-path rebase-apply)" ]; then
+  echo "리베이스 중이므로 prepare-commit-msg 훅 건너뛰기"
+  exit 0
+fi
+
 # 현재 브랜치명 가져오기
 BRANCH_NAME=$(git symbolic-ref --short HEAD)
 
