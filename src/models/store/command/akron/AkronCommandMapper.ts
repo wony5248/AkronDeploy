@@ -35,7 +35,7 @@ class AkronCommandMapper extends CommandMapper {
     // this.setModeCommandMap(factory);
 
     // // Page
-    // this.setPageCommandMap(factory);
+    this.setPageCommandMap(factory);
 
     // // Widget template
     // this.setCompositeWidgetCommandMap(factory);
@@ -189,22 +189,22 @@ class AkronCommandMapper extends CommandMapper {
   //     this.commandMap.set(CommandEnum.CHANGE_APP_MODE, [appModeChangeCommandHandler]);
   //   }
 
-  //   /**
-  //    * Page의 조작 관련 CommandHandler에서 처리하는
-  //    * CommandEnum을 등록합니다.
-  //    */
-  //   @boundMethod
-  //   private setPageCommandMap(factory: CommandHandlerFactory): void {
-  //     const pageCommandHandler = factory.createPageCommandHandler();
-  //     // Page
-  //     this.commandMap.set(CommandEnum.ADD_PAGE, [pageCommandHandler]);
-  //     this.commandMap.set(CommandEnum.DELETE_PAGE, [pageCommandHandler]);
-  //     this.commandMap.set(CommandEnum.RENAME_PAGE, [pageCommandHandler]);
-  //     this.commandMap.set(CommandEnum.SELECT_PAGE_BY_ID, [pageCommandHandler]);
-  //     this.commandMap.set(CommandEnum.LOCK_PAGE, [pageCommandHandler]);
-  //     this.commandMap.set(CommandEnum.HIDE_PAGE, [pageCommandHandler]);
-  //     this.commandMap.set(CommandEnum.UPDATE_PAGE_LEVEL, [pageCommandHandler]);
-  //   }
+  /**
+   * Page의 조작 관련 CommandHandler에서 처리하는
+   * CommandEnum을 등록합니다.
+   */
+  @boundMethod
+  private setPageCommandMap(factory: CommandHandlerFactory): void {
+    const pageCommandHandler = factory.createPageCommandHandler();
+    // Page
+    this.commandMap.set(CommandEnum.ADD_PAGE, [pageCommandHandler]);
+    this.commandMap.set(CommandEnum.DELETE_PAGE, [pageCommandHandler]);
+    this.commandMap.set(CommandEnum.RENAME_PAGE, [pageCommandHandler]);
+    this.commandMap.set(CommandEnum.SELECT_PAGE_BY_ID, [pageCommandHandler]);
+    this.commandMap.set(CommandEnum.LOCK_PAGE, [pageCommandHandler]);
+    this.commandMap.set(CommandEnum.HIDE_PAGE, [pageCommandHandler]);
+    this.commandMap.set(CommandEnum.UPDATE_PAGE_LEVEL, [pageCommandHandler]);
+  }
 
   //   /**
   //    * Composite widget 관련 CommandEnum을 등록합니다.

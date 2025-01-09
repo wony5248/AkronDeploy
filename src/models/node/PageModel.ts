@@ -1,13 +1,14 @@
+import { IWidgetCommonProperties } from '@akron/runner';
 import { makeObservable } from 'mobx';
 import WidgetModel, { IWidgetModelInitProps } from 'models/node/WidgetModel';
 
-interface PageModelInitProps extends IWidgetModelInitProps<null> {}
+// interface PageModelInitProps extends IWidgetModelInitProps<null> {}
 
-class PageModel extends WidgetModel<null> {
+class PageModel extends WidgetModel<IWidgetCommonProperties> {
   /**
    * 생성자
    */
-  constructor(args: PageModelInitProps) {
+  constructor(args: IWidgetModelInitProps<IWidgetCommonProperties>) {
     super({
       id: args.id,
       widgetType: args.widgetType,

@@ -7,6 +7,9 @@ import { useEffect, useRef, useState } from 'react';
 import PageThumbnailContextMenuData from 'store/ribbon-menu/PageThumbnailContextMenuData';
 import { pageThumbnail } from 'styles/toolpane/PageList';
 
+const THUMBNAIL_WIDTH_WITH_BORDER = 146;
+export const THUMBNAIL_WIDTH = THUMBNAIL_WIDTH_WITH_BORDER - 6;
+
 /**
  * 썸네일을 렌더하는 컴포넌트 입니다. title과 썸네일 페이지로 이루어져 있습니다.
  */

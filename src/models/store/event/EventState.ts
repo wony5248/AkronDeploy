@@ -5,6 +5,7 @@
  */
 enum EventState {
   // Default state
+  IDLE,
   DEFAULT,
   EDIT,
   RUN,

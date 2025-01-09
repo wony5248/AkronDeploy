@@ -7,6 +7,7 @@ import ClipboardContainer from 'models/store/container/ClipboardContainer';
 import CompositeComponentContainer from 'models/store/container/CompositeComponentContainer';
 import HitContainer from 'models/store/container/HitContainer';
 import IdContainerController from 'models/store/container/IdContainerController';
+import PageContainer from 'models/store/container/PageContainer';
 import PropContainer from 'models/store/container/PropContainer';
 import SelectionContainer from 'models/store/container/SelectionContainer';
 import UpdateMessageContainer from 'models/store/container/UpdateMessageContainer';
@@ -187,7 +188,7 @@ export interface EditableContextProp extends EditableContextBaseProp {
   //   errorBoundaryContainer: ErrorBoundaryContainer;
   //   smartGuideContainer: SmartGuideContainer;
   updateMessageContainer: UpdateMessageContainer;
-  //   pageContainer: PageContainer;
+  pageContainer: PageContainer;
   editorUIStore: EditorUIStore;
   //   outerServiceStore: OuterServiceStore;
   idContainerController: IdContainerController;

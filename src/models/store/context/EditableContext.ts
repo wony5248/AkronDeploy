@@ -8,6 +8,7 @@ import AppModeContainer from 'models/store/container/AppModeContainer';
 import ClipboardContainer from 'models/store/container/ClipboardContainer';
 import HitContainer from 'models/store/container/HitContainer';
 import IdContainerController from 'models/store/container/IdContainerController';
+import PageContainer from 'models/store/container/PageContainer';
 import PropContainer from 'models/store/container/PropContainer';
 import SelectionContainer from 'models/store/container/SelectionContainer';
 import SubToolpaneContainer from 'models/store/container/SubToolpaneContainer';
@@ -164,8 +165,8 @@ class EditableContext extends EditableContextBase {
   /**
    * 페이지에 관련된 정보들을 담고 있습니다.
    */
-  // @observable
-  // private pageContainer: PageContainer;
+  @observable
+  private pageContainer: PageContainer;
 
   /**
    * 편집 UI 관련 공통 상태들을 관리하는 Store
@@ -362,7 +363,7 @@ class EditableContext extends EditableContextBase {
     // this.errorBoundaryContainer = initProp.errorBoundaryContainer;
     // this.smartGuideContainer = initProp.smartGuideContainer;
     this.updateMessageContainer = initProp.updateMessageContainer;
-    // this.pageContainer = initProp.pageContainer;
+    this.pageContainer = initProp.pageContainer;
     this.editorUIStore = initProp.editorUIStore;
     this.contextMenuContainer = initProp.contextMenuContainer;
     this.idContainerController = initProp.idContainerController;
@@ -1008,21 +1009,21 @@ class EditableContext extends EditableContextBase {
     this.updateMessageContainer = updateMessageContainer;
   }
 
-  // /**
-  //  * PageContainer을 반환합니다
-  //  */
-  // @boundMethod
-  // public getPageContainer(): PageContainer {
-  //   return this.pageContainer;
-  // }
+  /**
+   * PageContainer을 반환합니다
+   */
+  @boundMethod
+  public getPageContainer(): PageContainer {
+    return this.pageContainer;
+  }
 
-  // /**
-  //  * PageContainer을 설정합니다
-  //  */
-  // @boundMethod
-  // public setPageContainer(pageContainer: PageContainer): void {
-  //   this.pageContainer = pageContainer;
-  // }
+  /**
+   * PageContainer을 설정합니다
+   */
+  @boundMethod
+  public setPageContainer(pageContainer: PageContainer): void {
+    this.pageContainer = pageContainer;
+  }
 
   /**
    * SubToolpaneContainer를 반환합니다.

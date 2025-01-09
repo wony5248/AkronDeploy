@@ -16,13 +16,13 @@ class UpdateWidgetCommand extends SimpleCommand {
 
   private propId: WidgetPropID | undefined; // 변경하고자 하는 속성명
 
-  private propValue: any; // 변경하고자 하는 속성 값
+  private propValue: IWidgetCommonProperties; // 변경하고자 하는 속성 값
 
   private prevPropValue: any; // 변경 전 속성 값
 
   private eventHandler: HandlerID[];
 
-  private prevEventHandler: HandlerID[];
+  // private prevEventHandler: HandlerID[];
 
   // private nonBindableDataReferenceContainer?: NonBindableDataReferenceContainer;
 
@@ -31,7 +31,7 @@ class UpdateWidgetCommand extends SimpleCommand {
    */
   public constructor(
     model: WidgetModel,
-    propValue: any,
+    propValue: IWidgetCommonProperties,
     propId?: WidgetPropID,
     eventHandler?: HandlerID[]
     // nonBindableDataReferenceContainer?: NonBindableDataReferenceContainer
@@ -40,9 +40,9 @@ class UpdateWidgetCommand extends SimpleCommand {
     this.model = model;
     this.propId = propId;
     this.propValue = propValue;
-    this.prevPropValue = this.model.getProperties().content.text;
+    this.prevPropValue = this.model.getProperties();
     this.eventHandler = eventHandler || [];
-    this.prevEventHandler = this.model.getProperties().content.text || [];
+    // this.prevEventHandler = this.model.getProperties().content.text || [];
     // this.nonBindableDataReferenceContainer = nonBindableDataReferenceContainer;
   }
 
@@ -53,8 +53,8 @@ class UpdateWidgetCommand extends SimpleCommand {
   public override apply(): void {
     const widgetProp = this.model.getProperties();
     if (widgetProp) {
-      widgetProp.content = this.propValue;
-      widgetProp.style = this.propValue;
+      widgetProp.content = this.propValue.content;
+      widgetProp.style = this.propValue.style;
       this.model.setProperties(widgetProp);
       //  if (this.nonBindableDataReferenceContainer) {
       //      this.updateNonBindableReferenceDataUpdate(this.prevPropValue, this.propValue);
@@ -67,10 +67,11 @@ class UpdateWidgetCommand extends SimpleCommand {
    */
   @action.bound
   public override unapply(): void {
-    const widgetProp = this.model.getProperties().get(this.propId);
+    const widgetProp = this.model.getProperties();
     if (widgetProp) {
-      widgetProp.value = this.prevPropValue;
-      widgetProp.eventHandler = this.prevEventHandler;
+      widgetProp.content = this.prevPropValue.content;
+      widgetProp.style = this.prevPropValue.style;
+      // widgetProp.eventHandler = this.prevEventHandler;
       this.model.setProperties(widgetProp);
       //  if (this.nonBindableDataReferenceContainer) {
       //      this.updateNonBindableReferenceDataUpdate(this.propValue, this.prevPropValue);
@@ -121,7 +122,7 @@ class UpdateWidgetCommand extends SimpleCommand {
     targetOpmessage.objectType = ObjectType.DEFAULT;
     targetOpmessage.propKey = this.propId;
     targetOpmessage.propValue = this.prevPropValue;
-    targetOpmessage.eventHandler = this.prevEventHandler;
+    // targetOpmessage.eventHandler = this.prevEventHandler;
 
     return [targetOpmessage];
   }

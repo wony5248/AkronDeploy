@@ -1,8 +1,7 @@
 // component 관련 propsHandler
 
-import { AppStore, Nullable } from '@akron/runner';
+import { AppStore, Nullable, WidgetTypeEnum } from '@akron/runner';
 import WidgetModel from 'models/node/WidgetModel';
-import { AnyWidgetType } from 'models/store/command/widget/WidgetModelTypes';
 import EditorStore from 'models/store/EditorStore';
 import { RibbonProp } from 'store/ribbon-menu/RibbonMenuComponentInfo';
 import { checkWidgetType, isWidgetsCopyable, isWidgetsDeletable } from 'util/WidgetUtil';
@@ -10,7 +9,7 @@ import { checkWidgetType, isWidgetsCopyable, isWidgetsDeletable } from 'util/Wid
 /**
  * 자식을 가질 수 있는 것들의 모음.
  */
-export const basicChildableWidgetTypeNames: Array<AnyWidgetType> = [
+export const basicChildableWidgetTypeNames: Array<string> = [
   // INPUTS
   'BasicIconButton',
   'BasicButtonGroup',
@@ -104,7 +103,7 @@ export const basicChildableWidgetTypeNamesSet = new Set(basicChildableWidgetType
 /**
  * 특정 Component의 자식밖에 될 수 없는 컴포넌트들의 모음.
  */
-export const basicChildWidgetTypeNames: Array<AnyWidgetType> = [
+export const basicChildWidgetTypeNames: Array<string> = [
   // basic
   'BasicOption',
   // INPUTS
@@ -169,10 +168,7 @@ export function deleteComponentDisabledPropsHandler(appStore: EditorStore): Ribb
   };
 }
 
-export const parentChildEssentialRelationMap = new Map<
-  (typeof basicChildableWidgetTypeNames)[number],
-  Set<AnyWidgetType>
->([
+export const parentChildEssentialRelationMap = new Map<(typeof basicChildableWidgetTypeNames)[number], Set<string>>([
   // TODO: 향후 내부 들어갈 수 있는 관계 파악 후 일괄 적용 필요
   // INPUTS
   ['BasicIconButton', new Set(['BasicIcon', 'BasicBadge'])], // Icon, Badge 추가 버튼 제외한 나머지 버튼 비활성화
@@ -258,10 +254,7 @@ export const parentChildEssentialRelationMap = new Map<
   ['BasicImageListItem', new Set(['BasicImageListItemBar', 'BasicImage'])], // BasicImageListItem 하위에 들어갈 수 있는 컴포넌트들
 ]);
 
-export const parentChildPermittedRelationMap = new Map<
-  (typeof basicChildableWidgetTypeNames)[number],
-  Set<AnyWidgetType>
->([
+export const parentChildPermittedRelationMap = new Map<(typeof basicChildableWidgetTypeNames)[number], Set<string>>([
   // Special
   ['BusinessDialog', new Set(['BasicDialogActions', 'BasicDialogContent', 'BasicDialogTitle'])], // BasicImageListItem 하위에 들어갈 수 있는 컴포넌트들
   ['BasicDialogContent', new Set(['BasicDialogContentText'])],
@@ -281,20 +274,20 @@ export const parentChildPermittedRelationMap = new Map<
 /**
  * 컴포넌트 추가 버튼에 대한 disable 처리
  */
-export function insertComponentDisabledPropsHandler(appStore: AppStore, commandPropName?: string) {
+export function insertComponentDisabledPropsHandler(appStore: EditorStore, commandPropName?: string) {
   const selectedWidgets = appStore.getSelectedWidgets();
   let disabled = false;
   if (selectedWidgets.length === 1 && commandPropName) {
     const widgetType = selectedWidgets[0].getWidgetType();
     // TODO: RepeatableLayout 삽입 가능한 경우에 대한 고려 필요
     if (parentChildEssentialRelationMap.has(widgetType)) {
-      disabled = !parentChildEssentialRelationMap.get(widgetType)?.has(commandPropName as AnyWidgetType);
+      disabled = !parentChildEssentialRelationMap.get(widgetType)?.has(commandPropName as string);
     } else {
       // 특정 Component의 자식밖에 될 수 없는 컴포넌트들
-      disabled = basicChildWidgetTypeNamesSet.has(commandPropName as AnyWidgetType);
+      disabled = basicChildWidgetTypeNamesSet.has(commandPropName as string);
       if (
         parentChildPermittedRelationMap.has(widgetType) &&
-        parentChildPermittedRelationMap.get(widgetType)?.has(commandPropName as AnyWidgetType)
+        parentChildPermittedRelationMap.get(widgetType)?.has(commandPropName as string)
       ) {
         disabled = false;
       }
@@ -309,18 +302,18 @@ export function insertComponentDisabledPropsHandler(appStore: AppStore, commandP
 /**
  * Ribbon의 컴포넌트 추가 버튼에 대한 disable 처리
  */
-export function insertRibbonButtonDisabledPropsHandler(appStore: AppStore) {
+export function insertRibbonButtonDisabledPropsHandler(appStore: EditorStore) {
   return {
-    disabled: appStore.getEditingPageModel()?.getComponentSpecificProperties().locked,
+    disabled: appStore.getEditingPageModel()?.getProperties().content.disabled.value,
   };
 }
 
 /**
  * Home - Undo 버튼에 대한 disable 처리
  */
-export function undoComponentDisabledPropsHandler(appStore: AppStore): RibbonProp {
+export function undoComponentDisabledPropsHandler(appStore: EditorStore): RibbonProp {
   let canUndo = false;
-  canUndo = appStore.getEditModeUndoStack().canUndo();
+  // canUndo = appStore.getEditModeUndoStack().canUndo();
   //   const appModeContainer = appStore.getAppModeContainer();
   //   if (isEditAppMode(appModeContainer)) {
   //     canUndo = appStore.getEditModeUndoStack().canUndo();
@@ -336,10 +329,10 @@ export function undoComponentDisabledPropsHandler(appStore: AppStore): RibbonPro
 /**
  * Home - Redo 버튼에 대한 disable 처리
  */
-export function redoComponentDisabledPropsHandler(appStore: AppStore): RibbonProp {
+export function redoComponentDisabledPropsHandler(appStore: EditorStore): RibbonProp {
   let canRedo = false;
-  canRedo = appStore.getEditModeUndoStack().canRedo();
-  const appModeContainer = appStore.getAppModeContainer();
+  // canRedo = appStore.getEditModeUndoStack().canRedo();
+  const appModeContainer = appStore.getCtx().getAppModeContainer();
   //   if (isEditAppMode(appModeContainer)) {
   //     canRedo = appStore.getEditModeUndoStack().canRedo();
   //   } else if (isEditDialogWidgetMode(appModeContainer)) {
@@ -353,15 +346,15 @@ export function redoComponentDisabledPropsHandler(appStore: AppStore): RibbonPro
 /**
  * 사용자 지정 - 옵션 버튼에 대한 disable 처리
  */
-export function optionComponentDisabledPropsHandler(appStore: AppStore): RibbonProp {
+export function optionComponentDisabledPropsHandler(appStore: EditorStore): RibbonProp {
   let optionDisable = true;
 
-  const appModeContainer = appStore.getAppModeContainer();
+  const appModeContainer = appStore.getCtx().getAppModeContainer();
   const selectedWidgets = appStore.getSelectedWidgets();
   if (
     selectedWidgets.length === 1 &&
-    selectedWidgets[0].getWidgetType() === 'BusinessDialog' &&
-    selectedWidgets[0].getComponentSpecificProperties().locked === false
+    selectedWidgets[0].getWidgetType() === WidgetTypeEnum.BasicDialog &&
+    selectedWidgets[0].getProperties().content.locked.value === false
   ) {
     optionDisable = false;
   }
@@ -383,7 +376,7 @@ export function optionComponentDisabledPropsHandler(appStore: AppStore): RibbonP
 /**
  * WidgetModel의 복사가 가능한지 체크.
  */
-export function copyResourcePropsHandler(appStore: AppStore): RibbonProp {
+export function copyResourcePropsHandler(appStore: EditorStore): RibbonProp {
   return {
     disabled: !isWidgetsCopyable(appStore.getSelectedWidgets()),
   };
@@ -392,14 +385,11 @@ export function copyResourcePropsHandler(appStore: AppStore): RibbonProp {
 /**
  * widget layer 이동이 위로 가능한지 체크.
  */
-export function moveUpPropsHandler(appStore: AppStore): RibbonProp {
+export function moveUpPropsHandler(appStore: EditorStore): RibbonProp {
   const selectedWidget = appStore.getSelectedWidgets()[0];
 
   const disabled =
-    !selectedWidget ||
-    !selectedWidget.getNextSibling() ||
-    selectedWidget.getComponentSpecificProperties().locked ||
-    checkWidgetType(selectedWidget, 'FragmentLayout');
+    !selectedWidget || !selectedWidget.getNextSibling() || selectedWidget.getProperties().content.locked.value;
 
   return {
     disabled,
@@ -409,7 +399,7 @@ export function moveUpPropsHandler(appStore: AppStore): RibbonProp {
 /**
  * widget layer 이동이 아래로 가능한지 체크.
  */
-export function moveDownPropsHandler(appStore: AppStore): RibbonProp {
+export function moveDownPropsHandler(appStore: EditorStore): RibbonProp {
   const selectedWidget = appStore.getSelectedWidgets()[0];
   const firstChild = selectedWidget.getParent()?.getFirstChild();
 
@@ -417,8 +407,8 @@ export function moveDownPropsHandler(appStore: AppStore): RibbonProp {
     !selectedWidget ||
     !firstChild ||
     selectedWidget.getID() === firstChild.getID() ||
-    selectedWidget.getComponentSpecificProperties().locked ||
-    checkWidgetType(selectedWidget, 'FragmentLayout');
+    selectedWidget.getProperties().content.locked.value;
+  // checkWidgetType(selectedWidget, 'FragmentLayout');
 
   return {
     disabled,
@@ -430,7 +420,7 @@ export function moveDownPropsHandler(appStore: AppStore): RibbonProp {
  * widgetModels이 최상위 부모인 PageModel이 될 때까지 Locked 속성 확인 후 맞다면 true / 아닐 경우 false 반환
  */
 export function checkToParentLockedIs(widgetModel: Nullable<WidgetModel>): boolean {
-  if (widgetModel?.getComponentSpecificProperties().locked) {
+  if (widgetModel?.getProperties().content.locked.value) {
     return true;
   }
   //   if (checkBusinessOrPageDialogModel(widgetModel)) return false;
@@ -440,7 +430,7 @@ export function checkToParentLockedIs(widgetModel: Nullable<WidgetModel>): boole
 // /**
 //  * widget의 부모가 lock 인지 체크.
 //  */
-// export function lockResourcePropsHandler(appStore: AppStore): ribbonProp {
+// export function lockResourcePropsHandler(appStore: EditorStore): ribbonProp {
 //   const selectedWidget = appStore.getSelectedWidgets()[0];
 //   const disabled = !checkBusinessOrPageDialogModel(selectedWidget) && checkToParentLockedIs(selectedWidget.getParent());
 //   return { disabled };

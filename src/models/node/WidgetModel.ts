@@ -16,12 +16,12 @@ export type WidgetID = number;
 
 export type WidgetTypeID = number;
 
-export interface IWidgetModelInitProps<Properties> {
+export interface IWidgetModelInitProps<IWidgetCommonProperties> {
   id: WidgetID;
   widgetType: WidgetTypeEnum;
   widgetCategory: WidgetCategory;
   name: string;
-  properties: Properties;
+  properties: IWidgetCommonProperties;
   ref?: React.RefObject<HTMLElement> | undefined;
 }
 

@@ -237,7 +237,6 @@ export const layoutWidgetTypeNames: readonly string[] = [
 ] as const;
 
 export const userCreatedWidgetTypeNames: string[] = [];
-export type IWidgetPartofProperties = { style?: { [key: string]: any }; content?: { [key: string]: any } };
 /**
  * UserCreated widget의 종류
  */
@@ -251,8 +250,3 @@ export const specialWidgetTypeNames = ['App', 'Page', 'BusinessDialog'] as const
 export type SpecialWidgetType = (typeof specialWidgetTypeNames)[number];
 export type LayoutWidgetType = (typeof layoutWidgetTypeNames)[number];
 export type BasicWidgetType = (typeof basicWidgetTypeNames)[number];
-
-export type AnyWidgetType = BasicWidgetType | SpecialWidgetType | LayoutWidgetType | UserCreatedWidgetType;
-export type InsertableWidgetType = Exclude<AnyWidgetType, 'FragmentLayout'>;
-
-export const staticWidgetTypes = new Set<AnyWidgetType>(['App']);
