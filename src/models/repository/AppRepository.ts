@@ -482,7 +482,6 @@ class AppRepository {
    */
   @boundMethod
   public async sendUpdateMessage(ctx: AkronContext): Promise<UpdateResult> {
-    const appModeContainer = ctx.getAppModeContainer();
     const updateMessageContainer = ctx.getUpdateMessageContainer();
     // FormData for Request
     const formData = new FormData();

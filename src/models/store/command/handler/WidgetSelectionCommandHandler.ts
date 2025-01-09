@@ -236,9 +236,9 @@ class WidgetSelectCommandHandler extends CommandHandler {
           // XXX: 이미 다중선택 상황인 경우 동일한 페이지가 중복으로 들어감
           //   const pageList = getPageList(ctx.getNewAppModel());
           const firstPage = selectedThumbnailWidgets[0];
-          const targetPage = props.targetModel;
-          let isTargetSearched = false;
-          let isPrevSelectSearched = false;
+          // const targetPage = props.targetModel;
+          // let isTargetSearched = false;
+          // let isPrevSelectSearched = false;
           //   pageList.forEach(page => {
           //     if (page === firstPage) {
           //       isPrevSelectSearched = true;

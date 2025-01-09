@@ -10,7 +10,7 @@ import WidgetModel from 'models/node/WidgetModel';
 /**
  * Target node 를 node tree 에 append 하는 simple command 입니다.
  */
-class NewAppendWidgetCommand extends SimpleCommand {
+class AppendWidgetCommand extends SimpleCommand {
   /**
    * Node tree 에 append 할 target 입니다.
    */
@@ -104,4 +104,4 @@ class NewAppendWidgetCommand extends SimpleCommand {
   }
 }
 
-export default NewAppendWidgetCommand;
+export default AppendWidgetCommand;

@@ -10,6 +10,7 @@ import ClipboardContainer from 'models/store/container/ClipboardContainer';
 import HitContainer from 'models/store/container/HitContainer';
 import { IdList } from 'models/store/container/IdContainer';
 import IdContainerController from 'models/store/container/IdContainerController';
+import PageContainer from 'models/store/container/PageContainer';
 import PropContainer from 'models/store/container/PropContainer';
 import SelectionContainer from 'models/store/container/SelectionContainer';
 import UpdateMessageContainer from 'models/store/container/UpdateMessageContainer';
@@ -29,6 +30,7 @@ import EventState from 'models/store/event/EventState';
 import { NavigateFunction } from 'react-router-dom';
 import { AppInfo } from 'store/app/AppInfo';
 import EditorUIStore from 'store/app/EditorUIStore';
+import ContextMenuContainer from 'store/context-menu/ContextMenuContainer';
 import { ContextMenu } from 'store/context-menu/ContextMenuTypes';
 
 /**
@@ -138,10 +140,10 @@ export default class AkronContext {
       // errorBoundaryContainer: this.createErrorBoundaryContainer(),
       // smartGuideContainer: this.createSmartGuideContainer(),
       updateMessageContainer: this.createUpdateMessageContainer(),
-      // pageContainer: this.createPageContainer({
-      //   startPageID: initProp.startPageID,
-      //   startPageURL: initProp.startPageURL,
-      // }),
+      pageContainer: this.createPageContainer({
+        startPageID: initProp.startPageID,
+        startPageURL: initProp.startPageURL,
+      }),
       editorUIStore: initProp.editorUIStore,
       contextMenuContainer: initProp.contextMenuContainer,
       // fileMessageContainer: this.createFileMessageContainer(),
@@ -293,6 +295,22 @@ export default class AkronContext {
   @boundMethod
   public getUpdateMessageContainer(): UpdateMessageContainer {
     return this.appEditableContext.getUpdateMessageContainer();
+  }
+
+  /**
+   * PageContainer을 반환합니다
+   */
+  @boundMethod
+  public getPageContainer(): PageContainer {
+    return this.appEditableContext.getPageContainer();
+  }
+
+  /**
+   * PageContainer을 설정합니다
+   */
+  @boundMethod
+  public setPageContainer(pageContainer: PageContainer): void {
+    this.appEditableContext.setPageContainer(pageContainer);
   }
 
   /**
@@ -495,6 +513,13 @@ export default class AkronContext {
   @boundMethod
   public getContextMenu(): ContextMenu | null {
     return this.appEditableContext.getContextMenu();
+  }
+
+  /**
+   * ContextMenuContainer를 반환합니다.
+   */
+  public getContextMenuContainer(): ContextMenuContainer {
+    return this.appEditableContext.getContextMenuContainer();
   }
 
   /**
@@ -753,6 +778,23 @@ export default class AkronContext {
   @boundMethod
   public setEditingWidgetModel(editingWidgetModel: WidgetModel): void {
     this.appEditableContext.setEditingNewWidgetModel(editingWidgetModel);
+  }
+
+  /**
+   * PageContainer 초기값을 생성해 반환합니다
+   */
+  @boundMethod
+  public createPageContainer({
+    startPageID,
+    startPageURL,
+  }: {
+    startPageID: number;
+    startPageURL: string;
+  }): PageContainer {
+    return new PageContainer({
+      startPageID: startPageID || -1,
+      startPageURL: startPageURL || '',
+    });
   }
 
   /**

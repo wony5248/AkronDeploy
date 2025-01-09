@@ -16,7 +16,7 @@ class EventMapper<ID, CommandEnum, SelectionProp, Model> {
   /**
    * EventState를 key로 EvenetHandler List를 반환하는 map 입니다.
    */
-  protected readonly eventMap: Map<EventState, EventHandler<ID, CommandEnum, SelectionProp, Model>[]>;
+  protected readonly eventMap: Map<EventState, Array<EventHandler<ID, CommandEnum, SelectionProp, Model>>>;
 
   protected readonly eventHandler: Array<EventHandler<ID, CommandEnum, SelectionProp, Model>> = [];
 

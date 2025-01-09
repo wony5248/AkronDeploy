@@ -2,8 +2,6 @@ import { IWidgetCommonProperties } from '@akron/runner';
 import { makeObservable } from 'mobx';
 import WidgetModel, { IWidgetModelInitProps } from 'models/node/WidgetModel';
 
-interface AppModelInitProps extends IWidgetModelInitProps<null> {}
-
 class AppModel extends WidgetModel<IWidgetCommonProperties> {
   //   /**
   //    * DeviceInfo
@@ -24,7 +22,7 @@ class AppModel extends WidgetModel<IWidgetCommonProperties> {
   /**
    * 생성자
    */
-  constructor(args: AppModelInitProps) {
+  constructor(args: IWidgetModelInitProps<IWidgetCommonProperties>) {
     super({
       id: args.id,
       widgetType: args.widgetType,

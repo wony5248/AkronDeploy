@@ -6,7 +6,6 @@ import {
   WidgetMoveCommandProps,
 } from 'models/store/command/handler/WidgetEditCommandHandler';
 import { SelectionProp } from 'models/store/command/widget/WidgetCommandProps';
-import { staticWidgetTypes, WidgetEditingState } from 'models/store/command/widget/WidgetModelTypes';
 import SelectionContainer from 'models/store/container/SelectionContainer';
 import WidgetEditInfoContainer, { WidgetEditSubEventState } from 'models/store/container/WidgetEditInfoContainer';
 import AkronContext from 'models/store/context/AkronContext';
@@ -60,7 +59,6 @@ class WidgetMoveEventHandler extends AkronEventHandler {
     if (
       isUndefined(hitModel) ||
       isUndefined(selectedWidgets) ||
-      staticWidgetTypes.has(hitModel.getWidgetType()) ||
       (checkPageModel(hitModel) && ctx.getMouseMode() === 'Normal')
     ) {
       // do nothing
@@ -233,10 +231,6 @@ class WidgetMoveEventHandler extends AkronEventHandler {
 
     event.stopPropagation();
 
-    if (staticWidgetTypes.has(hitModel.getWidgetType())) {
-      // do nothing
-      return false;
-    }
     const state = ctx.getState();
     const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
     const selectionContainer = ctx.getSelectionContainer();
@@ -250,10 +244,6 @@ class WidgetMoveEventHandler extends AkronEventHandler {
     if (isUndefined(hitWidgetProps)) {
       dError('hitModelProps are undefined');
       return false;
-    }
-
-    if (staticWidgetTypes.has(hitModel.getWidgetType())) {
-      return true;
     }
 
     hitModel = overrideHitWidgetModel(ctx, hitModel);

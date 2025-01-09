@@ -1,8 +1,8 @@
-import { dError, isDefined, isUndefined, Nullable } from '@akron/runner';
+import { dError, isDefined, isUndefined, Nullable, WidgetTypeEnum } from '@akron/runner';
 import WidgetModel from 'models/node/WidgetModel';
 import CommandEnum from 'models/store/command/common/CommandEnum';
 import RemoveWidgetCommand from 'models/store/command/widget/RemoveWidgetCommand';
-import { AnyWidgetType } from 'models/store/command/widget/WidgetModelTypes';
+import SelectionContainer from 'models/store/container/SelectionContainer';
 import AkronContext from 'models/store/context/AkronContext';
 import EventState from 'models/store/event/EventState';
 import { basicChildableWidgetTypeNamesSet, parentChildEssentialRelationMap } from 'models/widget/ParentChildRelMap';
@@ -48,6 +48,24 @@ export function isWidgetsDeletable(widgetModels: WidgetModel[]): boolean {
 }
 
 /**
+ * hover되는 widget에 style className 추가하는 함수
+ */
+export function addWidgetHoveredStyle(widgetModel: WidgetModel, selectionContainer: SelectionContainer | undefined) {
+  const hoverableElement = document.getElementById(`widgetSelection${widgetModel.getID()}`) as HTMLElement;
+  hoverableElement.classList.add('hovered');
+  selectionContainer?.setHoverableWidgetModel(widgetModel);
+}
+
+/**
+ * hover 해제되는 widget에 style className 제거하는 함수
+ */
+export function removeWidgetHoveredStyle(widgetModel: WidgetModel, selectionContainer: Nullable<SelectionContainer>) {
+  const hoverElement = document.getElementById(`widgetSelection${widgetModel.getID()}`) as HTMLElement;
+  hoverElement?.classList.remove('hovered');
+  selectionContainer?.setHoverableWidgetModel(undefined);
+}
+
+/**
  * 해당 WidgetModel들 중 삭제 가능한 WidgetModel들을 찾아 배열 형태로 반환
  * PageModel이 포함되어 있거나 삭제 불가능한 상태인 경우 빈 배열 반환
  */
@@ -56,11 +74,13 @@ export function getDeletableWidgetModels(widgetModels: WidgetModel[]): WidgetMod
     return [];
   }
 
-  if (widgetModels.some(widgetModel => widgetModel.getWidgetType() === 'FragmentLayout')) {
-    return [];
-  }
+  // if (widgetModels.some(widgetModel => widgetModel.getWidgetType() === 'FragmentLayout')) {
+  //   return [];
+  // }
 
-  const deletableWidgetModels = widgetModels.filter(widgetModel => widgetModel.getProperties().locked === false);
+  const deletableWidgetModels = widgetModels.filter(
+    widgetModel => widgetModel.getProperties().content.locked.value === false
+  );
 
   return deletableWidgetModels;
 }
@@ -72,7 +92,7 @@ export function getDeletableWidgetModels(widgetModels: WidgetModel[]): WidgetMod
  * @returns WidgetModel이 존재하며 WidgetModel의 widgetType이 'BusinessDialog'인 경우 true
  */
 export function checkBusinessDialogModel(targetModel: Nullable<WidgetModel>): boolean {
-  return targetModel?.getWidgetType() === 'BusinessDialog';
+  return targetModel?.getWidgetType() === WidgetTypeEnum.BasicDialog;
 }
 
 /**
@@ -95,15 +115,15 @@ export function checkPageModel(targetModel: Nullable<WidgetModel>): boolean {
   return targetModel?.getWidgetType() === 'Page';
 }
 
-/**
- * 해당 WidgetModel이 ConditionalLayout인지 확인합니다.
- *
- * @param targetModel ConditionalLayout인지 확인하기 위한 WidgetModel
- * @returns WidgetModel이 존재하며 WidgetModel의 widgetType이 'ConditionalLayout'인 경우 true
- */
-export function checkConditionalLayout(targetModel: Nullable<WidgetModel>): boolean {
-  return targetModel?.getWidgetType() === 'ConditionalLayout';
-}
+// /**
+//  * 해당 WidgetModel이 ConditionalLayout인지 확인합니다.
+//  *
+//  * @param targetModel ConditionalLayout인지 확인하기 위한 WidgetModel
+//  * @returns WidgetModel이 존재하며 WidgetModel의 widgetType이 'ConditionalLayout'인 경우 true
+//  */
+// export function checkConditionalLayout(targetModel: Nullable<WidgetModel>): boolean {
+//   return targetModel?.getWidgetType() === 'ConditionalLayout';
+// }
 
 /**
  * container에 item 삽입 시 삽입 가능한 type인지 체크.
@@ -112,9 +132,9 @@ export function checkInsertableItem(parent: WidgetModel | undefined, item: Widge
   if (parent === undefined) {
     return false;
   }
-  if (parent.getWidgetCategory() === 'Layout' && parent.getWidgetType() !== 'InnerPageLayout') {
-    return true;
-  }
+  // if (parent.getWidgetCategory() === 'Layout' && parent.getWidgetType() !== 'InnerPageLayout') {
+  //   return true;
+  // }
   if (basicChildableWidgetTypeNamesSet.has(parent.getWidgetType())) {
     if (
       // parentChildEssentialRelationMap에 있는 경우 삽입 가능한지 확인
@@ -128,9 +148,9 @@ export function checkInsertableItem(parent: WidgetModel | undefined, item: Widge
       return true;
     }
   }
-  if (parent.getWidgetCategory() === 'UserCreated') {
-    return true;
-  }
+  // if (parent.getWidgetCategory() === 'UserCreated') {
+  //   return true;
+  // }
   return false;
 }
 
@@ -151,8 +171,8 @@ export function getCopyableWidgetModels(widgetModels: WidgetModel[]): WidgetMode
     return [];
   }
 
-  const targetWidgetModels = widgetModels.filter(widgetModel => !checkWidgetType(widgetModel, 'FragmentLayout'));
-
+  // const targetWidgetModels = widgetModels.filter(widgetModel => !checkWidgetType(widgetModel, 'FragmentLayout'));
+  const targetWidgetModels = widgetModels;
   return targetWidgetModels;
 }
 
@@ -163,7 +183,7 @@ export function getCopyableWidgetModels(widgetModels: WidgetModel[]): WidgetMode
  * @param type 확인하기 위한 WidgetType(AnyWidgetType)
  * @returns WidgetModel이 존재하며 WidgetModel의 widgetType이 인자로 넘긴 type과 같은 경우 true
  */
-export function checkWidgetType(targetModel: Nullable<WidgetModel>, type: AnyWidgetType): boolean {
+export function checkWidgetType(targetModel: Nullable<WidgetModel>, type: WidgetTypeEnum): boolean {
   return targetModel?.getWidgetType() === type;
 }
 
@@ -193,38 +213,34 @@ export function findInsertPosition(
     const childStyle = widget.getProperties().style;
     // Set의 key값으로 쓰기 위해 object가 아닌 string으로 변환
     widgetPositionSet.add(
-      `${childStyle.x.absolute.toString()}/${childStyle.y.absolute.toString()}/${childStyle.width.absolute.toString()}/${childStyle.height.absolute.toString()}`
+      `${childStyle.x.value.toString()}/${childStyle.y.value.toString()}/${childStyle.width.value.toString()}/${childStyle.height.value.toString()}`
     );
   });
 
   let { x, y } = startPosition;
   while (true) {
     // 페이지보다 클 경우 (0,0)에 삽입(무한루프 도는 이슈)
-    if (
-      x + widgetStyle.width.absolute > pageStyle.width.absolute &&
-      y + widgetStyle.height.absolute > pageStyle.height.absolute
-    ) {
+    if (x + widgetStyle.width.value > pageStyle.width.value && y + widgetStyle.height.value > pageStyle.height.value) {
       return { x: 0, y: 0 };
     }
     if (
       widgetPositionSet.has(
-        `${x.toString()}/${y.toString()}/${widgetStyle.width.absolute.toString()}/${widgetStyle.height.absolute.toString()}`
+        `${x.toString()}/${y.toString()}/${widgetStyle.width.value.toString()}/${widgetStyle.height.value.toString()}`
       ) === false &&
       (isUndefined(insertingPositionSet) ||
         (insertingPositionSet &&
           insertingPositionSet.has(
-            `${x.toString()}/${y.toString()}/${widgetStyle.width.absolute.toString()}/${widgetStyle.height.absolute.toString()}`
+            `${x.toString()}/${y.toString()}/${widgetStyle.width.value.toString()}/${widgetStyle.height.value.toString()}`
           ) === false)) &&
-      (x + widgetStyle.width.absolute <= pageStyle.width.absolute ||
-        y + widgetStyle.height.absolute <= pageStyle.height.absolute)
+      (x + widgetStyle.width.value <= pageStyle.width.value || y + widgetStyle.height.value <= pageStyle.height.value)
     ) {
       return { x, y };
     }
     x += GAP;
     y += GAP;
     if (
-      x + widgetStyle.width.absolute >= pageStyle.width.absolute ||
-      y + widgetStyle.height.absolute >= pageStyle.height.absolute
+      x + widgetStyle.width.value >= pageStyle.width.value ||
+      y + widgetStyle.height.value >= pageStyle.height.value
     ) {
       x = RestartGAP * countRestart;
       y = 0;
@@ -263,13 +279,13 @@ export const appendDeleteWidgetCommandsRecursive = (
   // syncSubstrackDataStoreReference(widgetModel, ctx.dataStore, ctx.command);
 
   // 삭제 대상 중 InnerPageLayout이 있을 경우,
-  if (widgetModel.getWidgetType() === 'InnerPageLayout') {
-    const editingPageID = ctx.getSelectionContainer()?.getEditingPage()?.getID();
-    if (isDefined(editingPageID)) {
-      // const updateInnerPageMapCommand = new UpdateInnerPageMapCommand(ctx, commandID, editingPageID, widgetModel);
-      // ctx.getCommand()?.append(updateInnerPageMapCommand);
-    }
-  }
+  // if (widgetModel.getWidgetType() === 'InnerPageLayout') {
+  //   const editingPageID = ctx.getSelectionContainer()?.getEditingPage()?.getID();
+  //   if (isDefined(editingPageID)) {
+  //     // const updateInnerPageMapCommand = new UpdateInnerPageMapCommand(ctx, commandID, editingPageID, widgetModel);
+  //     // ctx.getCommand()?.append(updateInnerPageMapCommand);
+  //   }
+  // }
 
   // appendDeleteWidgetBusinessLogicCommands(ctx, widgetModel);
 

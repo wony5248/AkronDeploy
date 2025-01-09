@@ -5,13 +5,8 @@ import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
 import CommandEnum from 'models/store/command/common/CommandEnum';
 import CommandHandler from 'models/store/command/common/CommandHandler';
 import WidgetCommandProps, { SelectionProp } from 'models/store/command/widget/WidgetCommandProps';
-import NewAppendWidgetCommand from 'models/store/command/widget/AppendWidgetCommand';
-import {
-  AnyWidgetType,
-  InsertableWidgetType,
-  IWidgetPartofProperties,
-  WidgetEditingState,
-} from 'models/store/command/widget/WidgetModelTypes';
+import AppendWidgetCommand from 'models/store/command/widget/AppendWidgetCommand';
+import { WidgetEditingState } from 'models/store/command/widget/WidgetModelTypes';
 import {
   WidgetResizeHandle,
   WidgetPosition,
@@ -24,7 +19,6 @@ import CompositeModel from 'store/component/CompositeModel';
 import {
   appendDeleteWidgetCommandsRecursive,
   checkBusinessOrPageDialogModel,
-  checkConditionalLayout,
   checkInsertableItem,
   checkPageModel,
   clearWidgetModelEditContext,
@@ -33,24 +27,27 @@ import {
   isWidgetsDeletable,
 } from 'util/WidgetUtil';
 import UpdateWidgetCommand from 'models/store/command/widget/UpdateWidgetCommand';
-import AppendWidgetCommand from 'models/store/command/widget/AppendWidgetCommand';
 import AppendWidgetRecursiveCommand from 'models/store/command/widget/AppendWidgetRecursiveCommand';
 import { isEditAppMode, isEditWidgetMode } from 'util/AppModeUtil';
 import RenameWidgetCommand from 'models/store/command/widget/RenameWidgetCommand';
 import { WidgetStyle, Position, Length, Constraint } from 'models/widget/WidgetPropTypes';
 
-const widgetModelDemo = new WidgetModel({
+export const widgetModelDemo = new WidgetModel({
   id: 1000000,
   widgetType: WidgetTypeEnum.BasicButton,
   widgetCategory: '',
   name: 'button',
   properties: {
     content: { text: { value: 'afsdfasd', defaultValue: 'adsfzcv', variableId: 0 } },
-    style: { backgroundColor: { value: 'black', defaultValue: 'black', variableId: 1 } },
+    style: {
+      backgroundColor: { value: 'black', defaultValue: 'black', variableId: 1 },
+      height: { value: '200px', defaultValue: '200px', variableId: 2 },
+      width: { value: '200px', defaultValue: '200px', variableId: 3 },
+    },
   },
 });
 
-const widgetModelDemo2 = new WidgetModel({
+export const widgetModelDemo2 = new WidgetModel({
   id: 1000001,
   widgetType: WidgetTypeEnum.BasicButton,
   widgetCategory: '',
@@ -61,7 +58,7 @@ const widgetModelDemo2 = new WidgetModel({
   },
 });
 
-const widgetModelDemo3 = new WidgetModel({
+export const widgetModelDemo3 = new WidgetModel({
   id: 1000002,
   widgetType: WidgetTypeEnum.BasicButton,
   widgetCategory: '',
@@ -116,7 +113,7 @@ const widgetModelDemo3 = new WidgetModel({
 export type InsertWidgetCommandProps<Props extends IWidgetCommonProperties = IWidgetCommonProperties> =
   WidgetCommandProps & {
     commandID: CommandEnum.INSERT_WIDGET;
-    widgetType: InsertableWidgetType;
+    widgetType: WidgetTypeEnum;
     widgetID: WidgetID;
     // 부모 Widget을 지정해줘야할 때 사용.
     parentWidgetModel?: WidgetModel;
@@ -128,7 +125,7 @@ export type InsertWidgetCommandProps<Props extends IWidgetCommonProperties = IWi
  */
 export type InsertWidgetAtCommandProps = WidgetCommandProps & {
   commandID: CommandEnum.INSERT_WIDGET_AT;
-  widgetType: InsertableWidgetType;
+  widgetType: WidgetTypeEnum;
   widgetID: WidgetID;
   posX: number;
   posY: number;
@@ -200,7 +197,7 @@ type WidgetMoveEndCommandProps = WidgetCommandProps & {
   byKeyEvent?: boolean;
   deltaX: number;
   deltaY: number;
-  pinnedDirections: string[];
+  pinnedDirections?: string[];
   changeTopWidgetModel?: WidgetModel | undefined;
   container?: WidgetModel | undefined;
   isMovedToPage?: boolean;
@@ -230,7 +227,7 @@ export type WidgetMoveCommandProps =
 export type WidgetUpdateCommandProps = WidgetCommandProps & {
   commandID: CommandEnum.WIDGET_UPDATE_PROPERTIES;
   targetModel: WidgetModel[];
-  newWidgetProps: IWidgetPartofProperties;
+  newWidgetProps: IWidgetCommonProperties;
 };
 
 // /**
@@ -250,7 +247,7 @@ export type WidgetUpdateCommandProps = WidgetCommandProps & {
 export type ResetWidgetContentCommandProps = WidgetCommandProps & {
   commandID: CommandEnum.RESET_WIDGET_CONTENT;
   propertyKey: string;
-  newWidgetProps: IWidgetPartofProperties;
+  newWidgetProps: IWidgetCommonProperties;
 };
 
 /**
@@ -713,7 +710,7 @@ class WidgetEditCommandHandler extends CommandHandler {
    * 주어진 type에 해당하는 새 widget을 생성.
    */
   @boundMethod
-  private createNewWidgetModel(ctx: AkronContext, widgetType: AnyWidgetType, widgetID: WidgetID) {
+  private createNewWidgetModel(ctx: AkronContext, widgetType: WidgetTypeEnum, widgetID: WidgetID) {
     // const defaultWidgetModel = ctx.getMetaDataContainer().getDefaultWidgetModelMap().get(widgetType);
     // const pageWidth = ctx.getNewAppModel().getFirstChild()?.getFirstChild()?.getProperties().getStyle().width.absolute;
     // const pageHeight = ctx.getNewAppModel().getFirstChild()?.getFirstChild()?.getProperties().getStyle()
@@ -773,7 +770,7 @@ class WidgetEditCommandHandler extends CommandHandler {
 
     let parentWidgetModel = args.parentWidgetModel ?? this.getParentToInsert(ctx, newWidgetModel);
 
-    if (isDefined(parentWidgetModel) && checkConditionalLayout(parentWidgetModel)) {
+    if (isDefined(parentWidgetModel)) {
       const fragmentLayoutModels = parentWidgetModel.mapChild((childWidgetModel: WidgetModel) => childWidgetModel);
       const renderedChildIndex = parentWidgetModel.getProperties().content.flag.value ? 0 : 1;
       parentWidgetModel = fragmentLayoutModels[renderedChildIndex];
@@ -1435,8 +1432,11 @@ class WidgetEditCommandHandler extends CommandHandler {
       //     break;
       // }
       const updateSizeCommand = new UpdateWidgetCommand(widgetModel, {
-        width: newWidth,
-        height: newHeight,
+        style: {
+          width: { value: newWidth, defaultValue: newWidth, variableId: 0 },
+          height: { value: newHeight, defaultValue: newHeight, variableId: 0 },
+        },
+        content: {},
       });
       command.append(updateSizeCommand);
       // updatePinnedChildren(widgetModel, Number(newWidth.value), Number(newHeight.value), ctx);
@@ -2347,13 +2347,13 @@ class WidgetEditCommandHandler extends CommandHandler {
    */
   private appendSubComponentCommand(
     ctx: AkronContext,
-    componentType: string,
+    componentType: WidgetTypeEnum,
     parentModel: WidgetModel,
     nextSibling?: WidgetModel
   ) {
     const idContainerController = ctx.getIdContainerController();
     const model = this.createNewWidgetModel(ctx, componentType, idContainerController.generateComponentId());
-    const appendComponentCommand = new NewAppendWidgetCommand(ctx, model, parentModel, nextSibling);
+    const appendComponentCommand = new AppendWidgetCommand(ctx, model, parentModel, nextSibling);
     ctx.getCommand()?.append(appendComponentCommand);
     return model;
   }

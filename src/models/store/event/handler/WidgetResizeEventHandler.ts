@@ -1,4 +1,4 @@
-import { dError, KeyEvent, Nullable, MouseEvent, WidgetTypeEnum } from '@akron/runner';
+import { dError, KeyEvent, Nullable, MouseEvent, WidgetTypeEnum, isUndefined } from '@akron/runner';
 import WidgetModel from 'models/node/WidgetModel';
 import WidgetRepository from 'models/repository/WidgetRepository';
 import CommandEnum from 'models/store/command/common/CommandEnum';
@@ -7,11 +7,7 @@ import {
   WidgetResizeCommandProps,
   WidgetResizeEndCommandProps,
 } from 'models/store/command/handler/WidgetEditCommandHandler';
-import {
-  InsertableWidgetType,
-  staticWidgetTypes,
-  WidgetEditingState,
-} from 'models/store/command/widget/WidgetModelTypes';
+import { WidgetEditingState } from 'models/store/command/widget/WidgetModelTypes';
 import SelectionContainer from 'models/store/container/SelectionContainer';
 import WidgetEditInfoContainer, {
   WidgetEditSubEventState,
@@ -21,7 +17,6 @@ import AkronContext from 'models/store/context/AkronContext';
 import AkronEventHandler from 'models/store/event/AkronEventHandler';
 import EventState from 'models/store/event/EventState';
 import HitItem from 'models/store/selection/HitItem';
-import { isUndefined } from 'util';
 import {
   calcResizeDeltaBounds,
   calculateDeltaClientXY,
@@ -56,7 +51,7 @@ class WidgetResizeEventHandler extends AkronEventHandler {
 
     // container 삽입 모드
     if (state === EventState.WIDGET_INSERT) {
-      const insertContainerType = widgetEditInfoContainer.getInsertContainerType();
+      // const insertContainerType = widgetEditInfoContainer.getInsertContainerType();
       //   if (!insertContainerType || !getInsertableWidgetTypeNames().includes(insertContainerType)) {
       //     return false;
       //   }
@@ -67,7 +62,7 @@ class WidgetResizeEventHandler extends AkronEventHandler {
 
       const commandProps: InsertWidgetAtCommandProps = {
         commandID: CommandEnum.INSERT_WIDGET_AT,
-        widgetType: insertContainerType as InsertableWidgetType,
+        widgetType: ctx.getEditingWidgetModel().getWidgetType(),
         widgetID: WidgetRepository.generateWidgetID(),
         posX: event.getClientX() - ctx.getEditingPageRefPosition().x,
         posY: event.getClientY() - ctx.getEditingPageRefPosition().y,
@@ -141,7 +136,6 @@ class WidgetResizeEventHandler extends AkronEventHandler {
     if (
       isUndefined(hitModel) ||
       isUndefined(selectedWidgets) ||
-      staticWidgetTypes.has(hitModel.getWidgetType()) ||
       (checkPageModel(hitModel) && ctx.getMouseMode() === 'Normal')
     ) {
       // do nothing
@@ -238,11 +232,6 @@ class WidgetResizeEventHandler extends AkronEventHandler {
 
     event.stopPropagation();
 
-    if (staticWidgetTypes.has(hitModel.getWidgetType())) {
-      // do nothing
-      return false;
-    }
-
     const state = ctx.getState();
     const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
     const selectionContainer = ctx.getSelectionContainer();
@@ -256,10 +245,6 @@ class WidgetResizeEventHandler extends AkronEventHandler {
     if (isUndefined(hitWidgetProps)) {
       dError('hitModelProps are undefined');
       return false;
-    }
-
-    if (staticWidgetTypes.has(hitModel.getWidgetType())) {
-      return true;
     }
 
     hitModel = overrideHitWidgetModel(ctx, hitModel);

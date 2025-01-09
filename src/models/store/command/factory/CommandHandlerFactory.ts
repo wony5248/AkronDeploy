@@ -1,10 +1,8 @@
-import { WidgetID } from 'models/node/WidgetModel';
-import CommandEnum from 'models/store/command/common/CommandEnum';
 import CommandHandler from 'models/store/command/common/CommandHandler';
 import AppCommandHandler from 'models/store/command/handler/AppCommandHandler';
+import PageCommandHandler from 'models/store/command/handler/PageCommandHandler';
 import WidgetEditCommandHandler from 'models/store/command/handler/WidgetEditCommandHandler';
 import WidgetSelectCommandHandler from 'models/store/command/handler/WidgetSelectionCommandHandler';
-import { SelectionProp } from 'models/store/command/widget/WidgetCommandProps';
 
 /**
  * Command handler 를 생성하는 abstract factory 입니다.
@@ -46,12 +44,12 @@ class CommandHandlerFactory {
     return new AppCommandHandler();
   }
 
-  //   /**
-  //    * PageCommandHandler 반환
-  //    */
-  //   public createPageCommandHandler(): CommandHandler {
-  //     return new PageCommandHandler();
-  //   }
+  /**
+   * PageCommandHandler 반환
+   */
+  public createPageCommandHandler(): CommandHandler {
+    return new PageCommandHandler();
+  }
 
   //   /**
   //    * CompositeWidgetCommandHandler 반환

@@ -4,6 +4,7 @@ import WidgetModel, { WidgetTypeID } from 'models/node/WidgetModel';
 import AkronContext from 'models/store/context/AkronContext';
 import EditorStore from 'models/store/EditorStore';
 import EventState from 'models/store/event/EventState';
+import { WidgetTypeEnum } from '@akron/runner';
 
 /**
  * SubToolpaneInfo
@@ -25,9 +26,9 @@ export interface SubToolpanePosition {
  * SubToolpane의 이동을 처리하기 위한 정보를 담은 컨테이너
  */
 class SubToolpaneContainer {
-  private subToolpane: WidgetTypeID | undefined;
+  private subToolpane: WidgetTypeEnum | undefined;
 
-  private editingSubToolpane: WidgetTypeID | undefined;
+  private editingSubToolpane: WidgetTypeEnum | undefined;
 
   private widgetModel: WidgetModel | undefined;
 
@@ -44,9 +45,9 @@ class SubToolpaneContainer {
   private editingCurrY: number;
 
   @observable
-  private subToolpanePositionMap = new Map<WidgetTypeID, SubToolpanePosition>();
+  private subToolpanePositionMap = new Map<WidgetTypeEnum, SubToolpanePosition>();
 
-  private subToolpaneMap = new Map<WidgetTypeID, SubToolpaneInfo>();
+  private subToolpaneMap = new Map<WidgetTypeEnum, SubToolpaneInfo>();
 
   @observable
   private isSubToolpaneOpen: boolean;
@@ -102,7 +103,7 @@ class SubToolpaneContainer {
    * @param ctx AppContext
    */
   @boundMethod
-  public setSubToolpane(subToolpane: WidgetTypeID | undefined): void {
+  public setSubToolpane(subToolpane: WidgetTypeEnum | undefined): void {
     this.subToolpane = subToolpane;
   }
 
@@ -112,7 +113,7 @@ class SubToolpaneContainer {
    * @param ctx AppContext
    */
   @boundMethod
-  public getSubToolpane(): WidgetTypeID | undefined {
+  public getSubToolpane(): WidgetTypeEnum | undefined {
     return this.subToolpane;
   }
 
@@ -147,7 +148,7 @@ class SubToolpaneContainer {
    * get editingSubToolpane
    */
   @boundMethod
-  public getEditingSubToolpane(): WidgetTypeID | undefined {
+  public getEditingSubToolpane(): WidgetTypeEnum | undefined {
     return this.editingSubToolpane;
   }
 
@@ -155,7 +156,7 @@ class SubToolpaneContainer {
    * set editingSubToolpane
    */
   @boundMethod
-  public setEditingSubToolpane(editingSubToolpane: WidgetTypeID): void {
+  public setEditingSubToolpane(editingSubToolpane: WidgetTypeEnum): void {
     this.editingSubToolpane = editingSubToolpane;
   }
 
@@ -246,7 +247,7 @@ class SubToolpaneContainer {
    *
    */
   @boundMethod
-  public getSubToolpanePosition(editingSubToolpane: WidgetTypeID, state: EventState): SubToolpanePosition {
+  public getSubToolpanePosition(editingSubToolpane: WidgetTypeEnum, state: EventState): SubToolpanePosition {
     let startPosition = this.subToolpanePositionMap.get(editingSubToolpane) as SubToolpanePosition;
 
     if (state === EventState.TOOLPANE_MOVE) {
@@ -289,7 +290,7 @@ class SubToolpaneContainer {
    * set editingSubToolpane Toolpaneposition
    */
   @boundMethod
-  public setSubToolpanePosition(editingSubToolpane: WidgetTypeID, Toolpaneposition: SubToolpanePosition): void {
+  public setSubToolpanePosition(editingSubToolpane: WidgetTypeEnum, Toolpaneposition: SubToolpanePosition): void {
     this.subToolpanePositionMap.set(editingSubToolpane, Toolpaneposition);
   }
 
