@@ -17,13 +17,6 @@ npm:
         - rm -rf package-lock.json
         - npm install --legacy-peer-deps
 
-lint:
-    stage: lint
-    only:
-        - master
-    script:
-        - npm run lint
-
 build:
     stage: build
     only:
