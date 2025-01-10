@@ -3,6 +3,8 @@ import useContextMenuContainer from 'hooks/useContextMenuContainer';
 import useEditorStore from 'hooks/useEditorStore';
 import { observer } from 'mobx-react-lite';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
+import CommandEnum from 'models/store/command/common/CommandEnum';
+import { WidgetSelectCommandProps } from 'models/store/command/handler/WidgetSelectionCommandHandler';
 import { useEffect, useRef, useState } from 'react';
 import ResourceContextMenuData from 'store/toolpane/TreeNodeViewerContextMenuData';
 import {
@@ -76,7 +78,7 @@ const TreeNodeComponent: React.FC<IProps> = observer(({ widgetModel, isTop = tru
   const [hoverPlace, setHoverPlace] = useState<HoverPlace>('NONE');
 
   const selectedWidgets = editorStore.getSelectedWidgets();
-  const isSelected = true; // selectedWidgets.map(eachWidgetModel => eachWidgetModel.getID()).includes(widgetModel.getID());
+  const isSelected = selectedWidgets.map(eachWidgetModel => eachWidgetModel.getID()).includes(widgetModel.getID());
   const isInsertable = widgetLayerConatiner.isInsertableModel(widgetModel);
 
   const childWidgetModels = widgetModel.mapChild(childWidgetModel => childWidgetModel);
@@ -105,12 +107,12 @@ const TreeNodeComponent: React.FC<IProps> = observer(({ widgetModel, isTop = tru
 
   const handleClickName = (e: React.MouseEvent) => {
     if (!isPageLocked) {
-      // const commandProps: WidgetSelectCommandProps = {
-      //     commandID: CommandEnum.SELECT_WIDGET,
-      //     targetModel: widgetModel,
-      //     isAdded: e.ctrlKey || e.shiftKey,
-      // };
-      // editorStore.handleCommandEvent(commandProps);
+      const commandProps: WidgetSelectCommandProps = {
+        commandID: CommandEnum.SELECT_WIDGET,
+        targetModel: widgetModel,
+        isAdded: e.ctrlKey || e.shiftKey,
+      };
+      editorStore.handleCommandEvent(commandProps);
     }
   };
 

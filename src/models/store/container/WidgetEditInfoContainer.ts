@@ -1,8 +1,8 @@
-import { Nullable } from '@akron/runner';
+import { Nullable, WidgetEditingState } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { observable, makeObservable, action } from 'mobx';
 import WidgetModel from 'models/node/WidgetModel';
-import { LayoutWidgetType, WidgetEditingState } from 'models/store/command/widget/WidgetModelTypes';
+import { LayoutWidgetType } from 'models/store/command/widget/WidgetModelTypes';
 
 export enum WidgetResizeHandle {
   NONE,

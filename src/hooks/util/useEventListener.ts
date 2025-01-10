@@ -185,7 +185,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new MouseEvent(e, node);
-    // editorStore.handleClick(event);
+    editorStore.handleClick(event);
   };
 
   const handleDoubleClick: MouseHandlerType = e => {
@@ -193,7 +193,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new MouseEvent(e, node);
-    // editorStore.handleDoubleClick(event);
+    editorStore.handleDoubleClick(event);
   };
 
   const handleMouseDown: MouseHandlerType = e => {
@@ -201,7 +201,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new MouseEvent(e, node);
-    // editorStore.handleMouseDown(event);
+    editorStore.handleMouseDown(event);
   };
 
   const handleMouseMove: MouseHandlerType = e => {
@@ -209,7 +209,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new MouseEvent(e, node);
-    // editorStore.handleMouseMove(event);
+    editorStore.handleMouseMove(event);
   };
 
   const handleMouseOut: MouseHandlerType = e => {
@@ -217,7 +217,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new MouseEvent(e, node);
-    // editorStore.handleMouseOut(event);
+    editorStore.handleMouseOut(event);
   };
 
   const handleMouseOver: MouseHandlerType = e => {
@@ -225,7 +225,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new MouseEvent(e, node);
-    // editorStore.handleMouseOver(event);
+    editorStore.handleMouseOver(event);
   };
 
   const handleMouseUp: MouseHandlerType = e => {
@@ -233,7 +233,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new MouseEvent(e, node);
-    // editorStore.handleMouseUp(event);
+    editorStore.handleMouseUp(event);
   };
 
   const handleMouseDownCapture: MouseHandlerType = e => {
@@ -241,7 +241,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new MouseEvent(e, node);
-    // editorStore.handleMouseDownCapture(event);
+    editorStore.handleMouseDownCapture(event);
   };
 
   const handleMouseUpCapture: MouseHandlerType = e => {
@@ -249,7 +249,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new MouseEvent(e, node);
-    // editorStore.handleMouseUpCapture(event);
+    editorStore.handleMouseUpCapture(event);
   };
   const handleMouseMoveCapture: MouseHandlerType = e => {
     if (checkDontResave()) {
@@ -257,7 +257,7 @@ const useEventListener: Hook = node => {
     }
     if (e.buttons === 1) {
       const event = new MouseEvent(e, node);
-      // editorStore.handleMouseMoveCapture(event);
+      editorStore.handleMouseMoveCapture(event);
     }
   };
 
@@ -266,7 +266,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new MouseEvent(e, node);
-    // editorStore.handleMouseEnter(event);
+    editorStore.handleMouseEnter(event);
   };
 
   const handleMouseLeave: MouseHandlerType = e => {
@@ -274,7 +274,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new MouseEvent(e, node);
-    // editorStore.handleMouseLeave(event);
+    editorStore.handleMouseLeave(event);
   };
 
   const handleContextMenu: MouseHandlerType = e => {
@@ -282,7 +282,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new MouseEvent(e, node);
-    // editorStore.handleContextMenu(event);
+    editorStore.handleContextMenu(event);
   };
 
   const handleWheel: WheelHandlerType = e => {
@@ -290,7 +290,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new WheelEvent(e, node);
-    // editorStore.handleWheel(event);
+    editorStore.handleWheel(event);
   };
 
   const handleKeyDown: KeyHandlerType = e => {
@@ -298,7 +298,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new KeyEvent(e, node);
-    // editorStore.handleKeyDown(event);
+    editorStore.handleKeyDown(event);
   };
 
   const handleKeyUp: KeyHandlerType = e => {
@@ -306,7 +306,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new KeyEvent(e, node);
-    // editorStore.handleKeyUp(event);
+    editorStore.handleKeyUp(event);
   };
 
   const handleKeyPressed: KeyHandlerType = e => {
@@ -314,7 +314,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new KeyEvent(e, node);
-    // editorStore.handleKeyPressed(event);
+    editorStore.handleKeyPressed(event);
   };
 
   const handleBeforeInput: FormHandlerType = e => {
@@ -322,7 +322,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new FormEvent(e, node);
-    // editorStore.handleBeforeInput(event);
+    editorStore.handleBeforeInput(event);
   };
 
   const handleInput: FormHandlerType = e => {
@@ -330,7 +330,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new FormEvent(e, node);
-    // editorStore.handleInput(event);
+    editorStore.handleInput(event);
   };
 
   const handleFocus: FocusHandlerType = e => {
@@ -338,7 +338,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new FocusEvent(e, node);
-    // editorStore.handleFocus(event);
+    editorStore.handleFocus(event);
   };
 
   const handleBlur: FocusHandlerType = e => {
@@ -346,7 +346,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new FocusEvent(e, node);
-    // editorStore.handleBlur(event);
+    editorStore.handleBlur(event);
   };
 
   const handleCompositionUpdate: CompositionHandelrType = e => {
@@ -354,7 +354,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new CompositionEvent(e, node);
-    // editorStore.handleCompositionUpdate(event);
+    editorStore.handleCompositionUpdate(event);
   };
 
   const handleDrag: DragHandlerType = e => {
@@ -362,7 +362,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new DragEvent(e, node);
-    // editorStore.handleDrag(event);
+    editorStore.handleDrag(event);
   };
 
   const handleDragStart: DragHandlerType = e => {
@@ -370,7 +370,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new DragEvent(e, node);
-    // editorStore.handleDragStart(event);
+    editorStore.handleDragStart(event);
   };
 
   const handleDragEnd: DragHandlerType = e => {
@@ -378,7 +378,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new DragEvent(e, node);
-    // editorStore.handleDragEnd(event);
+    editorStore.handleDragEnd(event);
   };
 
   const handleDragEnter: DragHandlerType = e => {
@@ -386,7 +386,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new DragEvent(e, node);
-    // editorStore.handleDragEnter(event);
+    editorStore.handleDragEnter(event);
   };
 
   const handleDragLeave: DragHandlerType = e => {
@@ -394,7 +394,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new DragEvent(e, node);
-    // editorStore.handleDragLeave(event);
+    editorStore.handleDragLeave(event);
   };
 
   const handleDragOver: DragHandlerType = e => {
@@ -402,7 +402,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new DragEvent(e, node);
-    // editorStore.handleDragOver(event);
+    editorStore.handleDragOver(event);
   };
 
   const handleScroll: DragHandlerType = e => {
@@ -410,7 +410,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new UIEvent(e, node);
-    // editorStore.handleScroll(event);
+    editorStore.handleScroll(event);
   };
 
   const handleDrop: DragHandlerType = e => {
@@ -418,7 +418,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new DragEvent(e, node);
-    // editorStore.handleDrop(event);
+    editorStore.handleDrop(event);
   };
 
   const handleOnChange: FormHandlerType = (e, ...eventParams) => {
@@ -443,7 +443,7 @@ const useEventListener: Hook = node => {
       }
     }
     const event = new FormEvent(e, node);
-    // editorStore.handleChange(event, [...eventParams, value]);
+    editorStore.handleChange(event, [...eventParams, value]);
   };
 
   const handleOnContextMenu: MouseHandlerType = e => {
@@ -451,7 +451,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new MouseEvent(e, node);
-    // editorStore.handleOnContextMenu(event);
+    editorStore.handleOnContextMenu(event);
   };
 
   const handleInvalid: FormHandlerType = e => {
@@ -459,7 +459,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new FormEvent(e, node);
-    // editorStore.handleInvalid(event);
+    editorStore.handleInvalid(event);
   };
 
   const handleReset: FormHandlerType = e => {
@@ -467,7 +467,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new FormEvent(e, node);
-    // editorStore.handleReset(event);
+    editorStore.handleReset(event);
   };
 
   const handleSearch: FormHandlerType = e => {
@@ -475,7 +475,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new FormEvent(e, node);
-    // editorStore.handleSearch(event);
+    editorStore.handleSearch(event);
   };
 
   const handleSelect: FormHandlerType = e => {
@@ -483,7 +483,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new FormEvent(e, node);
-    // editorStore.handleSelect(event);
+    editorStore.handleSelect(event);
   };
 
   const handleSubmit: FormHandlerType = e => {
@@ -491,7 +491,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new FormEvent(e, node);
-    // editorStore.handleSubmit(event);
+    editorStore.handleSubmit(event);
   };
 
   const handleCopy: ClipboardHandlerType = e => {
@@ -499,7 +499,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new ClipboardEvent(e, node);
-    // editorStore.handleCopy(event);
+    editorStore.handleCopy(event);
   };
 
   const handleCut: ClipboardHandlerType = e => {
@@ -507,7 +507,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new ClipboardEvent(e, node);
-    // editorStore.handleCut(event);
+    editorStore.handleCut(event);
   };
 
   const handlePaste: ClipboardHandlerType = e => {
@@ -515,7 +515,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new ClipboardEvent(e, node);
-    // editorStore.handlePaste(event);
+    editorStore.handlePaste(event);
   };
 
   const handleTouchStart: TouchHandlerType = e => {
@@ -523,7 +523,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new TouchEvent(e, node);
-    // editorStore.handleTouchStart(event);
+    editorStore.handleTouchStart(event);
   };
 
   const handleTouchEnd: TouchHandlerType = e => {
@@ -531,7 +531,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new TouchEvent(e, node);
-    // editorStore.handleTouchEnd(event);
+    editorStore.handleTouchEnd(event);
   };
 
   const handleTouchMove: TouchHandlerType = e => {
@@ -539,7 +539,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new TouchEvent(e, node);
-    // editorStore.handleTouchMove(event);
+    editorStore.handleTouchMove(event);
   };
 
   const handlePointerDown: PointerHandlerType = e => {
@@ -547,7 +547,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new PointerEvent(e, node);
-    // editorStore.handlePointerDown(event);
+    editorStore.handlePointerDown(event);
   };
 
   const handlePointerMove: PointerHandlerType = e => {
@@ -555,7 +555,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new PointerEvent(e, node);
-    // editorStore.handlePointerMove(event);
+    editorStore.handlePointerMove(event);
   };
 
   const handlePointerUp: PointerHandlerType = e => {
@@ -563,7 +563,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new PointerEvent(e, node);
-    // editorStore.handlePointerUp(event);
+    editorStore.handlePointerUp(event);
   };
 
   const handlePointerCancel: PointerHandlerType = e => {
@@ -571,7 +571,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new PointerEvent(e, node);
-    // editorStore.handlePointerCancel(event);
+    editorStore.handlePointerCancel(event);
   };
 
   const handlePointerEnter: PointerHandlerType = e => {
@@ -579,7 +579,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new PointerEvent(e, node);
-    // editorStore.handlePointerEnter(event);
+    editorStore.handlePointerEnter(event);
   };
 
   const handlePointerLeave: PointerHandlerType = e => {
@@ -587,7 +587,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new PointerEvent(e, node);
-    // editorStore.handlePointerLeave(event);
+    editorStore.handlePointerLeave(event);
   };
 
   const handlePointerOver: PointerHandlerType = e => {
@@ -595,7 +595,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new PointerEvent(e, node);
-    // editorStore.handlePointerOver(event);
+    editorStore.handlePointerOver(event);
   };
 
   const handleGotPointerCapture: PointerHandlerType = e => {
@@ -603,7 +603,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new PointerEvent(e, node);
-    // editorStore.handleGotPointerCapture(event);
+    editorStore.handleGotPointerCapture(event);
   };
 
   const handleLostPointerCapture: PointerHandlerType = e => {
@@ -611,7 +611,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new PointerEvent(e, node);
-    // editorStore.handleLostPointerCapture(event);
+    editorStore.handleLostPointerCapture(event);
   };
 
   const handleAnimationStart: AnimationHandlerType = e => {
@@ -619,7 +619,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new AnimationEvent(e, node);
-    // editorStore.handleAnimationStart(event);
+    editorStore.handleAnimationStart(event);
   };
 
   const handleAnimationEnd: AnimationHandlerType = e => {
@@ -627,7 +627,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new AnimationEvent(e, node);
-    // editorStore.handleAnimationEnd(event);
+    editorStore.handleAnimationEnd(event);
   };
 
   const handleAnimationIteration: AnimationHandlerType = e => {
@@ -635,7 +635,7 @@ const useEventListener: Hook = node => {
       return;
     }
     const event = new AnimationEvent(e, node);
-    // editorStore.handleAnimationIteration(event);
+    editorStore.handleAnimationIteration(event);
   };
 
   const wrapEvent: (e: any, eventType: string) => BaseEvent<WidgetModel> = (e: any, eventType: string) => {

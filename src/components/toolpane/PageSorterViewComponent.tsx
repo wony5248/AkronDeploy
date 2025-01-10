@@ -2,6 +2,7 @@ import PageListComponent, { PageItem } from 'components/toolpane/PageListCompone
 import ToolPaneTitleComponent from 'components/toolpane/ToolPaneTitleComponent';
 import useEditorStore from 'hooks/useEditorStore';
 import { observer } from 'mobx-react-lite';
+import PageModel from 'models/node/PageModel';
 import WidgetModel from 'models/node/WidgetModel';
 import * as React from 'react';
 import { ForwardedRef } from 'react';
@@ -58,7 +59,7 @@ const PageSorterViewComponent = React.forwardRef((_, ref: ForwardedRef<HTMLDivEl
   appModel?.mapChild(child => {
     const pageItem: PageItem = {
       id: child.getID(),
-      content: child as WidgetModel,
+      content: child as PageModel,
       type: 'page',
     };
     pageItemList.push(pageItem);

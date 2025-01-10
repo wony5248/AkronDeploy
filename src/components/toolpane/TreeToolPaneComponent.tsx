@@ -1,10 +1,10 @@
+import { WidgetEditingState } from '@akron/runner';
 import LeftToolPaneContentComponent from 'components/toolpane/LeftToolpaneContentComponent';
 import ToolPaneTitleComponent from 'components/toolpane/ToolPaneTitleComponent';
 import TreeNodeComponent from 'components/toolpane/TreeNodeComponent';
 import useEditorStore from 'hooks/useEditorStore';
 import { observer } from 'mobx-react-lite';
 import WidgetModel from 'models/node/WidgetModel';
-import { WidgetEditingState } from 'models/store/command/widget/WidgetModelTypes';
 import { WidgetLayerContainerProvider } from 'models/widget/WidgetLayerContainer';
 import * as React from 'react';
 import { ForwardedRef } from 'react';

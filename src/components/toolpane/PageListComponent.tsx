@@ -1,5 +1,6 @@
 import PageThumbnailComponent from 'components/toolpane/PageThumbnailComponent';
 import useEditorStore from 'hooks/useEditorStore';
+import PageModel from 'models/node/PageModel';
 import WidgetModel from 'models/node/WidgetModel';
 import { useEffect, useState } from 'react';
 
@@ -8,7 +9,7 @@ import { useEffect, useState } from 'react';
  */
 export interface PageItem {
   id: number;
-  content: WidgetModel;
+  content: PageModel;
   type: string;
 }
 

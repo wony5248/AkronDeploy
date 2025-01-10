@@ -1,5 +1,6 @@
 import { isDefined } from '@akron/runner';
 import { action, makeObservable } from 'mobx';
+import PageModel from 'models/node/PageModel';
 import WidgetModel from 'models/node/WidgetModel';
 import WidgetSelection from 'models/store/selection/WidgetSelection';
 
@@ -149,11 +150,11 @@ export default class SelectionContainer {
    */
   public getEditingPage() {
     if (this.editingPage) {
-      return this.editingPage;
+      return this.editingPage as PageModel;
     }
 
     return this.pageSelections.length > 0
-      ? this.pageSelections[this.pageSelections.length - 1].getWidgetModel()
+      ? (this.pageSelections[this.pageSelections.length - 1].getWidgetModel() as PageModel)
       : undefined;
   }
 
@@ -172,7 +173,7 @@ export default class SelectionContainer {
    * @returns 선택된 widget Models.
    */
   public getSelectedPages() {
-    return this.pageSelections.map(selection => selection.getWidgetModel());
+    return this.pageSelections.map(selection => selection.getWidgetModel()) as PageModel[];
   }
 
   /**

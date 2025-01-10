@@ -12,6 +12,7 @@ import SelectionEnum from 'models/store/selection/SelectionEnum';
 import { PageSection } from 'models/widget/WidgetPropTypes';
 import { checkPageModel } from 'util/WidgetUtil';
 import AkronContext from 'models/store/context/AkronContext';
+import PageModel from 'models/node/PageModel';
 
 /**
  * Section 선택 시 필요한 props
@@ -45,7 +46,7 @@ export type WidgetDragSelectCommandProps = WidgetCommandProps & {
  */
 export type PageThumbnailSelectCommandProps = WidgetCommandProps & {
   commandID: CommandEnum.SELECT_PAGE_THUMBNAIL;
-  targetModel: WidgetModel;
+  targetModel: PageModel;
   isMouseDown: boolean;
   isAdded?: boolean;
   isShiftPressed?: boolean;
@@ -140,7 +141,7 @@ class WidgetSelectCommandHandler extends CommandHandler {
     const widgetModels: WidgetModel[] = [];
     const selectedWidgetModels = ctx.getSelectionContainer()?.getSelectedWidgets();
     const commandProps = ctx.getCommandProps();
-    let selectedThumbnailWidget = ctx.getSelectionContainer()?.getEditingPage();
+    let selectedPage = ctx.getSelectionContainer()?.getEditingPage();
     let selectTarget = true;
 
     if (isDefined(selectedWidgetModels) && selectedWidgetModels[0]?.getParent() !== props.targetModel.getParent()) {
@@ -168,13 +169,13 @@ class WidgetSelectCommandHandler extends CommandHandler {
       }
     }
     if (checkPageModel(props.targetModel)) {
-      selectedThumbnailWidget = props.targetModel;
+      selectedPage = props.targetModel as PageModel;
     }
 
     const selectionPropObj: SelectionProp = {
       selectionType: SelectionEnum.WIDGET,
       widgetModels,
-      editingPageModel: selectedThumbnailWidget,
+      editingPageModel: selectedPage,
     };
     if (isDefined(commandProps)) {
       commandProps.selectionProp = selectionPropObj;
@@ -187,21 +188,21 @@ class WidgetSelectCommandHandler extends CommandHandler {
   @boundMethod
   private selectPageThumbnail(ctx: AkronContext, props: PageThumbnailSelectCommandProps) {
     // 썸네일 셀렉션을 채움
-    let widgetModels: WidgetModel[] = [];
+    let widgetModels: PageModel[] = [];
     const commandProps = ctx.getCommandProps();
-    const selectedThumbnailWidgets = ctx.getSelectionContainer()?.getSelectedPages();
-    let selectedThumbnailWidget = ctx.getSelectionContainer()?.getEditingPage();
+    const selectedPageModels = ctx.getSelectionContainer()?.getSelectedPages();
+    let selectedPageModel = ctx.getSelectionContainer()?.getEditingPage();
     let selectTarget = true;
 
     if (props.isAdded) {
       if (props.isMouseDown) {
-        selectedThumbnailWidgets?.forEach(model => {
+        selectedPageModels?.forEach(model => {
           // target 이 아닌경우 선택
           // target 인 경우, 전체 선택된 페이지가 단일이면 변화 없음
           // target 인 경우, 멀티 셀렉션 상태면 toggle
           if (model !== props.targetModel) {
             widgetModels.push(model);
-          } else if (selectedThumbnailWidgets.length === 1) {
+          } else if (selectedPageModels.length === 1) {
             selectTarget = true;
           } else {
             selectTarget = false;
@@ -212,21 +213,21 @@ class WidgetSelectCommandHandler extends CommandHandler {
         }
         // 기존 프레임웤으로 페이지 선택 할 수 있도록 commandProps를 채워줌 (editing page 변경을 위함)
         if (checkPageModel(props.targetModel)) {
-          selectedThumbnailWidget = props.targetModel;
+          selectedPageModel = props.targetModel;
         }
       } else {
-        selectedThumbnailWidgets?.forEach(model => {
+        selectedPageModels?.forEach(model => {
           widgetModels.push(model);
         });
       }
     } else if (props.isShiftPressed) {
       if (props.isMouseDown) {
-        if (isUndefined(selectedThumbnailWidgets) || selectedThumbnailWidgets?.length === 0) {
+        if (isUndefined(selectedPageModels) || selectedPageModels?.length === 0) {
           // 이미 선택한게 없는 경우, 그냥 선택
           widgetModels.push(props.targetModel);
-        } else if (selectedThumbnailWidgets?.find(element => element === props.targetModel)) {
+        } else if (selectedPageModels?.find(element => element === props.targetModel)) {
           // 이미 선택한 걸 선택한 경우, 그걸 제외
-          selectedThumbnailWidgets?.forEach(model => {
+          selectedPageModels?.forEach(model => {
             if (model !== props.targetModel) {
               widgetModels.push(model);
             }
@@ -235,7 +236,7 @@ class WidgetSelectCommandHandler extends CommandHandler {
           // 이미 선택한게 있고 target이 그중 없을 경우, 최초 선택 부터 target 까지 주르륵 선택
           // XXX: 이미 다중선택 상황인 경우 동일한 페이지가 중복으로 들어감
           //   const pageList = getPageList(ctx.getNewAppModel());
-          const firstPage = selectedThumbnailWidgets[0];
+          const firstPage = selectedPageModels[0];
           // const targetPage = props.targetModel;
           // let isTargetSearched = false;
           // let isPrevSelectSearched = false;
@@ -252,41 +253,41 @@ class WidgetSelectCommandHandler extends CommandHandler {
           //     }
           //   });
           // 추가 적으로 나머지 기존 선택된 페이지들도 선택
-          selectedThumbnailWidgets.forEach(page => {
+          selectedPageModels.forEach(page => {
             if (page !== firstPage) {
               widgetModels.push(page);
             }
           });
         }
       } else {
-        selectedThumbnailWidgets?.forEach(model => {
+        selectedPageModels?.forEach(model => {
           widgetModels.push(model);
         });
       }
     } else if (props.isMouseDown === true) {
       // 특수키 누르지 않은 상태에서, 기존 선택 페이지들 중 하나를 mouseDown한 경우 유지
       if (
-        selectedThumbnailWidgets?.some(thumbnail => {
+        selectedPageModels?.some(thumbnail => {
           return thumbnail === props.targetModel;
         })
       ) {
-        widgetModels = [...selectedThumbnailWidgets];
+        widgetModels = [...selectedPageModels];
       } else {
         // 특수키 누르지 않은 상태에서, 기존 선택 페이지를 클릭한 경우가 아닌 경우 target만 select
-        selectedThumbnailWidget = props.targetModel;
+        selectedPageModel = props.targetModel;
         widgetModels.push(props.targetModel);
       }
     } else if (props.isMouseDown === false) {
       // 특수키 누르지 않은 상태에서 mouseUp인경우 target만 select
-      selectedThumbnailWidget = props.targetModel;
+      selectedPageModel = props.targetModel;
       widgetModels.push(props.targetModel);
     }
 
     const selectionPropObj: SelectionProp = {
       selectionType: SelectionEnum.WIDGET,
       widgetModels: [props.targetModel],
-      editingPageModel: selectedThumbnailWidget,
-      thumbnailModels: [...new Set(widgetModels)], // 같은 Page가 중복으로 targetModels에 들어있는 경우가 있어 중복제거
+      editingPageModel: selectedPageModel,
+      selectPageModels: [...new Set(widgetModels)], // 같은 Page가 중복으로 targetModels에 들어있는 경우가 있어 중복제거
     };
     if (isDefined(commandProps)) {
       commandProps.selectionProp = selectionPropObj;

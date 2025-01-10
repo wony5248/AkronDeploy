@@ -1,4 +1,4 @@
-import { dError, KeyEvent, Nullable, MouseEvent, WidgetTypeEnum, isUndefined } from '@akron/runner';
+import { dError, KeyEvent, Nullable, MouseEvent, isUndefined, WidgetEditingState } from '@akron/runner';
 import WidgetModel from 'models/node/WidgetModel';
 import WidgetRepository from 'models/repository/WidgetRepository';
 import CommandEnum from 'models/store/command/common/CommandEnum';
@@ -7,7 +7,6 @@ import {
   WidgetResizeCommandProps,
   WidgetResizeEndCommandProps,
 } from 'models/store/command/handler/WidgetEditCommandHandler';
-import { WidgetEditingState } from 'models/store/command/widget/WidgetModelTypes';
 import SelectionContainer from 'models/store/container/SelectionContainer';
 import WidgetEditInfoContainer, {
   WidgetEditSubEventState,

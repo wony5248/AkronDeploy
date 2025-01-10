@@ -29,10 +29,7 @@ export default class WidgetSelection {
    */
   @action.bound
   public setSelected(selected: boolean): void {
-    this.widgetModel.setProperties({
-      ...this.widgetModel.getProperties(),
-      // selected,
-    });
+    this.widgetModel.setSelected(selected);
   }
 
   /**

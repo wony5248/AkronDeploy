@@ -7,10 +7,10 @@ import {
   WidgetTypeEnum,
 } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
-import { action, makeObservable, observable, override } from 'mobx';
+import { action, makeObservable } from 'mobx';
 import { Behavior } from 'models/message/OperationMessage';
 import { IOperationMessage } from 'models/message/OperationMessageType';
-import { ContentType, WidgetEditingState } from 'models/store/command/widget/WidgetModelTypes';
+import { ContentType } from 'models/store/command/widget/WidgetModelTypes';
 import IdContainerController from 'models/store/container/IdContainerController';
 import { makeInstanceMessageRecursive, makeRelationMessageRecursive } from 'util/WidgetMessageUtil';
 import { getPropertyKeys } from 'util/WidgetUtil';
@@ -32,26 +32,6 @@ class WidgetModel<
   Properties extends IWidgetCommonProperties = IWidgetCommonProperties,
 > extends BaseWidgetModel<Properties> {
   /**
-   * WidgetModel이 바뀌었을 때 re-render가 필요한 곳에서 호출합니다.
-   */
-  @observable
-  private rerenderSwitch: boolean;
-
-  /**
-   * GX widgetModel 중 선택 가능한 model
-   * FIXME: 필요한건가?
-   */
-  private selectable: boolean;
-
-  /**
-   * 현재 이동/리사이징 중인지 상태.
-   * 위젯마다가 아닌 글로벌한 상태값이 필요할 때 사용.
-   * widgetEditInfoContainer의 editingState와 중복 사용을 확인해봐야함
-   */
-  @observable
-  private editingState: WidgetEditingState;
-
-  /**
    * 생성자
    */
   constructor(args: IWidgetModelInitProps<Properties>) {
@@ -65,50 +45,10 @@ class WidgetModel<
     });
 
     makeObservable(this);
-    this.rerenderSwitch = false;
-    this.selectable = false;
-    this.editingState = WidgetEditingState.NONE;
-  }
-
-  /**
-   * rendering 을 강제로 발생 시킵니다.
-   * rerendering이 필요한 component 에서 getRerenderTrigger() 함수 호출을 통해
-   * rerenderTrigger 변수를 component 에서 가지고 있어야 정상 동작 합니다.
-   */
-  @action.bound
-  public triggerRerender(): void {
-    this.rerenderSwitch = !this.rerenderSwitch;
-  }
-
-  public getRerenderSwitch(): boolean {
-    return this.rerenderSwitch;
-  }
-
-  public setSelectable(selectable: boolean) {
-    this.selectable = selectable;
-  }
-
-  public getSelectable(): boolean {
-    return this.selectable;
   }
 
   public isRepeatableLayoutWidgetType() {
     return false;
-  }
-
-  /**
-   * state getter.
-   */
-  public getEditingState(): WidgetEditingState {
-    return this.editingState;
-  }
-
-  /**
-   * state setter.
-   */
-  @action
-  public setEditingState(editingState: WidgetEditingState) {
-    this.editingState = editingState;
   }
 
   /**
@@ -198,36 +138,42 @@ class WidgetModel<
    * 해당 값들을 나머지 변수로 가져오기 위함입니다.
    */
   public getStyleProperties(propCategory: string) {
-    switch (propCategory) {
-      case 'x': {
-        return this.properties.style.x;
-      }
-      case 'y': {
-        return this.properties.style.y;
-      }
-      case 'width': {
-        return this.properties.style.width;
-      }
-      case 'height': {
-        return this.properties.style.height;
-      }
-      case 'maxWidth': {
-        return this.properties.style.maxWidth;
-      }
-      case 'maxHeight': {
-        return this.properties.style.maxHeight;
-      }
-      case 'minWidth': {
-        return this.properties.style.minWidth;
-      }
-      case 'minHeight': {
-        return this.properties.style.minHeight;
-      }
-      default: {
-        dError('Property is not exist.');
-        return null;
-      }
+    const widgetStyle = this.properties.style;
+    // switch (propCategory) {
+    //   case 'x': {
+    //     return widgetStyle.x.value ?? widgetStyle.x.defaultValue;
+    //   }
+    //   case 'y': {
+    //     return widgetStyle.y.value ?? widgetStyle.y.defaultValue;
+    //   }
+    //   case 'width': {
+    //     return widgetStyle.width.value ?? widgetStyle.width.defaultValue;
+    //   }
+    //   case 'height': {
+    //     return widgetStyle.height.value ?? widgetStyle.height.defaultValue;
+    //   }
+    //   case 'maxWidth': {
+    //     return widgetStyle.maxWidth.value ?? widgetStyle.maxWidth.defaultValue;
+    //   }
+    //   case 'maxHeight': {
+    //     return widgetStyle.maxHeight.value ?? widgetStyle.maxHeight.defaultValue;
+    //   }
+    //   case 'minWidth': {
+    //     return widgetStyle.minWidth.value ?? widgetStyle.minWidth.defaultValue;
+    //   }
+    //   case 'minHeight': {
+    //     return widgetStyle.minHeight.value ?? widgetStyle.minHeight.defaultValue;
+    //   }
+    //   default: {
+    //     dError('Property is not exist.');
+    //     return null;
+    //   }
+    // }
+    if (widgetStyle[propCategory]) {
+      return widgetStyle[propCategory].value ?? widgetStyle[propCategory].defaultValue;
     }
+    dError('Property is not exist.');
+    return null;
   }
 
   /**
@@ -253,7 +199,9 @@ class WidgetModel<
    * set ref.
    */
   public setRef(ref: React.RefObject<Element> | undefined) {
+    console.log(ref);
     this.ref = ref;
+    this.triggerRerender();
   }
 
   /**

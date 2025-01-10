@@ -1,6 +1,12 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { appPrimaryColor150, appPrimaryColor200, basicColorFill600, basicColorFill900 } from 'styles/Color';
+import {
+  appPrimaryColor100,
+  appPrimaryColor150,
+  appPrimaryColor200,
+  basicColorFill600,
+  basicColorFill900,
+} from 'styles/Color';
 import { selectionOverlayZIndex } from 'styles/MUIZIndex';
 
 export const pageWidgetList = css`
@@ -27,6 +33,7 @@ export const pageThumbnail = (isSelected: boolean) => css`
   background-color: ${isSelected ? appPrimaryColor200 : 'transparent'};
 
   &:hover {
+    background-color: ${appPrimaryColor100};
     border-color: ${appPrimaryColor150};
   }
 `;

@@ -46,12 +46,12 @@ class AkronEventMapper extends EventMapper<WidgetID, CommandEnum, SelectionProp,
     const widgetEventHandler = factory.createWidgetEventHandler();
     // const runtimeEventHandler = factory.createRuntimeEventHandler();
     const widgetAltkeyEventHandler = factory.createWidgetAltkeyEventHandler();
-    const subToolpaneEventHandler = factory.createSubToolpaneEventHandler();
+    // const subToolpaneEventHandler = factory.createSubToolpaneEventHandler();
 
     this.eventMap.set(EventState.DEFAULT, [defaultEventHandler]);
     this.eventMap.set(EventState.EDIT, [defaultEventHandler, widgetAltkeyEventHandler, widgetEventHandler]);
     // this.eventMap.set(EventState.RUN, [defaultEventHandler, runtimeEventHandler]);
-    this.eventMap.set(EventState.TOOLPANE_MOVE, [subToolpaneEventHandler]);
+    // this.eventMap.set(EventState.TOOLPANE_MOVE, [subToolpaneEventHandler]);
 
     this.eventMap.set(EventState.DEFAULT, [defaultEventHandler]);
     this.eventMap.set(EventState.EDIT, [defaultEventHandler, widgetAltkeyEventHandler, widgetEventHandler]);

@@ -1,4 +1,4 @@
-import { dError, isDefined, KeyEvent, Nullable, MouseEvent, isUndefined } from '@akron/runner';
+import { dError, KeyEvent, Nullable, MouseEvent, isUndefined, WidgetEditingState } from '@akron/runner';
 import WidgetModel from 'models/node/WidgetModel';
 import CommandEnum from 'models/store/command/common/CommandEnum';
 import {
@@ -10,7 +10,6 @@ import SelectionContainer from 'models/store/container/SelectionContainer';
 import WidgetEditInfoContainer, { WidgetEditSubEventState } from 'models/store/container/WidgetEditInfoContainer';
 import AkronContext from 'models/store/context/AkronContext';
 import AkronEventHandler from 'models/store/event/AkronEventHandler';
-import EventHandler from 'models/store/event/EventHandler';
 import EventState from 'models/store/event/EventState';
 import SelectionEnum from 'models/store/selection/SelectionEnum';
 import { parentChildPermittedRelationMap, basicChildWidgetTypeNamesSet } from 'models/widget/ParentChildRelMap';
@@ -21,7 +20,7 @@ import {
   calculateDeltaClientXY,
   correctCoordinateForSnap,
 } from 'util/WidgetEditUtil';
-import { checkPageModel, checkBusinessOrPageDialogModel, clearWidgetModelEditContext } from 'util/WidgetUtil';
+import { checkPageModel, clearWidgetModelEditContext, findNestedContainer, isAncestor } from 'util/WidgetUtil';
 
 /**
  * 마우스로 WidgetModel을 이동할 때 처리해야 할 Event Handler 로직을 작성하는 class 입니다.
@@ -74,7 +73,7 @@ class WidgetMoveEventHandler extends AkronEventHandler {
 
     const widgetEditSubEventState = widgetEditInfoContainer.getWidgetEditSubEventState();
 
-    let movedWidgetModels = [hitModel];
+    let movedWidgetModels = selectedWidgets;
 
     // 첫 drag 시점
     if (widgetEditSubEventState === WidgetEditSubEventState.PRESSED) {
@@ -136,8 +135,39 @@ class WidgetMoveEventHandler extends AkronEventHandler {
     // delta값 설정
     const deltaClientXY = calculateDeltaClientXY(event, ctx);
     const correctDeltaXY = correctCoordinateForSnap(ctx, targetModel, deltaClientXY.x, deltaClientXY.y, 'move');
+    const prevDeltaX = widgetEditInfoContainer.getDeltaX();
+    const prevDeltaY = widgetEditInfoContainer.getDeltaY();
     widgetEditInfoContainer.setDeltaX(correctDeltaXY.correctedX);
     widgetEditInfoContainer.setDeltaY(correctDeltaXY.correctedY);
+
+    const floatingWidgetModels = ctx.getSelectionContainer()?.getFloatingWidgetModels();
+    floatingWidgetModels?.forEach(model => {
+      const modelProperties = model.getProperties();
+      const modelTop = model.getStyleProperties('top');
+      const modelLeft = model.getStyleProperties('left');
+      model.setProperties({
+        ...modelProperties,
+        style: {
+          ...modelProperties.style,
+          left: {
+            ...modelProperties.style.left,
+            value: {
+              absolute: modelLeft.absolute + deltaClientXY.x - prevDeltaX,
+              relative: 0,
+              unit: 'px',
+            },
+          },
+          top: {
+            ...modelProperties.style.top,
+            value: {
+              absolute: modelTop.absolute + deltaClientXY.y - prevDeltaY,
+              relative: 0,
+              unit: 'px',
+            },
+          },
+        },
+      });
+    });
 
     // FIXME: 가독성을 위한 코드 정리
     // let nestedContainer =
@@ -296,46 +326,45 @@ class WidgetMoveEventHandler extends AkronEventHandler {
     const movedWidgetModels: WidgetModel[] = [];
     widgetModels.forEach(widgetModel => {
       // move 불가능한 widget은 값 변경하지 않음
-      //   if (widgetModel.getComponentSpecificProperties().locked === false) {
-      //     movedWidgetModels.push(widgetModel);
-      //   }
+      // if (widgetModel.getComponentSpecificProperties().locked === false) {
+      movedWidgetModels.push(widgetModel);
+      // }
     });
 
-    // let nestedContainer =
-    //   movedWidgetModels.length >= 1
-    //     ? findNestedContainer(ctx, movedWidgetModels[0], targetModel)
-    //     : (ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getEditingWidgetModel());
-    // nestedContainer =
-    //   !checkPageModel(nestedContainer) &&
-    //   movedWidgetModels.every(widget => nestedContainer === findNestedContainer(ctx, widget, targetModel))
-    //     ? nestedContainer
-    //     : (ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getEditingWidgetModel());
-    // // 부모-자식 역전이 일어나는 경우 child로 삽입하지 않음
-    // if (widgetModels?.some(widget => isAncestor(widget, nestedContainer))) {
-    //   nestedContainer = ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getEditingWidgetModel();
-    // }
+    let nestedContainer =
+      movedWidgetModels.length >= 1
+        ? findNestedContainer(ctx, movedWidgetModels[0], targetModel)
+        : (ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getEditingWidgetModel());
+    nestedContainer =
+      !checkPageModel(nestedContainer) &&
+      movedWidgetModels.every(widget => nestedContainer === findNestedContainer(ctx, widget, targetModel))
+        ? nestedContainer
+        : (ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getEditingWidgetModel());
+    // 부모-자식 역전이 일어나는 경우 child로 삽입하지 않음
+    if (widgetModels?.some(widget => isAncestor(widget, nestedContainer))) {
+      nestedContainer = ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getEditingWidgetModel();
+    }
 
-    // const deltaClientXY = calculateDeltaClientXY(event, ctx);
-    // const props: WidgetMoveCommandProps = {
-    //   commandID: CommandEnum.WIDGET_MOVE_END,
-    //   targetModels: movedWidgetModels,
-    //   useRefPosition: true,
-    //   deltaX: deltaClientXY.x,
-    //   deltaY: deltaClientXY.y,
-    //   container:
-    //     nestedContainer !== selectionContainer?.getEditingPage() &&
-    //     nestedContainer.getWidgetType() !== 'InnerPageLayout' &&
-    //     nestedContainer.getProperties().dragHovered
-    //       ? nestedContainer
-    //       : undefined,
-    //   isMovedToPage:
-    //     !checkBusinessOrPageDialogModel(movedWidgetModels[0].getParent()) &&
-    //     nestedContainer === selectionContainer?.getEditingPage(),
-    //   mousePosition:
-    //     nestedContainer.getWidgetCategory() === 'Layout' ? { x: event.getClientX(), y: event.getClientY() } : undefined,
-    //   desModel: targetModel.getEditingState() !== WidgetEditingState.FLOATING ? targetModel : undefined,
-    // };
-    // ctx.setCommandProps(props);
+    const deltaClientXY = calculateDeltaClientXY(event, ctx);
+    const props: WidgetMoveCommandProps = {
+      commandID: CommandEnum.WIDGET_MOVE_END,
+      targetModels: movedWidgetModels,
+      useRefPosition: true,
+      deltaX: deltaClientXY.x,
+      deltaY: deltaClientXY.y,
+      container:
+        nestedContainer !== selectionContainer?.getEditingPage() &&
+        // nestedContainer.getWidgetType() !== 'InnerPageLayout' &&
+        nestedContainer.getDragHovered()
+          ? nestedContainer
+          : undefined,
+      isMovedToPage:
+        !checkPageModel(movedWidgetModels[0].getParent()) && nestedContainer === selectionContainer?.getEditingPage(),
+      mousePosition: undefined,
+      // nestedContainer.getWidgetCategory() === 'Layout' ? { x: event.getClientX(), y: event.getClientY() } : undefined,
+      desModel: targetModel.getEditingState() !== WidgetEditingState.FLOATING ? targetModel : undefined,
+    };
+    ctx.setCommandProps(props);
     const commandProps = ctx.getCommandProps();
     const selectionPropObj: SelectionProp = {
       selectionType: SelectionEnum.WIDGET,

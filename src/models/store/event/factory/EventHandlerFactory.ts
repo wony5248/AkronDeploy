@@ -5,7 +5,7 @@ import WidgetAltkeyEventHandler from 'models/store/event/handler/WidgetAltKeyEve
 import WidgetEventHandler from 'models/store/event/handler/WidgetEventHandler';
 import WidgetMoveEventHandler from 'models/store/event/handler/WidgetMoveEventHandler';
 import WidgetResizeEventHandler from 'models/store/event/handler/WidgetResizeEventHandler';
-import WidgetSelectionEventHandler from 'models/store/event/handler/WidgetSelectionHandler';
+import WidgetSelectionEventHandler from 'models/store/event/handler/WidgetSelectionEventHandler';
 
 /**
  * Event handler 를 생성하는 abstract factory 입니다.

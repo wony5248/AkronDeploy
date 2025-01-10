@@ -8,11 +8,11 @@ import {
   WidgetTypeEnum,
 } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
+import PageModel from 'models/node/PageModel';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
-import WidgetRepository from 'models/repository/WidgetRepository';
 import CommandEnum from 'models/store/command/common/CommandEnum';
 import CommandHandler from 'models/store/command/common/CommandHandler';
-import { widgetModelDemo } from 'models/store/command/handler/WidgetEditCommandHandler';
+// import { widgetModelDemo } from 'models/store/command/handler/WidgetEditCommandHandler';
 import AppendWidgetCommand from 'models/store/command/widget/AppendWidgetCommand';
 import MoveWidgetCommand from 'models/store/command/widget/MoveWidgetCommand';
 import RemoveWidgetCommand from 'models/store/command/widget/RemoveWidgetCommand';
@@ -21,6 +21,7 @@ import UpdateWidgetCommand from 'models/store/command/widget/UpdateWidgetCommand
 import WidgetCommandProps, { SelectionProp } from 'models/store/command/widget/WidgetCommandProps';
 import AkronContext from 'models/store/context/AkronContext';
 import SelectionEnum from 'models/store/selection/SelectionEnum';
+import { pageStyleMeta } from 'models/util/LocalMetaData';
 import { PageSection } from 'models/widget/WidgetPropTypes';
 import {
   isPagesDeletable,
@@ -30,6 +31,8 @@ import {
   getDeletablePageModels,
 } from 'util/PageUtil';
 import { checkPageModel, appendDeleteWidgetCommandsRecursive } from 'util/WidgetUtil';
+
+let pageId = 3;
 
 /**
  * Page 추가 시 필요한 Props
@@ -161,7 +164,7 @@ class PageCommandHandler extends CommandHandler {
         if (
           isUndefined(ctx.getSelectionContainer()) ||
           !isPagesDeletable(
-            ctx.getSelectionContainer().getSelectedWidgets(),
+            ctx.getSelectionContainer()?.getSelectedWidgets() ?? [],
             ctx.getNewAppModel(),
             ctx.getAppModeContainer()
           )
@@ -198,13 +201,23 @@ class PageCommandHandler extends CommandHandler {
     //   .getDefaultWidgetModelMap()
     //   .get(props.widgetType)
     //   ?.cloneNode(props.widgetID);
-    const newWidgetModel = widgetModelDemo;
+
+    const pageModel = new PageModel({
+      id: pageId,
+      widgetType: WidgetTypeEnum.Page,
+      widgetCategory: '',
+      name: 'Page',
+      properties: { content: {}, style: pageStyleMeta } as IWidgetCommonProperties,
+      ref: undefined,
+    });
+    pageId += 1;
+    const newWidgetModel = pageModel;
     if (isUndefined(newWidgetModel) || isUndefined(ctx.getCommand())) {
       dError('widgetModel creation failed.');
       return;
     }
 
-    const pageNamePrefix = 'New Component';
+    const pageNamePrefix = 'New Page';
 
     let pageIndex = ctx.getNewAppModel().getChildCount() + 1; // page 개수 + 1
     while (pageNameExist(ctx.getNewAppModel(), `${pageNamePrefix} ${pageIndex}`)) {
@@ -493,11 +506,11 @@ class PageCommandHandler extends CommandHandler {
   /**
    * Context 내에 SelectionProperty 값 생성
    */
-  private createWidgetSelectionProp(ctx: AkronContext, newWidgetModel: WidgetModel): void {
+  private createWidgetSelectionProp(ctx: AkronContext, newWidgetModel: PageModel): void {
     const selectionPropObj: SelectionProp = {
       selectionType: SelectionEnum.WIDGET,
-      widgetModels: [newWidgetModel],
-      editingPageModel: newWidgetModel as WidgetModel<IWidgetCommonProperties>,
+      widgetModels: [],
+      editingPageModel: newWidgetModel,
     };
     const commandProps = ctx.getCommandProps();
     if (commandProps) {

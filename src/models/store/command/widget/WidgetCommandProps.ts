@@ -1,3 +1,4 @@
+import PageModel from 'models/node/PageModel';
 import CommandProps from '../common/CommandProps';
 import WidgetModel from 'models/node/WidgetModel';
 import SelectionEnum from 'models/store/selection/SelectionEnum';
@@ -9,8 +10,8 @@ export interface SelectionProp {
   selectionType: SelectionEnum;
   widgetModels: WidgetModel[];
   // editingPageModel을 따로 주지 않는 경우, 기존 SelectionContainer에서 승계됩니다.
-  editingPageModel?: WidgetModel;
-  thumbnailModels?: WidgetModel[];
+  editingPageModel?: PageModel; // currentPage
+  selectPageModels?: PageModel[]; // selectPages
 }
 
 /**

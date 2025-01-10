@@ -2,6 +2,7 @@ import { Nullable } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { action } from 'mobx';
 import AppModel from 'models/node/AppModel';
+import PageModel from 'models/node/PageModel';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
 import Command from 'models/store/command/common/Command';
 import WidgetCommandProps from 'models/store/command/widget/WidgetCommandProps';
@@ -132,7 +133,7 @@ export default class AkronContext {
       // undoStack: this.createUndoStack(),
       lastRegisteredEditUndoStackTag: this.createLastRegisteredEditUndoStackTag(),
       hitContainer: this.createHitContainer(),
-      selectionContainer: this.createSelectionContainer(),
+      selectionContainer: this.createSelectionContainer(initProp.newAppModel),
       clipboardContainer: this.createClipboardContainer(),
       propContainer: this.createPropContainer(),
       widgetEditInfoContainer: this.createWidgetEditInfoContainer(),
@@ -315,10 +316,19 @@ export default class AkronContext {
 
   /**
    * DocumentContext
+   * SelectionContainer을 설정합니다
+   */
+  @boundMethod
+  public setSelectionContainer(selectionContainer: SelectionContainer | undefined) {
+    return this.appEditableContext.setSelectionContainer(selectionContainer);
+  }
+
+  /**
+   * DocumentContext
    * SelectionContainer을 반환합니다
    */
   @boundMethod
-  public getSelectionContainer(): SelectionContainer {
+  public getSelectionContainer(): SelectionContainer | undefined {
     return this.appEditableContext.getSelectionContainer();
   }
 
@@ -327,8 +337,13 @@ export default class AkronContext {
    * SelectionContainer 초기값을 생성해 반환합니다
    */
   @boundMethod
-  public createSelectionContainer(): SelectionContainer {
-    return new SelectionContainer();
+  public createSelectionContainer(appModel: AppModel): SelectionContainer {
+    const selectionContainer = new SelectionContainer();
+    const firstPage = appModel.getFirstChild() as PageModel;
+    selectionContainer.setEditingPage(appModel.getFirstChild());
+    firstPage.setSelected(true);
+    selectionContainer.setSelectedPage(firstPage);
+    return selectionContainer;
   }
 
   /**

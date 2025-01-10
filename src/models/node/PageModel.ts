@@ -1,6 +1,7 @@
 import { IWidgetCommonProperties } from '@akron/runner';
 import { makeObservable } from 'mobx';
 import WidgetModel, { IWidgetModelInitProps } from 'models/node/WidgetModel';
+import { pageStyleMeta } from 'models/util/LocalMetaData';
 
 interface PageModelInitProps extends IWidgetModelInitProps<IWidgetCommonProperties> {}
 
@@ -19,6 +20,11 @@ class PageModel extends WidgetModel<IWidgetCommonProperties> {
       ref: args.ref,
     });
     makeObservable(this);
+
+    this.properties.style = {
+      ...this.properties.style,
+      ...pageStyleMeta,
+    };
   }
 }
 
