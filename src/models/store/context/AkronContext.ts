@@ -339,7 +339,7 @@ export default class AkronContext {
   public createSelectionContainer(appModel: AppModel): SelectionContainer {
     const selectionContainer = new SelectionContainer();
     // TODO: workArea 삭제 시 수정해야함
-    selectionContainer.setEditingPage(appModel.getFirstChild()?.getFirstChild());
+    selectionContainer.setEditingPage(appModel.getFirstChild());
     return selectionContainer;
   }
 
