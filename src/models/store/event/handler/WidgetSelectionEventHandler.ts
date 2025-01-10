@@ -17,7 +17,7 @@ class WidgetSelectionEventHandler extends AkronEventHandler {
    * 마우스 버튼 누를 때
    */
   public override onMouseDown(event: MouseEvent<WidgetModel>, ctx: AkronContext): boolean {
-    event.preventDefault();
+    // event.preventDefault();
     event.stopPropagation();
     const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
     const HitContainer = ctx.getHitContainer();

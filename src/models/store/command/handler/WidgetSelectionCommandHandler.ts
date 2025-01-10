@@ -285,7 +285,7 @@ class WidgetSelectCommandHandler extends CommandHandler {
 
     const selectionPropObj: SelectionProp = {
       selectionType: SelectionEnum.WIDGET,
-      widgetModels: [props.targetModel],
+      widgetModels: [],
       editingPageModel: selectedPageModel,
       selectPageModels: [...new Set(widgetModels)], // 같은 Page가 중복으로 targetModels에 들어있는 경우가 있어 중복제거
     };

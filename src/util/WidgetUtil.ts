@@ -81,14 +81,8 @@ export function getDeletableWidgetModels(widgetModels: WidgetModel[]): WidgetMod
   if (widgetModels.some(widgetModel => checkPageModel(widgetModel))) {
     return [];
   }
-
-  // if (widgetModels.some(widgetModel => widgetModel.getWidgetType() === 'FragmentLayout')) {
-  //   return [];
-  // }
-
-  const deletableWidgetModels = widgetModels.filter(
-    widgetModel => widgetModel.getProperties().content.locked.value === false
-  );
+  // 삭제 불가능 조건 추가 가능
+  const deletableWidgetModels = widgetModels;
 
   return deletableWidgetModels;
 }

@@ -1,12 +1,8 @@
-import { Nullable, AppStore, isDefined, IWidgetCommonProperties, isUndefined } from '@akron/runner';
+import { Nullable, isDefined, IWidgetCommonProperties, isUndefined } from '@akron/runner';
 import { THUMBNAIL_WIDTH } from 'components/toolpane/PageThumbnailComponent';
 import AppModel from 'models/node/AppModel';
 import PageModel from 'models/node/PageModel';
 import WidgetModel from 'models/node/WidgetModel';
-import AppRepository, { LibraryType } from 'models/repository/AppRepository';
-import CommandEnum from 'models/store/command/common/CommandEnum';
-import { InsertWidgetAtCommandProps } from 'models/store/command/handler/WidgetEditCommandHandler';
-import { AnyWidgetType, InsertableWidgetType } from 'models/store/command/widget/WidgetModelTypes';
 import AppModeContainer from 'models/store/container/AppModeContainer';
 import { PageSection } from 'models/widget/WidgetPropTypes';
 import { isEditWidgetMode } from 'util/AppModeUtil';
@@ -352,9 +348,7 @@ export function getDeletablePageModels(
     return [];
   }
 
-  const deletablePageModels = widgetModels.filter(
-    widgetModel => widgetModel.getProperties().content.locked.value === false
-  );
+  const deletablePageModels = widgetModels;
 
   return deletablePageModels;
 }

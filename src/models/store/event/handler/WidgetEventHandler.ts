@@ -2,6 +2,7 @@ import { isDefined, dError, KeyEvent, MouseEvent, isUndefined, WheelEvent, Widge
 import { runInAction } from 'mobx';
 import WidgetModel from 'models/node/WidgetModel';
 import CommandEnum from 'models/store/command/common/CommandEnum';
+import { DeleteWidgetCommandProps } from 'models/store/command/handler/WidgetEditCommandHandler';
 import AkronContext from 'models/store/context/AkronContext';
 import AkronEventHandler from 'models/store/event/AkronEventHandler';
 import { isPageListMode } from 'util/AppModeUtil';
@@ -165,7 +166,21 @@ class WidgetEventHandler extends AkronEventHandler {
    */
   public override onKeyDown(event: KeyEvent<WidgetModel>, ctx: AkronContext): boolean {
     // 대부분의 key event는 widget에 focus가 없는 상태에서도 동작해야 하므로 useGlobalHotKeyHandler에 등록함
-    return false;
+    const keyCode = event.getCode();
+    const targetModel = event.getTargetModel();
+
+    switch (keyCode) {
+      case 'Delete': {
+        const commandProps: DeleteWidgetCommandProps = {
+          commandID: CommandEnum.DELETE_WIDGET,
+        };
+        ctx.setCommandProps(commandProps);
+        return true;
+      }
+      default: {
+        return false;
+      }
+    }
   }
 
   /**
