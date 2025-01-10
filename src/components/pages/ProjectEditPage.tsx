@@ -17,11 +17,10 @@ import AppRepository from 'models/repository/AppRepository';
 import AsyncComponent from 'components/common/AsyncComponent';
 import LoadingComponent from 'components/common/LoadingComponent';
 import AppModeContainer from 'models/store/container/AppModeContainer';
-import CommandMapper from 'models/store/command/common/CommandMapper';
-import EventMapper from 'models/store/event/EventMapper';
-import NewAppendWidgetCommand from 'models/store/command/widget/AppendWidgetCommand';
 import AkronCommandMapper from 'models/store/command/akron/AkronCommandMapper';
 import CommandHandlerFactory from 'models/store/command/factory/CommandHandlerFactory';
+import AkronEventMapper from 'models/store/event/AkronEventMapper';
+import EventHandlerFactory from 'models/store/event/factory/EventHandlerFactory';
 // import AsyncComponent from 'components/common/AsyncComponent';
 // import LoadingComponent from 'components/common/LoadingComponent';
 
@@ -92,11 +91,11 @@ const MainPageComponent = () => {
   const getAppData = async () => {
     const appJson = await AppRepository.getAppJson(Number(appId));
     const params: EditorStoreInitParams = {
-      eventMapper: new EventMapper(),
+      eventMapper: new AkronEventMapper(new EventHandlerFactory()),
       mode: 'EDIT_APP',
       appName: '',
       appModeContainer: new AppModeContainer(),
-      commandMapper: new CommandMapper(),
+      commandMapper: new AkronCommandMapper(new CommandHandlerFactory()),
       appJson,
       appInfo: {
         type: 'ux',
@@ -113,7 +112,6 @@ const MainPageComponent = () => {
 
   const render = (params: EditorStoreInitParams) => {
     const contextMenuContainer = new ContextMenuContainer();
-    params.commandMapper = new AkronCommandMapper(new CommandHandlerFactory());
     const editorStore = new EditorStore(params);
     return (
       <EditorStoreProvider value={editorStore}>

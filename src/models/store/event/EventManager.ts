@@ -14,14 +14,8 @@ import {
   PointerEvent,
   AnimationEvent,
 } from '@akron/runner';
-import EventMapper, { AkronEventMapper } from 'models/store/event/EventMapper';
+import EventMapper from 'models/store/event/EventMapper';
 import AkronContext from 'models/store/context/AkronContext';
-import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
-import CommandEnum from 'models/store/command/common/CommandEnum';
-import { SelectionProp } from 'models/store/command/widget/WidgetCommandProps';
-
-export interface AkronEventManager
-  extends EventManager<WidgetID, CommandEnum, SelectionProp, WidgetModel, AkronEventMapper> {}
 
 /**
  * Event 해석을 담당하는 class 입니다.

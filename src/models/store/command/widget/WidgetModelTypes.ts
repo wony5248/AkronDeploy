@@ -19,13 +19,6 @@ export enum ObjectType {
   DEFAULT = 0,
 }
 
-export enum WidgetEditingState {
-  NONE,
-  RESIZE,
-  MOVE, // 이동을 시작한 원본 widget(이동 중에 움직이지 않음)
-  FLOATING, // 이동을 시작한 widget으로부터 clone된 floating widget
-}
-
 export const basicHtmlWidgetTypeNames = [
   'BasicLabel',
   'BasicParagraph',

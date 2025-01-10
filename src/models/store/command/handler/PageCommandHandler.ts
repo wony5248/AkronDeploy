@@ -8,11 +8,11 @@ import {
   WidgetTypeEnum,
 } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
+import PageModel from 'models/node/PageModel';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
-import WidgetRepository from 'models/repository/WidgetRepository';
 import CommandEnum from 'models/store/command/common/CommandEnum';
 import CommandHandler from 'models/store/command/common/CommandHandler';
-import { widgetModelDemo } from 'models/store/command/handler/WidgetEditCommandHandler';
+// import { widgetModelDemo } from 'models/store/command/handler/WidgetEditCommandHandler';
 import AppendWidgetCommand from 'models/store/command/widget/AppendWidgetCommand';
 import MoveWidgetCommand from 'models/store/command/widget/MoveWidgetCommand';
 import RemoveWidgetCommand from 'models/store/command/widget/RemoveWidgetCommand';
@@ -21,6 +21,7 @@ import UpdateWidgetCommand from 'models/store/command/widget/UpdateWidgetCommand
 import WidgetCommandProps, { SelectionProp } from 'models/store/command/widget/WidgetCommandProps';
 import AkronContext from 'models/store/context/AkronContext';
 import SelectionEnum from 'models/store/selection/SelectionEnum';
+import { pageStyleMeta } from 'models/util/LocalMetaData';
 import { PageSection } from 'models/widget/WidgetPropTypes';
 import {
   isPagesDeletable,
@@ -161,7 +162,7 @@ class PageCommandHandler extends CommandHandler {
         if (
           isUndefined(ctx.getSelectionContainer()) ||
           !isPagesDeletable(
-            ctx.getSelectionContainer().getSelectedWidgets(),
+            ctx.getSelectionContainer()?.getSelectedWidgets() ?? [],
             ctx.getNewAppModel(),
             ctx.getAppModeContainer()
           )
@@ -198,7 +199,16 @@ class PageCommandHandler extends CommandHandler {
     //   .getDefaultWidgetModelMap()
     //   .get(props.widgetType)
     //   ?.cloneNode(props.widgetID);
-    const newWidgetModel = widgetModelDemo;
+
+    const pageModel = new PageModel({
+      id: 2,
+      widgetType: WidgetTypeEnum.Page,
+      widgetCategory: '',
+      name: 'Page',
+      properties: { content: {}, style: pageStyleMeta } as IWidgetCommonProperties,
+      ref: undefined,
+    });
+    const newWidgetModel = pageModel;
     if (isUndefined(newWidgetModel) || isUndefined(ctx.getCommand())) {
       dError('widgetModel creation failed.');
       return;

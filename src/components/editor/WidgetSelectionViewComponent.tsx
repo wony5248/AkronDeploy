@@ -1,8 +1,9 @@
-import { isDefined, isNotNull, isUndefined } from '@akron/runner';
+import { isDefined, isNotNull, isUndefined, WidgetEditingState, WidgetTypeEnum } from '@akron/runner';
 import useEditorStore from 'hooks/useEditorStore';
+import useEventListener from 'hooks/util/useEventListener';
+import useWidgetSelectionViewComponentEventListner from 'hooks/widget/useWidgetSelectionViewComponentEventListner';
 import { observer } from 'mobx-react-lite';
 import WidgetModel from 'models/node/WidgetModel';
-import { WidgetEditingState } from 'models/store/command/widget/WidgetModelTypes';
 import {
   isBottomSide,
   isLeftSide,
@@ -12,7 +13,7 @@ import {
 } from 'models/store/container/WidgetEditInfoContainer';
 import { useEffect, useRef, useState } from 'react';
 import {
-  widgetSelectionOverlay,
+  pageWidgetSelection,
   widgetSelectionView,
   widgetSelectionViewHandleSquare,
 } from 'styles/editor/WidgetSelection';
@@ -42,6 +43,7 @@ const SELECTION_HANDLE_SIZE = 6;
  */
 const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props) => {
   const editorStore = useEditorStore();
+  const editorUIStore = editorStore.getEditorUIStore();
   const { model } = props;
   const _ = model.getRerenderSwitch(); // rerender switch 참조용
   const selectionRef = useRef<HTMLDivElement>(null);
@@ -53,78 +55,33 @@ const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props
   let refWidth = model.getRefWidth() ?? 0;
   let refHeight = model.getRefHeight() ?? 0;
   const zoomRatio = editorStore.getZoomRatio() / 100;
-  const childInAkronProject =
-    model.getParent()?.getWidgetType() !== 'Page' &&
-    model.getParent()?.getWidgetType() !== 'BusinessDialog' &&
-    !model.getSelectable();
-  const pageLocked = editorStore.getEditingPageModel()?.getComponentSpecificProperties().locked;
+  const childInAkronProject = model.getParent()?.getWidgetType() !== WidgetTypeEnum.Page && !model.getSelectable();
+  const pageLocked = false; // editorStore.getEditingPageModel()?.getComponentSpecificProperties().locked;
 
   // 최하위 widget의 경우 text 입력이 가능해야하기 때문에 textComponent 활성화를 위한 조건
   const isLowestLvlWidget = model.getFirstChild() === undefined && model.getSelectable();
-  // Container 삽입 직후 model의 ref가 undefined이라서 re-render 시키고 min-width 체크함
-  useEffect(() => {
-    if (model.getParent()?.getWidgetCategory() === 'Layout') {
-      setRefDefined(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // 아래 useEffect는 mount 직후 setRefDefined()에 의해 한번만 수행됨
-  useEffect(() => {
-    if (model.getParent()?.getWidgetCategory() === 'Layout') {
-      if (
-        isNotNull(selectionRef.current) &&
-        isDefined(refWidth) &&
-        isDefined(refHeight) &&
-        ((selectionRef.current as HTMLDivElement).clientWidth < Number(refWidth) ||
-          (selectionRef.current as HTMLDivElement).clientHeight < Number(refHeight))
-      ) {
-        setReRenderSwitch(!reRenderSwitch);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refDefined]);
 
   // 디바이스 정보가 변경되면 리랜더링
   // useEffect(() => {
-  //     setReRenderSwitch(!reRenderSwitch);
-  //     // eslint-disable-next-line react-hooks/exhaustive-deps
+  //   setReRenderSwitch(!reRenderSwitch);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, [editorStore.getDeviceInfo()]);
 
+  // 위젯삽입 툴페인의 트랜지션 시간 이후 re-render하여 selectionView 맞춤
   useEffect(() => {
-    // refWidth 변수 재할당은 null체크를 위한 것으로 re-render에 관여하지 않으므로 state로 관리할 필요 없음.
-    /* eslint-disable react-hooks/exhaustive-deps */
-    refX = model.getRefX() ?? 0;
-    refY = model.getRefY() ?? 0;
-    refWidth = model.getRefWidth() ?? 0;
-    refHeight = model.getRefHeight() ?? 0;
-    const selectionX = selectionRef.current?.getBoundingClientRect().x ?? 0;
-    const selectionY = selectionRef.current?.getBoundingClientRect().y ?? 0;
-    /* eslint-enable */
-    // model과 selection의 위치가 다른 경우 rerender
-    if (
-      (isNotNull(selectionRef.current) &&
-        isDefined(refWidth) &&
-        isDefined(refHeight) &&
-        (Math.abs(refWidth - (selectionRef.current as HTMLDivElement).getBoundingClientRect().width) > 1 ||
-          Math.abs(refHeight - (selectionRef.current as HTMLDivElement).getBoundingClientRect().height) > 1)) ||
-      (isDefined(refX) &&
-        isDefined(refY) &&
-        isDefined(selectionX) &&
-        isDefined(selectionY) &&
-        (Math.abs(refX - selectionX) > 0.1 || Math.abs(refY - selectionY) > 0.1))
-    ) {
+    setTimeout(() => {
       setReRenderSwitch(!reRenderSwitch);
-    }
-  });
+    }, 500);
 
-  const isParentLayoutFrame = model.getParent()?.getWidgetCategory() === 'Layout';
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editorUIStore.getActiveLeftToolPaneType()]);
+
   // Tabs 하위인 경우 Tabs가 사이즈를 임의로 잡고 이동 및 리사이징이 불가능함.
   // 추후 이러한 컴포넌트가 있을 경우 따로 TypeNames로 관리해야 함
   const isParentTabs = model.getParent()?.getWidgetType() === 'BasicTabs';
 
-  const parentRefX = model.getParent()?.getRefX() ?? 0;
-  const parentRefY = model.getParent()?.getRefY() ?? 0;
+  let parentRefX = model.getParent()?.getRefX() ?? 0;
+  let parentRefY = model.getParent()?.getRefY() ?? 0;
   const parentRefWidth = model.getParent()?.getRefWidth() ?? 1;
   const parentRefHeight = model.getParent()?.getRefHeight() ?? 1;
   let x = '0px';
@@ -132,6 +89,20 @@ const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props
   if (isUndefined(refX) || isUndefined(refY)) {
     x = model.getStyleProperties('x')?.unit === 'px' ? '0px' : '0%';
     y = model.getStyleProperties('y')?.unit === 'px' ? '0px' : '0%';
+  } else if (model.getParent()?.getWidgetType() === WidgetTypeEnum.Page) {
+    const pageId = model.getParent()?.getID();
+    const pageDomId = `Page-${pageId}`;
+    const pageDom = document.getElementById(pageDomId);
+    parentRefX = pageDom?.getBoundingClientRect().x ?? 0;
+    parentRefY = pageDom?.getBoundingClientRect().y ?? 0;
+    x =
+      model.getStyleProperties('x')?.unit === 'px'
+        ? `${(refX - parentRefX) / zoomRatio}px`
+        : `${((refX - parentRefX) / parentRefWidth) * 100}%`;
+    y =
+      model.getStyleProperties('y')?.unit === 'px'
+        ? `${(refY - parentRefY) / zoomRatio}px`
+        : `${((refY - parentRefY) / parentRefHeight) * 100}%`;
   } else {
     x =
       model.getStyleProperties('x')?.unit === 'px'
@@ -158,14 +129,15 @@ const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props
         : `${(refHeight / parentRefHeight) * 100}%`;
   }
 
-  const { editingState, selected } = model.getProperties();
+  const editingState = model.getEditingState();
+  const selected = model.getSelected();
   const resizeHandleVisibility = selected && editingState === WidgetEditingState.NONE ? 'visible' : 'hidden';
 
   const backgroundColor = 'transparent';
   let outline = 'none';
 
   if (selected && editingState === WidgetEditingState.NONE) {
-    if (model.getWidgetCategory() !== 'Layout' || childInAkronProject) {
+    if (childInAkronProject) {
       outline = `solid 1px #205EFF`;
     } else {
       outline = `solid 1px #ff5353`;
@@ -173,14 +145,11 @@ const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props
   }
 
   // 자식 컴포넌트로 삽입 가능하거나 속성으로 추가가 가능할 때 하이라이트
-  const isChildableWidgetOrLayout = model.getWidgetCategory() === 'Layout';
   // const isReactNodeProp = editorStore.getMetaDataContainer().getReactNodeTypePropMap().get(model.getWidgetType());
-  const isInnerPageLayout = model.getWidgetType() === 'InnerPageLayout';
 
   if (
-    isChildableWidgetOrLayout /* || isReactNodeProp*/ &&
-    !isInnerPageLayout &&
-    model.getProperties().dragHovered === true
+    /*isReactNodeProp && */
+    model.getDragHovered() === true
   ) {
     outline = 'solid 2px #0043f2';
   }
@@ -188,23 +157,23 @@ const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props
   // 이동 중에 겹쳐진 widget을 알기 위해 현재 widget의 mouse event 받지 않음
   const pointerEvents = model.getEditingState() === WidgetEditingState.MOVE ? 'none' : 'auto';
 
-  // const {
-  //     handleMouseDownCapture,
-  //     handleMouseMove,
-  //     handleClick,
-  //     handleDoubleClick,
-  //     handleDrag,
-  //     handleContextMenu,
-  //     handleKeyDown,
-  //     handleMouseOver,
-  // } = useEventListener(model);
+  const {
+    handleMouseDownCapture,
+    handleMouseMove,
+    handleClick,
+    handleDoubleClick,
+    handleDrag,
+    handleContextMenu,
+    handleKeyDown,
+    handleMouseOver,
+  } = useEventListener(model);
 
-  // const {
-  //     handleWidgetSelectionViewComponentMouseDownCapture,
-  //     handleWidgetSelectionViewComponentMouseDownForMove,
-  //     handleWidgetSelectionViewComponentMouseDownForResize,
-  //     handleWidgetSelectionViewComponentMouseUp,
-  // } = useWidgetSelectionViewComponentEventListner(model);
+  const {
+    handleWidgetSelectionViewComponentMouseDownCapture,
+    handleWidgetSelectionViewComponentMouseDownForMove,
+    handleWidgetSelectionViewComponentMouseDownForResize,
+    handleWidgetSelectionViewComponentMouseUp,
+  } = useWidgetSelectionViewComponentEventListner(model);
 
   const squareHandleLen = SELECTION_HANDLE_SIZE;
 
@@ -231,7 +200,7 @@ const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props
 
   const calcHandleStyle = (handle: WidgetResizeHandle) => {
     // cursor: css 마우스 커서 모양 속성
-    if (model.getParent()?.getWidgetCategory() === 'Layout' || model.getParent()?.getWidgetType() === 'BasicTabs') {
+    if (model.getParent()?.getWidgetType() === 'BasicTabs') {
       return { cursor: 'not-allowed' };
     }
 
@@ -268,16 +237,14 @@ const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props
           ...calcHandlePosition(handle),
           visibility: resizeHandleVisibility,
         }}
-        // onMouseDownCapture={
-        //     isParentLayoutFrame || isParentTabs ? undefined : handleWidgetSelectionViewComponentMouseDownCapture
-        // }
-        // onMouseDown={
-        //     isParentLayoutFrame || isParentTabs
-        //         ? undefined
-        //         : e => {
-        //               handleWidgetSelectionViewComponentMouseDownForResize?.(e, handle);
-        //           }
-        // }
+        onMouseDownCapture={isParentTabs ? undefined : handleWidgetSelectionViewComponentMouseDownCapture}
+        onMouseDown={
+          isParentTabs
+            ? undefined
+            : e => {
+                handleWidgetSelectionViewComponentMouseDownForResize?.(e, handle);
+              }
+        }
         data-handlestring={handle}
       />
     ));
@@ -307,7 +274,11 @@ const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props
   };
 
   // Selection이 불필요한 영역은 렌더링하지 않습니다.
-  if (!checkWidgetInParent(model) && model.getParent().getWidgetType() !== 'Page' && !model.getProperties().selected) {
+  if (
+    !checkWidgetInParent(model) &&
+    model.getParent()?.getWidgetType() !== WidgetTypeEnum.Page &&
+    !model.getSelected()
+  ) {
     return <></>;
   }
 
@@ -326,16 +297,16 @@ const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props
             outline,
           }}
           tabIndex={0} // for key event
-          // onMouseDownCapture={childInAkronProject ? doNothing : handleMouseDownCapture}
-          // onMouseDown={childInAkronProject ? doNothing : handleWidgetSelectionViewComponentMouseDownForMove}
-          // onMouseMove={childInAkronProject ? doNothing : handleMouseMove}
-          // onMouseUp={childInAkronProject ? doNothing : handleWidgetSelectionViewComponentMouseUp}
-          // onClick={childInAkronProject ? doNothing : handleClick}
-          // onDoubleClick={handleDoubleClick}
-          // onDrag={childInAkronProject ? doNothing : handleDrag}
-          // onContextMenu={childInAkronProject ? doNothing : handleContextMenu}
-          // onKeyDown={childInAkronProject ? doNothing : handleKeyDown}
-          // onMouseOver={childInAkronProject ? doNothing : handleMouseOver}
+          onMouseDownCapture={childInAkronProject ? doNothing : handleMouseDownCapture}
+          onMouseDown={childInAkronProject ? doNothing : handleWidgetSelectionViewComponentMouseDownForMove}
+          onMouseMove={childInAkronProject ? doNothing : handleMouseMove}
+          onMouseUp={childInAkronProject ? doNothing : handleWidgetSelectionViewComponentMouseUp}
+          onClick={childInAkronProject ? doNothing : handleClick}
+          onDoubleClick={handleDoubleClick}
+          onDrag={childInAkronProject ? doNothing : handleDrag}
+          onContextMenu={childInAkronProject ? doNothing : handleContextMenu}
+          onKeyDown={childInAkronProject ? doNothing : handleKeyDown}
+          onMouseOver={childInAkronProject ? doNothing : handleMouseOver}
           onFocus={doNothing}
         >
           {renderResizeHandles()}
@@ -372,17 +343,16 @@ WidgetSelectionViewBaseComponent.displayName = 'WidgetSelectionViewBaseComponent
  */
 const PageWidgetSelectionViewComponent: React.FC<Props> = observer((props: Props) => {
   const { model } = props;
-
-  // const {
-  //     handleMouseDown,
-  //     handleMouseUp,
-  //     handleMouseDownCapture,
-  //     handleMouseMove,
-  //     handleClick,
-  //     handleDoubleClick,
-  //     handleDrag,
-  //     handleMouseOver,
-  // } = useEventListener(model);
+  const {
+    handleMouseDown,
+    handleMouseUp,
+    handleMouseDownCapture,
+    handleMouseMove,
+    handleClick,
+    handleDoubleClick,
+    handleDrag,
+    handleMouseOver,
+  } = useEventListener(model);
   // child Selection들 render
   const renderChildrenSelection = () => {
     // ESLint가 mutually recursive한 함수들(a()가 b()를 호출, b()가 a()를 호출)을 제대로 처리 못함 -> 이 줄 한해서 off.
@@ -398,15 +368,15 @@ const PageWidgetSelectionViewComponent: React.FC<Props> = observer((props: Props
     <div
       // Page 하위에 그려지므로, 페이지와 같은 크기의 render 영역을 그려줌. Composite 편집시에도 동일
       id={`Page-${model.getID()}`}
-      css={widgetSelectionOverlay}
-      // onMouseDownCapture={handleMouseDownCapture}
-      // onMouseDown={handleMouseDown}
-      // onMouseUp={handleMouseUp}
-      // onMouseMove={handleMouseMove}
-      // onClick={handleClick}
-      // onDoubleClick={handleDoubleClick}
-      // onDrag={handleDrag}
-      // onMouseOver={handleMouseOver}
+      css={pageWidgetSelection}
+      onMouseDownCapture={handleMouseDownCapture}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onMouseMove={handleMouseMove}
+      onClick={handleClick}
+      onDoubleClick={handleDoubleClick}
+      onDrag={handleDrag}
+      onMouseOver={handleMouseOver}
       onFocus={doNothing}
     >
       {renderChildrenSelection()}
@@ -426,10 +396,10 @@ const WidgetSelectionViewComponent: React.FC<Props> = ({ model }: Props) => {
   const editorStore = useEditorStore();
   const isTopWidget = editorStore.getEditingWidgetModel()?.getID() === model.getID();
 
-  if (modelType === 'App' || model.getEditingState() === WidgetEditingState.FLOATING) {
+  if (model.getID() === 0 /* appModel */ || model.getEditingState() === WidgetEditingState.FLOATING) {
     return null;
   }
-  if (modelType === 'Page' || (modelType === 'BusinessDialog' && isTopWidget)) {
+  if (modelType === WidgetTypeEnum.Page || isTopWidget) {
     return <PageWidgetSelectionViewComponent key={model.getID()} model={model} />;
   }
   return <WidgetSelectionViewBaseComponent key={model.getID()} model={model} />;

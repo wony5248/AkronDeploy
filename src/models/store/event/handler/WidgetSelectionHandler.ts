@@ -7,7 +7,7 @@ import AkronEventHandler from 'models/store/event/AkronEventHandler';
 import EventState from 'models/store/event/EventState';
 import { isEditWidgetMode } from 'util/AppModeUtil';
 import { setSmartGuideLineStructure, overrideHitWidgetModel } from 'util/WidgetEditUtil';
-import { checkBusinessOrPageDialogModel, removeWidgetHoveredStyle, clearWidgetModelEditContext } from 'util/WidgetUtil';
+import { removeWidgetHoveredStyle, clearWidgetModelEditContext, checkPageModel } from 'util/WidgetUtil';
 
 /**
  * 마우스로 WidgetModel을 이동할 때 처리해야 할 Event Handler 로직을 작성하는 class 입니다.
@@ -29,7 +29,7 @@ class WidgetSelectionEventHandler extends AkronEventHandler {
     if (
       isUndefined(hitModel) ||
       isUndefined(selectedWidgets) ||
-      (checkBusinessOrPageDialogModel(hitModel) && ctx.getMouseMode() === 'Normal')
+      (checkPageModel(hitModel) && ctx.getMouseMode() === 'Normal')
     ) {
       // do nothing
       return false;
@@ -59,8 +59,11 @@ class WidgetSelectionEventHandler extends AkronEventHandler {
 
     // 순수 widget영역 선택 -> textEditing 동작 X
     hitModel.setProperties({
-      ...hitModel.getProperties(),
-      content: { textEditing: { value: false, defaultValue: false, variableId: 0 } },
+      content: {
+        ...hitModel.getProperties().content,
+        textEditing: { value: false, defaultValue: false, variableId: 0 },
+      },
+      style: hitModel.getProperties().style,
     });
 
     // update selection

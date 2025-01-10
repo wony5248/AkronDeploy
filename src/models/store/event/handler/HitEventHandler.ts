@@ -52,8 +52,11 @@ class HitEventHandler extends AkronEventHandler {
 
     // 현재 model이 최상위 widget이면...
     // (ex. App 편집 모드 -> AppWidget.)
-    if (model.getWidgetType() === 'App') {
+    if (model.getID() === 0) {
       this.handleEditorHitItem(event, ctx, type);
+      return;
+    } else {
+      this.handleWidgetHitItem(event, ctx, type);
       return;
     }
 
@@ -64,10 +67,10 @@ class HitEventHandler extends AkronEventHandler {
    * 최상위 component의 MouseCapture EventHandler
    * HitItem을 최초 생성합니다.
    */
-  private handleEditorHitItem(event: MouseEvent<BaseWidgetModel>, ctx: AkronContext, type: HitType) {
+  private handleEditorHitItem(event: MouseEvent<WidgetModel>, ctx: AkronContext, type: HitType) {
     switch (type) {
       case HitType.DOWN: {
-        const startHitItem = new HitItem<BaseWidgetModel>();
+        const startHitItem = new HitItem<WidgetModel>();
         ctx.getHitContainer().setStartHitItem(startHitItem);
         break;
       }
@@ -75,7 +78,7 @@ class HitEventHandler extends AkronEventHandler {
         break;
       }
       case HitType.MOVE: {
-        const endHitItem = new HitItem<BaseWidgetModel>();
+        const endHitItem = new HitItem<WidgetModel>();
         ctx.getHitContainer()?.setEndHitItem(endHitItem);
         break;
       }

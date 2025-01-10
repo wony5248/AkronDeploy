@@ -5,7 +5,6 @@ import ContentComponent from 'components/workarea/ContentComponent';
 import DataContentComponent from 'components/workarea/DataContentComponent';
 import DataLeftToolPaneComponent from 'components/workarea/DataLeftToolPaneComponent';
 import useEditorStore from 'hooks/useEditorStore';
-import { trace } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { useEffect, useState } from 'react';
 import { WorkAreaTabIndex } from 'store/app/EditorUIStore';
@@ -15,7 +14,6 @@ import { WorkAreaStyle } from 'styles/editor/WorkAreaStyle';
  * Editor Page 내에서 좌측 패널, 우측 패널을 제외한 실제 작업 영역을 나타내는 컴포넌트입니다.
  */
 const WorkAreaComponent = () => {
-  trace(true);
   const editorStore = useEditorStore();
   const UIStore = editorStore.getEditorUIStore();
 

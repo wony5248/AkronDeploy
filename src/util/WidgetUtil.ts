@@ -94,26 +94,6 @@ export function getDeletableWidgetModels(widgetModels: WidgetModel[]): WidgetMod
 }
 
 /**
- * 해당 BusinessDialog 인지 확인합니다.
- *
- * @param targetModel BusinessDialog 인지 확인하기 위한 WidgetModel
- * @returns WidgetModel이 존재하며 WidgetModel의 widgetType이 'BusinessDialog'인 경우 true
- */
-export function checkBusinessDialogModel(targetModel: Nullable<WidgetModel>): boolean {
-  return targetModel?.getWidgetType() === WidgetTypeEnum.BasicDialog;
-}
-
-/**
- * 해당 Page 또는 BusinessDialog 인지 확인합니다.
- *
- * @param targetModel Page 또는 BusinessDialog 인지 확인하기 위한 WidgetModel
- * @returns WidgetModel이 존재하며 WidgetModel의 widgetType이 'Page' 또는 'BusinessDialog'인 경우 true
- */
-export function checkBusinessOrPageDialogModel(targetModel: Nullable<WidgetModel>): boolean {
-  return checkPageModel(targetModel) || checkBusinessDialogModel(targetModel);
-}
-
-/**
  * 해당 WidgetModel이 페이지인지 확인합니다.
  *
  * @param targetModel 페이지인지 확인하기 위한 WidgetModel
@@ -221,34 +201,38 @@ export function findInsertPosition(
     const childStyle = widget.getProperties().style;
     // Set의 key값으로 쓰기 위해 object가 아닌 string으로 변환
     widgetPositionSet.add(
-      `${childStyle.x.value.toString()}/${childStyle.y.value.toString()}/${childStyle.width.value.toString()}/${childStyle.height.value.toString()}`
+      `${childStyle.x.defaultValue.absolute.toString()}/${childStyle.y.defaultValue.absolute.toString()}/${childStyle.width.defaultValue.absolute.toString()}/${childStyle.height.defaultValue.absolute.toString()}`
     );
   });
 
   let { x, y } = startPosition;
   while (true) {
     // 페이지보다 클 경우 (0,0)에 삽입(무한루프 도는 이슈)
-    if (x + widgetStyle.width.value > pageStyle.width.value && y + widgetStyle.height.value > pageStyle.height.value) {
+    if (
+      x + widgetStyle.width.defaultValue.absolute > (pageStyle.width?.defaultValue.absolute ?? 0) &&
+      y + widgetStyle.height.defaultValue.absolute > (pageStyle.height?.defaultValue.absolute ?? 0)
+    ) {
       return { x: 0, y: 0 };
     }
     if (
       widgetPositionSet.has(
-        `${x.toString()}/${y.toString()}/${widgetStyle.width.value.toString()}/${widgetStyle.height.value.toString()}`
+        `${x.toString()}/${y.toString()}/${widgetStyle.width.defaultValue.absolute.toString()}/${widgetStyle.height.defaultValue.absolute.toString()}`
       ) === false &&
       (isUndefined(insertingPositionSet) ||
         (insertingPositionSet &&
           insertingPositionSet.has(
-            `${x.toString()}/${y.toString()}/${widgetStyle.width.value.toString()}/${widgetStyle.height.value.toString()}`
+            `${x.toString()}/${y.toString()}/${widgetStyle.width.defaultValue.absolute.toString()}/${widgetStyle.height.defaultValue.absolute.toString()}`
           ) === false)) &&
-      (x + widgetStyle.width.value <= pageStyle.width.value || y + widgetStyle.height.value <= pageStyle.height.value)
+      (x + widgetStyle.width.defaultValue.absolute <= pageStyle.width.defaultValue.absolute ||
+        y + widgetStyle.height.defaultValue.absolute <= pageStyle.height.defaultValue.absolute)
     ) {
       return { x, y };
     }
     x += GAP;
     y += GAP;
     if (
-      x + widgetStyle.width.value >= pageStyle.width.value ||
-      y + widgetStyle.height.value >= pageStyle.height.value
+      x + widgetStyle.width.defaultValue.absolute >= pageStyle.width.defaultValue.absolute ||
+      y + widgetStyle.height.defaultValue.absolute >= pageStyle.height.defaultValue.absolute
     ) {
       x = RestartGAP * countRestart;
       y = 0;
@@ -314,7 +298,7 @@ export const appendDeleteWidgetCommandsRecursive = (
   // deletePropsStatesByComponentID(ctx, widgetModel.getID());
 
   // 컨테이너 내부 item 삭제 시 나를 제외한 sibling re-render
-  if (!checkBusinessOrPageDialogModel(parentModel)) {
+  if (!checkPageModel(parentModel)) {
     parentModel.forEachChild((child: WidgetModel) => {
       if (child !== widgetModel) {
         child.triggerRerender();
@@ -357,4 +341,36 @@ export function getPropertyKeys(properties: IWidgetContentProperties | IWidgetSt
     }
   }
   return keys;
+}
+
+/**
+ * targetModel에 중접된 첫번째 삽입 가능한 컴포넌트(or page).
+ */
+export function findNestedContainer(
+  ctx: AkronContext,
+  selectedWidget: WidgetModel,
+  targetModel: WidgetModel
+): WidgetModel {
+  let parent: WidgetModel | undefined = targetModel;
+  while (isDefined(parent)) {
+    if (parent === ctx.getSelectionContainer()?.getEditingPage() || checkInsertableItem(parent, selectedWidget)) {
+      return parent;
+    }
+    parent = parent.getParent();
+  }
+  return ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getEditingWidgetModel();
+}
+
+/**
+ * targetModel이 ancestor에 포함되는지 확인.
+ */
+export function isAncestor(ancestor: WidgetModel, targetModel: WidgetModel) {
+  let curChild: WidgetModel | undefined = targetModel;
+  while (isDefined(curChild) && !checkPageModel(curChild)) {
+    if (curChild === ancestor) {
+      return true;
+    }
+    curChild = curChild.getParent();
+  }
+  return false;
 }

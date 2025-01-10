@@ -1,16 +1,11 @@
 import { boundMethod } from 'autobind-decorator';
 import EventState from './EventState';
 import EventHandler from './EventHandler';
-import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
-import CommandEnum from '../command/common/CommandEnum';
-import { SelectionProp } from 'models/store/command/widget/WidgetCommandProps';
 
 /**
  * EventMaper 은 EventState 에 따라 어떤 event handler 들이 순서대로 동작하는 지를 정의한 class 입니다.
  * EventManager class 가 event 를 받으면 event mapper 에서 event handler 의 list 를 받아 처리합니다.
  */
-
-export interface AkronEventMapper extends EventMapper<WidgetID, CommandEnum, SelectionProp, WidgetModel> {}
 
 class EventMapper<ID, CommandEnum, SelectionProp, Model> {
   /**

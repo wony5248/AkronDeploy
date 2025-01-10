@@ -1,13 +1,12 @@
-import { isDefined, dError, KeyEvent, MouseEvent, isUndefined, WheelEvent } from '@akron/runner';
+import { isDefined, dError, KeyEvent, MouseEvent, isUndefined, WheelEvent, WidgetEditingState } from '@akron/runner';
 import { runInAction } from 'mobx';
 import WidgetModel from 'models/node/WidgetModel';
 import CommandEnum from 'models/store/command/common/CommandEnum';
-import { WidgetEditingState } from 'models/store/command/widget/WidgetModelTypes';
 import AkronContext from 'models/store/context/AkronContext';
 import AkronEventHandler from 'models/store/event/AkronEventHandler';
 import { isPageListMode } from 'util/AppModeUtil';
 import { overrideHitWidgetModel } from 'util/WidgetEditUtil';
-import { addWidgetHoveredStyle, checkBusinessOrPageDialogModel, removeWidgetHoveredStyle } from 'util/WidgetUtil';
+import { addWidgetHoveredStyle, checkPageModel, removeWidgetHoveredStyle } from 'util/WidgetUtil';
 
 /**
  * Widget의 Event를 처리하는 Handler입니다.
@@ -19,7 +18,6 @@ class WidgetEventHandler extends AkronEventHandler {
   public override onMouseDown(event: MouseEvent<WidgetModel>, ctx: AkronContext): boolean {
     // 상위 Widget model이 Event를 다시 처리하는 것을 막음
     event.stopPropagation();
-
     return false;
   }
 
@@ -64,7 +62,7 @@ class WidgetEventHandler extends AkronEventHandler {
       return false;
     }
 
-    if (checkBusinessOrPageDialogModel(hitModel)) {
+    if (checkPageModel(hitModel)) {
       if (isPageListMode(appModeContainer)) {
         return true;
       }
@@ -205,7 +203,7 @@ class WidgetEventHandler extends AkronEventHandler {
   public override onMouseOver(event: MouseEvent<WidgetModel>, ctx: AkronContext): boolean {
     // page가 아닌 widget에서는 event의 전파를 막아서 hover 해제를 하지 않게 함
     const selectionContainer = ctx.getSelectionContainer();
-    if (checkBusinessOrPageDialogModel(event.getTargetModel())) {
+    if (checkPageModel(event.getTargetModel())) {
       // 최하위 widget만 over 하기 위해 이벤트 전달을 막음
       event.stopPropagation();
 
@@ -213,7 +211,7 @@ class WidgetEventHandler extends AkronEventHandler {
       const selectedWidgetModels = selectionContainer?.getSelectedWidgets();
       const targetWidget = event.getTargetModel();
       // selectable widget과 1depth의 widget만이 hover 대상이 될 수 있음
-      if (selectableWidgetModels?.includes(targetWidget) || checkBusinessOrPageDialogModel(targetWidget.getParent())) {
+      if (selectableWidgetModels?.includes(targetWidget) || checkPageModel(targetWidget.getParent())) {
         const hoverableWidget = selectionContainer?.getHoverableWidgetModel();
 
         // 정의되어있는 hoverable widget이 있다면 초기화

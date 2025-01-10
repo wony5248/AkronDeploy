@@ -73,7 +73,7 @@ class EditableContext extends EditableContextBase {
    * 현재 선택된 Selection 정보
    */
   @observable
-  private selectionContainer: SelectionContainer;
+  private selectionContainer: SelectionContainer | undefined;
 
   /**
    * 이전에 선택된 Selection 정보
@@ -828,10 +828,17 @@ class EditableContext extends EditableContextBase {
   }
 
   /**
-   * SelectionContainer을 반환합니다
+   * SelectionContainer을 설정합니다
    */
   @boundMethod
-  public getSelectionContainer(): SelectionContainer {
+  public setSelectionContainer(selectionContainer: SelectionContainer | undefined) {
+    return (this.selectionContainer = selectionContainer);
+  }
+
+  /**
+   * SelectionContainer을 반환합니다
+   */
+  public getSelectionContainer(): SelectionContainer | undefined {
     return this.selectionContainer;
   }
 

@@ -1,7 +1,4 @@
-import EventManager, { AkronEventManager } from './event/EventManager';
-import { AkronEventMapper } from './event/EventMapper';
 import { createContext } from 'react';
-import { AkronCommandMapper } from './command/common/CommandMapper';
 import CommandProps from './command/common/CommandProps';
 import { action, runInAction } from 'mobx';
 import CommandManager from './command/common/CommandManager';
@@ -16,7 +13,7 @@ import ContextMenuContainer from 'store/context-menu/ContextMenuContainer';
 import AkronContext from 'models/store/context/AkronContext';
 import EventState from 'models/store/event/EventState';
 import { LeftToolPaneType } from 'store/toolpane/ToolPaneComponentInfo';
-import { BaseWidgetModel, Nullable } from '@akron/runner';
+import { Nullable } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { AppInfo } from 'store/app/AppInfo';
 import CompositeComponentContainer from 'models/store/container/CompositeComponentContainer';
@@ -24,6 +21,23 @@ import WidgetModel from 'models/node/WidgetModel';
 import CommandEnum from 'models/store/command/common/CommandEnum';
 import AppParser, { AppJson } from 'models/parser/AppParser';
 import { defaultDeviceInfo, DeviceInfo } from 'util/DeviceUtil';
+import {
+  MouseEvent,
+  KeyEvent,
+  FocusEvent,
+  FormEvent,
+  DragEvent,
+  TouchEvent,
+  PointerEvent,
+  UIEvent,
+  WheelEvent,
+  AnimationEvent,
+  ClipboardEvent,
+  CompositionEvent,
+} from '@akron/runner';
+import AkronEventManager from 'models/store/event/AkronEventManager';
+import AkronEventMapper from 'models/store/event/AkronEventMapper';
+import AkronCommandMapper from 'models/store/command/akron/AkronCommandMapper';
 
 /**
  * Editor Store 생성자 파라미터 Interface 입니다.
@@ -83,14 +97,14 @@ class EditorStore {
   constructor(params: EditorStoreInitParams) {
     const appParser = new AppParser(params.appJson);
     const appModel = appParser.getAppModel();
-    this.eventManager = new EventManager(params.eventMapper);
+    this.eventManager = new AkronEventManager(params.eventMapper);
     this.commandManager = new CommandManager(params.commandMapper);
     this.selectionManager = new SelectionManager();
     const appModeContainer = new AppModeContainer(params.mode);
     this.editorUIStore = new EditorUIStore();
     this.tooltipStore = new TooltipStore();
     this.widgetLayerContainer = new WidgetLayerContainer();
-    let eventState = EventState.DEFAULT;
+    let eventState = EventState.EDIT;
     this.deviceInfo = params.deviceInfo ?? defaultDeviceInfo;
     (this.saveState = SaveState.SAVE_COMPLETE),
       (this.ctx = new AkronContext({
@@ -107,29 +121,6 @@ class EditorStore {
         compositeComponentContainer: new CompositeComponentContainer(),
         editorUIStore: this.editorUIStore,
       }));
-  }
-
-  /**
-   * commandEvent를 처리합니다.
-   */
-  @action.bound
-  public handleCommandEvent(commandProps: WidgetCommandProps): void {
-    const ctx = this.getCtxAsAppContext();
-    this.initContext(commandProps);
-    this.commandManager.execute(this.ctx);
-    this.selectionManager.updateSelection(this.getCtxAsAppContext());
-    // this.updateProperties(this.getCtxAsAppContext());
-    this.saveApp();
-  }
-
-  /**
-   * 문서에 변경 사항이 생길 경우 0.5초마다 자동 저장하는 핸들러
-   */
-  @boundMethod
-  public handleSave(commandProps: WidgetCommandProps): void {
-    this.initContext(commandProps);
-    this.commandManager.execute(this.getCtxAsAppContext());
-    this.saveTimerId = undefined;
   }
 
   /**
@@ -165,6 +156,14 @@ class EditorStore {
    */
   public getAppID() {
     return this.ctx.getAppID();
+  }
+
+  /**
+   * SelectionContainer를 초기화합니다.
+   */
+  @boundMethod
+  public initHitContainer(): void {
+    this.getCtxAsAppContext().getHitContainer().initHitContainer();
   }
 
   /**
@@ -263,6 +262,636 @@ class EditorStore {
    */
   public getDeviceInfo(): DeviceInfo {
     return this.deviceInfo;
+  }
+
+  /**
+   * 현재 EventState를 반환합니다.
+   */
+  public getEventState(): EventState {
+    return this.getCtxAsAppContext().getState();
+  }
+
+  /**
+   * EventState를 변경합니다.
+   */
+  public setEventState(state: EventState): void {
+    this.getCtxAsAppContext().setState(state);
+  }
+
+  /**
+   * WidgetEditInfoContainer 반환
+   */
+  @boundMethod
+  public getWidgetEditInfoContainer() {
+    return this.getCtxAsAppContext().getWidgetEditInfoContainer();
+  }
+
+  /**
+   * commandEvent를 처리합니다.
+   */
+  @action.bound
+  public handleCommandEvent(commandProps: WidgetCommandProps): void {
+    const ctx = this.getCtxAsAppContext();
+    this.initContext(commandProps);
+    this.commandManager.execute(this.ctx);
+    this.selectionManager.updateSelection(this.getCtxAsAppContext());
+    // this.updateProperties(this.getCtxAsAppContext());
+    this.saveApp();
+  }
+
+  /**
+   * Mouse Click 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleClick(event: MouseEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onClick(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+    this.selectionManager.updateSelection(this.getCtxAsAppContext());
+    // this.updateProperties(this.getCtxAsAppContext());
+    this.saveApp();
+  }
+
+  /**
+   * Mouse Double Click 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleDoubleClick(event: MouseEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onDoubleClick(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+    this.selectionManager.updateSelection(this.getCtxAsAppContext());
+    this.saveApp();
+  }
+
+  /**
+   * Mouse Down 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleMouseDown(event: MouseEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onMouseDown(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+    this.selectionManager.updateSelection(this.getCtxAsAppContext());
+    // this.updateProperties(this.getCtxAsAppContext());
+    this.saveApp();
+  }
+
+  /**
+   * Mouse Move 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleMouseMove(event: MouseEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onMouseMove(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Mouse Out 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleMouseOut(event: MouseEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onMouseOut(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Mouse Over 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleMouseOver(event: MouseEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onMouseOver(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Mouse Up 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleMouseUp(event: MouseEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onMouseUp(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+    this.selectionManager.updateSelection(this.getCtxAsAppContext());
+    // this.updateProperties(this.getCtxAsAppContext());
+    this.saveApp();
+  }
+
+  /**
+   * MouseEnter 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleMouseEnter(event: MouseEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onMouseEnter(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * MouseLeave 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleMouseLeave(event: MouseEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onMouseLeave(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Mouse Drag 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleDrag(event: DragEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onDrag(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Drag Start 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleDragStart(event: DragEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onDragStart(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Drag End 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleDragEnd(event: DragEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onDragEnd(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Drag Enter 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleDragEnter(event: DragEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onDragEnter(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   *  Drag  Leave 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleDragLeave(event: DragEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onDragLeave(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   *  Drag Over 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleDragOver(event: DragEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onDragOver(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   *  Scroll 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleScroll(event: UIEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onScroll(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Drop 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleDrop(event: DragEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onDrop(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Mouse Wheel 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleWheel(event: WheelEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onWheel(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * onChange 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleOnChange(event: FormEvent<WidgetModel>, eventParams: any[]): void {
+    this.initContext();
+    this.eventManager.onChange(event, this.getCtxAsAppContext(), eventParams);
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * contextMenu 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleOnContextMenu(event: MouseEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onFormContextMenu(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Invalid 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleInvalid(event: FormEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onInvalid(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Reset 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleReset(event: FormEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onReset(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Search 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleSearch(event: FormEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onSearch(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Select 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleSelect(event: FormEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onSelect(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * submit 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleSubmit(event: FormEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onSubmit(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * ContextMenu 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleContextMenu(event: MouseEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onContextMenu(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+    this.selectionManager.updateSelection(this.getCtxAsAppContext());
+    this.saveApp();
+  }
+
+  /**
+   * KeyDown 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleKeyDown(event: KeyEvent<WidgetModel>): void {
+    if (event.isShiftDown() && event.getIsComposing()) {
+      return; // temporary, 여기에서 분기 처리해도 되나..? -- sj
+    }
+    this.initContext();
+    this.eventManager.onKeyDown(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+    this.selectionManager.updateSelection(this.getCtxAsAppContext());
+    // this.updateProperties(this.getCtxAsAppContext());
+    this.saveApp();
+  }
+
+  /**
+   * KeyPressed 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleKeyPressed(event: KeyEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onKeyPressed(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+    this.selectionManager.updateSelection(this.getCtxAsAppContext());
+    // this.updateProperties(this.getCtxAsAppContext());
+  }
+
+  /**
+   * KeyUp 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleKeyUp(event: KeyEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onKeyUp(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * CompositionUpdate 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleCompositionUpdate(event: CompositionEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onCompositionUpdate(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+    this.saveApp();
+  }
+
+  /**
+   * BeforInput 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleBeforeInput(event: FormEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onBeforeInput(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+    this.saveApp();
+  }
+
+  /**
+   * Input 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleInput(event: FormEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onInput(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Change 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleChange(event: FormEvent<WidgetModel>, eventParams: any[]): void {
+    this.initContext();
+    this.eventManager.onChange(event, this.getCtxAsAppContext(), eventParams);
+    this.commandManager.execute(this.getCtxAsAppContext());
+    this.selectionManager.updateSelection(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Focus 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleFocus(event: FocusEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onFocus(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Blur 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleBlur(event: FocusEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onBlur(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+    this.saveApp();
+  }
+
+  /**
+   * Copy 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleCopy(event: ClipboardEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onCopy(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Cut 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleCut(event: ClipboardEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onCut(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Paste 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handlePaste(event: ClipboardEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onPaste(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Touch start 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleTouchStart(event: TouchEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onTouchStart(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Touch end 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleTouchEnd(event: TouchEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onTouchEnd(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Touch Move 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleTouchMove(event: TouchEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onTouchMove(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Pointer Down 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handlePointerDown(event: PointerEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onPointerDown(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Pointer Move 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handlePointerMove(event: PointerEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onPointerMove(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Pointer Up 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handlePointerUp(event: PointerEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onPointerUp(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Pointer Cancel 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handlePointerCancel(event: PointerEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onPointerCancel(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Pointer Enter 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handlePointerEnter(event: PointerEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onPointerEnter(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Pointer Leave 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handlePointerLeave(event: PointerEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onPointerLeave(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Pointer Over 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handlePointerOver(event: PointerEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onPointerOver(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Got Pointer Capture 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleGotPointerCapture(event: PointerEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onGotPointerCapture(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Lost Pointer Capture 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleLostPointerCapture(event: PointerEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onLostPointerCapture(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Animation Start 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleAnimationStart(event: AnimationEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onAnimationStart(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Animation End 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleAnimationEnd(event: AnimationEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onAnimationEnd(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Animation Iteration 이벤트를 처리합니다.
+   */
+  @boundMethod
+  public handleAnimationIteration(event: AnimationEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onAnimationIteration(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * 문서에 변경 사항이 생길 경우 0.5초마다 자동 저장하는 핸들러
+   */
+  @boundMethod
+  public handleSave(commandProps: WidgetCommandProps): void {
+    this.initContext(commandProps);
+    this.commandManager.execute(this.getCtxAsAppContext());
+    this.saveTimerId = undefined;
+  }
+
+  /**
+   * Capture 시점에는 SelectionContainer의 HitItem을 채웁니다.
+   */
+  @boundMethod
+  public handleMouseDownCapture(event: MouseEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onMouseDownCapture(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Capture 시점에는 SelectionContainer의 HitItem을 채웁니다.
+   */
+  @boundMethod
+  public handleMouseUpCapture(event: MouseEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onMouseUpCapture(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
+  }
+
+  /**
+   * Capture 시점에는 SelectionContainer의 HitItem을 채웁니다.
+   */
+  @boundMethod
+  public handleMouseMoveCapture(event: MouseEvent<WidgetModel>): void {
+    this.initContext();
+    this.eventManager.onMouseMoveCapture(event, this.getCtxAsAppContext());
+    this.commandManager.execute(this.getCtxAsAppContext());
   }
 
   /**

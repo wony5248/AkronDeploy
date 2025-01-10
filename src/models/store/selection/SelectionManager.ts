@@ -6,6 +6,7 @@ import AkronContext from 'models/store/context/AkronContext';
 import WidgetModel from 'models/node/WidgetModel';
 import { isDefined } from '@akron/runner';
 import { writeNodeState } from 'components/toolpane/TreeNodeComponent';
+import PageModel from 'models/node/PageModel';
 
 /**
  * 사용자의 Selection 상태를 보여주기 위한 Class
@@ -119,7 +120,7 @@ export default class SelectionManager {
             case 'EDIT_APP':
               // EDIT_APP 모드로 변경될 때, editModeLastSelectionContainer 있으면, 현재 selection으로 변경.
               if (ctx.getEditModeLastSelectionContainer() !== undefined) {
-                ctx.getCommand()?.setNewSelectionContainer(editModeLastSelection);
+                ctx.setSelectionContainer(editModeLastSelection);
                 ctx.setPrevSelectionContainer(undefined); // 이전 selection은 사용자 정의 컴포넌트 수정 시 남아있던 것임. 모드 변경으로 사라짐에 따라 undefined 처리
                 ctx.setEditModeLastSelectionContainer(undefined);
               }
@@ -143,9 +144,9 @@ export default class SelectionManager {
               newSelectionContainer.setSelectedPage(selectedPages[0]);
               newSelectionContainer.setWidgetSelection(selectedPages[0]);
             }
-            ctx?.getCommand()?.setNewSelectionContainer(newSelectionContainer);
+            ctx?.setSelectionContainer(newSelectionContainer);
             ctx.setPrevSelectionContainer(ctx.getSelectionContainer());
-            ctx.getCommand()?.setNewSelectionContainer(newSelectionContainer);
+            ctx.setSelectionContainer(newSelectionContainer);
           }
           break;
         default: {
@@ -175,7 +176,7 @@ export default class SelectionManager {
               if (ctx.getCommandProps()?.selectionProp?.editingPageModel) {
                 newSelectionContainer.setEditingPage(ctx.getCommandProps()?.selectionProp?.editingPageModel);
               }
-            } else if (ctx.getCommandProps()?.selectionProp?.editingPageModel) {
+            } else if (ctx.getCommandProps()?.selectionProp?.editingPageModel instanceof PageModel) {
               newSelectionContainer.setEditingPage(ctx.getCommandProps()?.selectionProp?.editingPageModel);
               newSelectionContainer.setSelectedPage(ctx.getCommandProps()?.selectionProp?.editingPageModel);
             } else if (isDefined(ctx.getSelectionContainer()?.getEditingPage())) {
@@ -183,10 +184,10 @@ export default class SelectionManager {
               newSelectionContainer.setSelectedPage(ctx.getSelectionContainer()?.getEditingPage());
             }
 
-            ctx?.getCommand()?.setNewSelectionContainer(newSelectionContainer);
+            ctx?.setSelectionContainer(newSelectionContainer);
             ctx.setPrevSelectionContainer(ctx.getSelectionContainer());
             ctx.getPrevSelectionContainer()?.clearSelectableWidgetModels();
-            ctx.getCommand()?.setNewSelectionContainer(newSelectionContainer);
+            ctx.setSelectionContainer(newSelectionContainer);
 
             // selectableModelList set
             widgetModels?.forEach(model => {
@@ -196,9 +197,9 @@ export default class SelectionManager {
           } else if (ctx.getCommandProps()?.reUpdateSelection) {
             const clonedSelectionContainer = this.cloneSelectionContainer(ctx.getSelectionContainer());
             if (isDefined(clonedSelectionContainer)) {
-              ctx.getCommand()?.setNewSelectionContainer(clonedSelectionContainer);
+              ctx.setSelectionContainer(clonedSelectionContainer);
               ctx.setPrevSelectionContainer(ctx.getSelectionContainer());
-              ctx.getCommand()?.setNewSelectionContainer(clonedSelectionContainer);
+              ctx.setSelectionContainer(clonedSelectionContainer);
             }
           }
           break;

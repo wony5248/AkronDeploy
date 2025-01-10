@@ -132,7 +132,7 @@ export default class AkronContext {
       // undoStack: this.createUndoStack(),
       lastRegisteredEditUndoStackTag: this.createLastRegisteredEditUndoStackTag(),
       hitContainer: this.createHitContainer(),
-      selectionContainer: this.createSelectionContainer(),
+      selectionContainer: this.createSelectionContainer(initProp.newAppModel),
       clipboardContainer: this.createClipboardContainer(),
       propContainer: this.createPropContainer(),
       widgetEditInfoContainer: this.createWidgetEditInfoContainer(),
@@ -315,10 +315,19 @@ export default class AkronContext {
 
   /**
    * DocumentContext
+   * SelectionContainer을 설정합니다
+   */
+  @boundMethod
+  public setSelectionContainer(selectionContainer: SelectionContainer | undefined) {
+    return this.appEditableContext.setSelectionContainer(selectionContainer);
+  }
+
+  /**
+   * DocumentContext
    * SelectionContainer을 반환합니다
    */
   @boundMethod
-  public getSelectionContainer(): SelectionContainer {
+  public getSelectionContainer(): SelectionContainer | undefined {
     return this.appEditableContext.getSelectionContainer();
   }
 
@@ -327,8 +336,11 @@ export default class AkronContext {
    * SelectionContainer 초기값을 생성해 반환합니다
    */
   @boundMethod
-  public createSelectionContainer(): SelectionContainer {
-    return new SelectionContainer();
+  public createSelectionContainer(appModel: AppModel): SelectionContainer {
+    const selectionContainer = new SelectionContainer();
+    // TODO: workArea 삭제 시 수정해야함
+    selectionContainer.setEditingPage(appModel.getFirstChild()?.getFirstChild());
+    return selectionContainer;
   }
 
   /**

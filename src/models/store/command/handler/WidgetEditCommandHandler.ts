@@ -1,4 +1,12 @@
-import { IWidgetCommonProperties, isUndefined, dError, isDefined, DeepReadonly, WidgetTypeEnum } from '@akron/runner';
+import {
+  IWidgetCommonProperties,
+  isUndefined,
+  dError,
+  isDefined,
+  DeepReadonly,
+  WidgetTypeEnum,
+  WidgetEditingState,
+} from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { runInAction } from 'mobx';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
@@ -6,7 +14,6 @@ import CommandEnum from 'models/store/command/common/CommandEnum';
 import CommandHandler from 'models/store/command/common/CommandHandler';
 import WidgetCommandProps, { SelectionProp } from 'models/store/command/widget/WidgetCommandProps';
 import AppendWidgetCommand from 'models/store/command/widget/AppendWidgetCommand';
-import { WidgetEditingState } from 'models/store/command/widget/WidgetModelTypes';
 import {
   WidgetResizeHandle,
   WidgetPosition,
@@ -18,11 +25,9 @@ import AkronContext from 'models/store/context/AkronContext';
 import CompositeModel from 'store/component/CompositeModel';
 import {
   appendDeleteWidgetCommandsRecursive,
-  checkBusinessOrPageDialogModel,
   checkInsertableItem,
   checkPageModel,
   clearWidgetModelEditContext,
-  findInsertPosition,
   getDeletableWidgetModels,
   isWidgetsDeletable,
 } from 'util/WidgetUtil';
@@ -31,43 +36,7 @@ import AppendWidgetRecursiveCommand from 'models/store/command/widget/AppendWidg
 import { isEditAppMode, isEditWidgetMode } from 'util/AppModeUtil';
 import RenameWidgetCommand from 'models/store/command/widget/RenameWidgetCommand';
 import { WidgetStyle, Position, Length, Constraint } from 'models/widget/WidgetPropTypes';
-
-export const widgetModelDemo = new WidgetModel({
-  id: 1000000,
-  widgetType: WidgetTypeEnum.BasicButton,
-  widgetCategory: '',
-  name: 'button',
-  properties: {
-    content: { text: { value: 'afsdfasd', defaultValue: 'adsfzcv', variableId: 0 } },
-    style: {
-      backgroundColor: { value: 'black', defaultValue: 'black', variableId: 1 },
-      height: { value: '200px', defaultValue: '200px', variableId: 2 },
-      width: { value: '200px', defaultValue: '200px', variableId: 3 },
-    },
-  },
-});
-
-export const widgetModelDemo2 = new WidgetModel({
-  id: 1000001,
-  widgetType: WidgetTypeEnum.BasicButton,
-  widgetCategory: '',
-  name: 'button',
-  properties: {
-    content: { text: { value: 'afsdfasd', defaultValue: 'adsfzcv', variableId: 0 } },
-    style: { backgroundColor: { value: 'black', defaultValue: 'black', variableId: 1 } },
-  },
-});
-
-export const widgetModelDemo3 = new WidgetModel({
-  id: 1000002,
-  widgetType: WidgetTypeEnum.BasicButton,
-  widgetCategory: '',
-  name: 'button',
-  properties: {
-    content: { text: { value: 'afsdfasd', defaultValue: 'adsfzcv', variableId: 0 } },
-    style: { backgroundColor: { value: 'black', defaultValue: 'black', variableId: 1 } },
-  },
-});
+import { commonStyleMeta, getMetaDataByType } from 'models/util/LocalMetaData';
 
 /**
  * 삽입과 동시에 속성을 특정 값으로 설정해야 할 때 사용.
@@ -75,37 +44,6 @@ export const widgetModelDemo3 = new WidgetModel({
  * 이유: 속성 ID는 모델 생성 뒤에 나옴.
  */
 // type InitializeProperties = Array<WidgetProp>;
-
-/**
- * Widget 삽입 시 필요한 Props
- */
-// export type NewInsertWidgetCommandProps<Props extends IWidgetCommonProperties = IWidgetCommonProperties> =
-//   WidgetCommandProps & {
-//     commandID: CommandEnum.INSERT_WIDGET;
-//     widgetTypeId: WidgetTypeID;
-//     widgetType: string;
-//     initializeProperties?: InitializeProperties;
-//     widgetName?: string;
-//   };
-
-/**
- * Widget 을 특정 위치에 삽입 시 필요한 Props
- */
-// export type NewInsertWidgetAtCommandProps = WidgetCommandProps & {
-//   commandID: CommandEnum.INSERT_WIDGET_AT;
-//   widgetTypeId: WidgetTypeID;
-//   widgetID: WidgetID;
-//   widgetType: string;
-//   posX: number;
-//   posY: number;
-//   initializeProperties?: InitializeProperties;
-//   parentWidgetModel?: BaseWidgetModel; // 내부 로직에서 parent가 없다면 parent를 찾도록 함
-//   cloneWidget?: WidgetModel;
-
-//   libraryID?: number;
-//   libraryDependencyData?: LibraryDependencyData;
-//   insertedPuxLibraryInfoMap?: InsertedPuxLibraryInfoMap;
-// };
 
 /**
  * Widget 삽입 시 필요한 Props
@@ -425,7 +363,7 @@ class WidgetEditCommandHandler extends CommandHandler {
       case CommandEnum.CLIPBOARD_CUT_PROCESS:
         if (
           isUndefined(ctx.getSelectionContainer()) ||
-          !isWidgetsDeletable(ctx.getSelectionContainer().getSelectedWidgets())
+          !isWidgetsDeletable(ctx.getSelectionContainer()?.getSelectedWidgets() ?? [])
         ) {
           return false;
         }
@@ -583,8 +521,8 @@ class WidgetEditCommandHandler extends CommandHandler {
           ctx.getMouseMode() === 'InsertContainer'
             ? (ctx.getSelectionContainer()?.getEditingPage() ?? this.getParentToInsert(ctx, newWidgetModel))
             : this.getParentToInsert(ctx, newWidgetModel);
-        const parentWidth = parentWidgetModel.getProperties().style.width.value;
-        const parentHeight = parentWidgetModel.getProperties().style.height.value;
+        const parentWidth = parentWidgetModel?.getProperties().style.width.value;
+        const parentHeight = parentWidgetModel?.getProperties().style.height.value;
 
         return {
           ...defaultProperties,
@@ -711,6 +649,19 @@ class WidgetEditCommandHandler extends CommandHandler {
    */
   @boundMethod
   private createNewWidgetModel(ctx: AkronContext, widgetType: WidgetTypeEnum, widgetID: WidgetID) {
+    const { metaData, name } = getMetaDataByType(widgetType);
+    const widget = new WidgetModel({
+      id: 1000,
+      widgetType: widgetType,
+      widgetCategory: '',
+      name: name,
+      properties: {
+        content: metaData,
+        style: commonStyleMeta,
+      },
+      ref: undefined,
+    });
+    return widget;
     // const defaultWidgetModel = ctx.getMetaDataContainer().getDefaultWidgetModelMap().get(widgetType);
     // const pageWidth = ctx.getNewAppModel().getFirstChild()?.getFirstChild()?.getProperties().getStyle().width.absolute;
     // const pageHeight = ctx.getNewAppModel().getFirstChild()?.getFirstChild()?.getProperties().getStyle()
@@ -740,7 +691,6 @@ class WidgetEditCommandHandler extends CommandHandler {
     // const newWidgetModel = defaultWidgetModel.cloneNode(widgetID);
     // newWidgetModel.setName(`${widgetType.replace('Basic', '')} ${widgetID % 100}`);
     // return newWidgetModel;
-    return widgetModelDemo;
   }
 
   /**
@@ -770,18 +720,22 @@ class WidgetEditCommandHandler extends CommandHandler {
 
     let parentWidgetModel = args.parentWidgetModel ?? this.getParentToInsert(ctx, newWidgetModel);
 
-    if (isDefined(parentWidgetModel)) {
-      const fragmentLayoutModels = parentWidgetModel.mapChild((childWidgetModel: WidgetModel) => childWidgetModel);
-      const renderedChildIndex = parentWidgetModel.getProperties().content.flag.value ? 0 : 1;
-      parentWidgetModel = fragmentLayoutModels[renderedChildIndex];
-    }
+    // if (isDefined(parentWidgetModel)) {
+    //   const fragmentLayoutModels = parentWidgetModel.mapChild((childWidgetModel: WidgetModel) => childWidgetModel);
+    //   const renderedChildIndex = parentWidgetModel.getProperties().content.flag.value ? 0 : 1;
+    //   parentWidgetModel = fragmentLayoutModels[renderedChildIndex];
+    // }
 
     // // layout type의 repeatable component 하위에는 하나의 gx library component만 삽입 가능
     // if (!isInsertableRepeatableLayout(parentWidgetModel, newWidgetModel, editorUIStore)) {
     //   return;
     // }
+    const selectionContainer = ctx.getSelectionContainer();
+    if (selectionContainer === undefined) {
+      return;
+    }
 
-    const selectedWidgets = ctx.getSelectionContainer()?.getSelectedWidgets();
+    const selectedWidgets = selectionContainer.getSelectedWidgets();
     const properties = newWidgetModel.getProperties();
     const isParentChildable = selectedWidgets?.length === 1 && checkInsertableItem(selectedWidgets[0], newWidgetModel);
 
@@ -862,7 +816,7 @@ class WidgetEditCommandHandler extends CommandHandler {
     );
 
     // 컨테이너 내부에 item 삽입 시 sibling re-render
-    if (!checkBusinessOrPageDialogModel(parentWidgetModel)) {
+    if (!checkPageModel(parentWidgetModel)) {
       parentWidgetModel.forEachChild((child: WidgetModel) => {
         if (child !== newWidgetModel) {
           child.triggerRerender();
@@ -894,11 +848,11 @@ class WidgetEditCommandHandler extends CommandHandler {
       const selectedWidget = ctx.getSelectionContainer()?.getSelectedWidgets()[0];
       const childable = checkInsertableItem(selectedWidget, curWidget);
       if (childable) {
-        return selectedWidget;
+        return selectedWidget as WidgetModel;
       }
       // childable하지 않은 경우 페이지에 삽입
       if (isEditAppMode(ctx.getAppModeContainer())) {
-        return ctx.getSelectionContainer().getEditingPage() ?? ctx.getEditingWidgetModel().getFirstChild()!;
+        return ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getEditingWidgetModel().getFirstChild()!;
       }
       return ctx.getEditingWidgetModel();
     }
@@ -1012,7 +966,7 @@ class WidgetEditCommandHandler extends CommandHandler {
    */
   @boundMethod
   private createWidgetSelectionProp(ctx: AkronContext, newWidgetModel: WidgetModel): void {
-    const editingTopWidgetModel: WidgetModel = ctx.getNewAppModel();
+    const editingTopWidgetModel = ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getNewAppModel().getFirstChild();
     const selectionProp: SelectionProp = {
       selectionType: SelectionEnum.WIDGET,
       widgetModels: [newWidgetModel],
@@ -1318,15 +1272,19 @@ class WidgetEditCommandHandler extends CommandHandler {
     const command = ctx.getCommand();
     const selectionContainer = ctx.getSelectionContainer();
 
-    const { targetModels: widgetModels, deltaX, deltaY, deltaWidth, deltaHeight } = props;
-    const models = [widgetModelDemo, widgetModelDemo2, widgetModelDemo3];
-    const model = widgetModelDemo;
-    const resizeHandle = widgetEditInfoContainer.getResizeHandle();
-
-    const isPage = models.find(widgetModel => checkPageModel(widgetModel)) !== undefined;
-    if (isPage) {
+    if (selectionContainer === undefined) {
       return;
     }
+
+    const { targetModels: widgetModels, deltaX, deltaY, deltaWidth, deltaHeight } = props;
+    const models = selectionContainer.getSelectedWidgets(); // [widgetModelDemo, widgetModelDemo2, widgetModelDemo3];
+    // const model = widgetModelDemo;
+    const resizeHandle = widgetEditInfoContainer.getResizeHandle();
+
+    // const isPage = models.find(widgetModel => checkPageModel(widgetModel)) !== undefined;
+    // if (isPage) {
+    //   return;
+    // }
     if (command === undefined) {
       dError('command is not exist');
       return;
@@ -1700,15 +1658,21 @@ class WidgetEditCommandHandler extends CommandHandler {
       return;
     }
     const { container } = props;
-    // const { desModel, deltaX, deltaY, useRefPosition, isMovedToPage, changeTopWidgetModel, byKeyEvent } = props;
+    const { desModel, deltaX, deltaY, useRefPosition, isMovedToPage, changeTopWidgetModel, byKeyEvent } = props;
     const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
     // const compositeComponentContainer = ctx.getCompositeComponentContainer();
     const zoomRatio = ctx.getZoomRatio() / 100;
+    const editingPageRefPosition = ctx.getEditingPageRefPosition();
 
     // ConditionalLayout이 end container일 경우 하위 FragmentLayout를 container로 지정
     // if (container && checkConditionalLayout(container)) {
     //     container = getConditionalLayoutEditedFrameModel(container) as WidgetModel; // Conditional Layout
     // }
+
+    const page = ctx.getSelectionContainer()?.getEditingPage();
+    if (isUndefined(page)) {
+      return;
+    }
 
     const widgetModels = props.targetModels;
     // floating widget 제거
@@ -1737,270 +1701,139 @@ class WidgetEditCommandHandler extends CommandHandler {
     // isDefined(ctx.getMetaDataContainer().getReactNodeTypePropMap().get(desModel?.getWidgetType()));
 
     widgetModels.forEach(widgetModel => {
-      // const pinnedDirections = widgetModel.getPinnedDirections();
-      // const position = widgetModel.getPosition();
-      let newLeftUnit = 'px';
-      let newTopUnit = 'px';
-      let newLeftValue = 0;
-      let newTopValue = 0;
+      const widgetProps = widgetModel.getProperties();
+      const canInsertToWidget = checkInsertableItem(container, widgetModel);
 
-      // app 별 parent rect style 가져오기
-      // const {
-      //   parentRefX,
-      //   parentRefY,
-      //   parentRefWidth: parentWidth,
-      //   parentRefHeight: parentHeight,
-      // } = getTargetParentRectStyle(ctx, widgetModel.getParent());
-
-      // 먼저 pinned 방향을 확인하여 이동 가능 여부 결정
-      // const { keepX, keepY } = this.shouldKeepPosition(pinnedDirections);
-
-      // if (typeof position.left === 'string') {
-      //   const oldX = widgetModel.getRefX();
-      //   const parentX = parentRefX;
-      //   const oldValue = oldX !== undefined && parentX !== undefined ? oldX - parentX : 0;
-      //   newLeftValue = keepX ? oldValue : oldValue + deltaX;
-      // } else {
-      //   const oldLeft = position.left;
-      //   const { unit } = oldLeft;
-      //   const oldValue = oldLeft.value;
-      //   if (unit === 'px') {
-      //     newLeftValue = keepX ? oldValue : oldValue + deltaX;
-      //   } else {
-      //     const oldValueToPx = parentWidth * (oldValue / 100);
-      //     newLeftValue = keepX ? oldValue : ((oldValueToPx + deltaX) / parentWidth) * 100;
-      //     newLeftUnit = '%';
-      //   }
-      // }
-
-      // if (typeof position.top === 'string') {
-      //   const oldY = widgetModel.getRefY();
-      //   const parentY = parentRefY;
-      //   const oldValue = oldY !== undefined && parentY !== undefined ? oldY - parentY : 0;
-      //   newTopValue = keepY ? oldValue : oldValue + deltaY;
-      // } else {
-      //   const oldTop = position.top;
-      //   const { unit } = oldTop;
-      //   const oldValue = oldTop.value;
-      //   if (unit === 'px') {
-      //     newTopValue = keepY ? oldValue : oldValue + deltaY;
-      //   } else {
-      //     const oldValueToPx = parentHeight * (oldValue / 100);
-      //     newTopValue = keepY ? oldValue : ((oldValueToPx + deltaY) / parentHeight) * 100;
-      //     newTopUnit = '%';
-      //   }
-      // }
-
-      // const newPosition = {
-      //   left: { value: newLeftValue, unit: newLeftUnit },
-      //   top: { value: newTopValue, unit: newTopUnit },
-      //   pinnedDirections: widgetModel.getPinnedDirections().join(','),
+      // const newWidgetProps: IWidgetCommonProperties = {
+      //     ...widgetProps,
+      //     editingState: WidgetEditingState.NONE,
       // };
+      // widgetModel.setProperties(newWidgetProps);
+      widgetModel.setEditingState(WidgetEditingState.NONE);
 
-      // // pinnedDirections 먼저 설정하고 position 업데이트
-      // widgetModel.setPinnedDirections(pinnedDirections);
-      // const updatePositionCommand = new UpdatePositionCommand(widgetModel, newPosition);
-      // ctx.getCommand()?.append(updatePositionCommand);
+      const refPositionMap = widgetEditInfoContainer.getRefPositionMap(widgetModel);
 
-      // widgetModel.setEditingState(WidgetEditingState.NONE);
+      const styleProperties = widgetModel.getProperties().style;
 
-      // const widgetProps = widgetModel.getProperties();
-      // const canInsertToWidget = checkInsertableItem(container, widgetModel);
+      // 마우스를 통한 이동 시 absolute 계산
+      const isRelative = byKeyEvent && widgetModel.getStyleProperties('frameType') === 'relative';
 
-      // widgetModel.getProperties().setEditingState(WidgetEditingState.NONE);
+      const xAbsolute = widgetModel.getStyleProperties('x').absolute;
+      const yAbsolute = widgetModel.getStyleProperties('y').absolute;
 
-      // const refPositionMap = widgetEditInfoContainer.getRefPositionMap(widgetModel);
+      const referenceX = useRefPosition && refPositionMap ? refPositionMap.x : xAbsolute;
+      const referenceY = useRefPosition && refPositionMap ? refPositionMap.y : yAbsolute;
 
-      // const styleProperties = widgetModel.getProperties().getStyle();
+      // parent의 absolute 값으로 relative 계산
+      const parentWidget = widgetModel.getParent();
+      if (!parentWidget) {
+        return;
+      }
 
-      // // 마우스를 통한 이동 시 absolute 계산
-      // const isRelative = byKeyEvent && styleProperties.frameType === 'relative';
+      let resultX = isRelative ? referenceX + (parentWidget.getRefWidth() ?? 0) * deltaX * 0.01 : referenceX + deltaX;
+      let resultY = isRelative ? referenceY + (parentWidget.getRefHeight() ?? 0) * deltaY * 0.01 : referenceY + deltaY;
 
-      // const xAbsolute = styleProperties.x.absolute;
-      // const yAbsolute = styleProperties.y.absolute;
+      const parentWidth = isMovedToPage
+        ? page.getStyleProperties('width').absolute
+        : parentWidget.getStyleProperties('width').absolute;
+      const parentHeight = isMovedToPage
+        ? page.getStyleProperties('height').absolute
+        : parentWidget.getStyleProperties('height').absolute;
 
-      // const referenceX =
-      //     useRefPosition && refPositionMap ? refPositionMap.x : xAbsolute + pagePosition.x;
-      // const referenceY =
-      //     useRefPosition && refPositionMap ? refPositionMap.y : yAbsolute + pagePosition.y;
-
-      // // parent의 absolute 값으로 relative 계산
-      // const parentWidget = widgetModel.getParent();
-      // const pageModel = workAreaModel.getFirstChild();
-      // if (!parentWidget || !pageModel) {
-      //     return;
+      // 페이지 밖으로 나간 경우 다시 페이지 안쪽으로 위치 시킴
+      // if (resultY * -1 >= (widgetModel.getRefHeight() ?? 0) / (zoomRatio / 100)) {
+      //   // 위쪽으로 나간 경우
+      //   resultY = 0;
+      // } else if (resultY >= editingPageRefPosition.height / (zoomRatio / 100)) {
+      //   // 아래쪽으로 나간 경우
+      //   resultY -= widgetModel.getStyleProperties('height').absolute;
+      // }
+      // if (resultX * -1 >= (widgetModel.getRefWidth() ?? 0) / (zoomRatio / 100)) {
+      //   // 왼쪽으로 나간 경우
+      //   resultX = 0;
+      // } else if (resultX >= editingPageRefPosition.width / (zoomRatio / 100)) {
+      //   // 오른쪽으로 나간 경우
+      //   resultX -= widgetModel.getStyleProperties('width').absolute;
       // }
 
-      // let dragEndTargetModel: 'Page' | 'WorkArea' = 'Page';
-      // let parentWidth = parentWidget.getRefWidth() ?? parentWidget?.getProperties().getStyle().width.absolute;
-      // let parentHeight =
-      //     parentWidget.getRefHeight() ?? parentWidget?.getProperties().getStyle().height.absolute;
-
-      // let resultX = isRelative
-      //     ? referenceX + (parentWidget.getRefWidth() ?? 0) * deltaX * 0.01
-      //     : referenceX + deltaX;
-      // let resultY = isRelative
-      //     ? referenceY + (parentWidget.getRefHeight() ?? 0) * deltaY * 0.01
-      //     : referenceY + deltaY;
-
-      // if (
-      //     (isDefined(changeTopWidgetModel) && !checkTopParentIsWorkArea(parentWidget)) ||
-      //     (!isDefined(changeTopWidgetModel) && checkTopParentIsWorkArea(parentWidget))
-      // ) {
-      //     // Page -> WorkArea or  WorkArea -> WorkArea
-      //     dragEndTargetModel = 'WorkArea';
-      //     parentWidth = workAreaModel.getProperties().getStyle().width.absolute;
-      //     parentHeight = workAreaModel.getProperties().getStyle().height.absolute;
-
-      //     resultX -= pagePosition.x;
-      //     resultY -= pagePosition.y;
-      // } else if (
-      //     isEditAppMode(ctx.getAppModeContainer()) &&
-      //     (!isSelectReactNodeProp || desModel?.getID() !== widgetModel.getID())
-      // ) {
-      //     // WorkArea -> Page or Page -> Page
-      //     resultX -= pagePosition.x;
-      //     resultY -= pagePosition.y;
-
-      //     parentWidth = pageModel.getProperties().getStyle().width.absolute;
-      //     parentHeight = pageModel.getProperties().getStyle().height.absolute;
-
-      //     const isOutOfPage =
-      //         resultX <= 0 ||
-      //         resultY <= 0 ||
-      //         resultX >= parentWidth - (widgetModel.getRefWidth() ?? 0) / (zoomRatio / 100) ||
-      //         resultY >= parentHeight - (widgetModel.getRefHeight() ?? 0) / (zoomRatio / 100);
-
-      //     const isChildExclusive = basicChildWidgetTypeNamesSet.has(widgetModel.getWidgetType());
-
-      //     if (!byKeyEvent && isOutOfPage && !isChildExclusive) {
-      //         // 비정상적 동작으로 페이지 내 컴포넌트가 페이지 밖에 배치될 경우 강제로 parent를 workArea로 이동
-      //         forceParentChange = true;
-      //         dragEndTargetModel = 'WorkArea';
-      //         parentWidth = workAreaModel.getProperties().getStyle().width.absolute;
-      //         parentHeight = workAreaModel.getProperties().getStyle().height.absolute;
-      //     }
-      // }
-
-      // if (!byKeyEvent) {
-      //     // 키보드 이동이 아닌 마우스 드래그 이동 중에 viewPort 밖으로 나간 경우 다시 viewPort 안쪽으로 위치 시킴
-      //     // view port의 좌측 최상단 좌표
-      //     const viewportCoordinates = getViewportCoordinates(
-      //         editorRect,
-      //         workAreaRect,
-      //         zoomRatio,
-      //         pagePosition
-      //     );
-
-      //     if (resultY <= viewportCoordinates.y) {
-      //         // 위쪽으로 나간 경우
-      //         resultY = viewportCoordinates.y;
-      //     } else if (
-      //         resultY >=
-      //         viewportCoordinates.y +
-      //             (editorRect.height - (widgetModel.getRefHeight() ?? 0)) / (zoomRatio / 100)
-      //     ) {
-      //         // 아래쪽으로 나간 경우
-      //         resultY =
-      //             viewportCoordinates.y +
-      //             (editorRect.height - (widgetModel.getRefHeight() ?? 0)) / (zoomRatio / 100);
-      //     }
-      //     if (resultX <= viewportCoordinates.x) {
-      //         // 왼쪽으로 나간 경우
-      //         resultX = viewportCoordinates.x;
-      //     } else if (
-      //         resultX >=
-      //         viewportCoordinates.x +
-      //             (editorRect.width - (widgetModel.getRefWidth() ?? 0)) / (zoomRatio / 100)
-      //     ) {
-      //         // 오른쪽으로 나간 경우
-      //         resultX =
-      //             viewportCoordinates.x +
-      //             (editorRect.width - (widgetModel.getRefWidth() ?? 0)) / (zoomRatio / 100);
-      //     }
-      // }
-      // ctx.getCommand()?.append(
-      //     new UpdateWidgetCommand(widgetModel, 'x', true, {
-      //         ...widgetProps.getStyle().x,
-      //         absolute: isDefined(container) && canInsertToWidget ? 0 : resultX,
-      //         relative:
-      //             isDefined(container) && canInsertToWidget
-      //                 ? 0
-      //                 : Math.round((Number(resultX) / parentWidth) * 100),
-      //     })
-      // );
-      // ctx.getCommand()?.append(
-      //     new UpdateWidgetCommand(widgetModel, 'y', true, {
-      //         ...widgetProps.getStyle().y,
-      //         absolute: isDefined(container) && canInsertToWidget ? 0 : resultY,
-      //         relative:
-      //             isDefined(container) && canInsertToWidget
-      //                 ? 0
-      //                 : Math.round((Number(resultY) / parentHeight) * 100),
-      //     })
-      // );
-      // ctx.getCommand()?.append(
-      //     new UpdateWidgetCommand(
-      //         widgetModel,
-      //         'frameType',
-      //         true,
-      //         dragEndTargetModel === 'WorkArea' ? 'absolute' : widgetProps.getStyle().frameType
-      //     )
-      // );
-      // ctx.getCommand()?.append(
-      //     new UpdateWidgetCommand(widgetModel, 'left', true, {
-      //         ...widgetProps.getStyle().left,
-      //         absolute: isDefined(container) && canInsertToWidget ? 0 : resultX,
-      //         relative:
-      //             isDefined(container) && canInsertToWidget
-      //                 ? 0
-      //                 : Math.round((Number(resultX) / parentWidth) * 100),
-      //         anchor: dragEndTargetModel === 'WorkArea' ? false : widgetProps.getStyle().left.anchor,
-      //     })
-      // );
-      // ctx.getCommand()?.append(
-      //     new UpdateWidgetCommand(widgetModel, 'top', true, {
-      //         ...widgetProps.getStyle().top,
-      //         absolute: isDefined(container) && canInsertToWidget ? 0 : resultY,
-      //         relative:
-      //             isDefined(container) && canInsertToWidget
-      //                 ? 0
-      //                 : Math.round((Number(resultY) / parentHeight) * 100),
-      //         anchor: dragEndTargetModel === 'WorkArea' ? false : widgetProps.getStyle().top.anchor,
-      //     })
-      // );
-      // ctx.getCommand()?.append(
-      //     new UpdateWidgetCommand(widgetModel, 'right', true, {
-      //         ...widgetProps.getStyle().right,
-      //         absolute:
-      //             parentWidth -
-      //             (isDefined(container) && canInsertToWidget ? 0 : resultX) -
-      //             widgetProps.getStyle().width.absolute,
-      //         relative:
-      //             100 -
-      //             (isDefined(container) && canInsertToWidget
-      //                 ? 0
-      //                 : Math.round((Number(resultX) / parentWidth) * 100) +
-      //                   widgetProps.getStyle().width.relative),
-      //         anchor: dragEndTargetModel === 'WorkArea' ? false : widgetProps.getStyle().right.anchor,
-      //     })
-      // );
-      // ctx.getCommand()?.append(
-      //     new UpdateWidgetCommand(widgetModel, 'bottom', true, {
-      //         ...widgetProps.getStyle().bottom,
-      //         absolute:
-      //             parentHeight -
-      //             (isDefined(container) && canInsertToWidget ? 0 : resultY) -
-      //             widgetProps.getStyle().height.absolute,
-      //         relative:
-      //             100 -
-      //             (isDefined(container) && canInsertToWidget
-      //                 ? 0
-      //                 : Math.round((Number(resultY) / parentHeight) * 100) +
-      //                   widgetProps.getStyle().height.relative),
-      //         anchor: dragEndTargetModel === 'WorkArea' ? false : widgetProps.getStyle().bottom.anchor,
-      //     })
-      // );
+      const updateWidgetCommand = new UpdateWidgetCommand(widgetModel, {
+        ...widgetProps,
+        style: {
+          ...widgetProps.style,
+          x: {
+            ...widgetProps.style.x,
+            value: {
+              absolute: isDefined(container) && canInsertToWidget ? 0 : resultX,
+              relative:
+                isDefined(container) && canInsertToWidget ? 0 : Math.round((Number(resultX) / parentWidth) * 100),
+              unit: widgetModel.getStyleProperties('x').unit,
+            },
+          },
+          y: {
+            ...widgetProps.style.y,
+            value: {
+              absolute: isDefined(container) && canInsertToWidget ? 0 : resultY,
+              relative:
+                isDefined(container) && canInsertToWidget ? 0 : Math.round((Number(resultY) / parentHeight) * 100),
+              unit: widgetModel.getStyleProperties('y').unit,
+            },
+          },
+          frameType: widgetProps.style.frameType,
+          left: {
+            ...widgetProps.style.left,
+            value: {
+              absolute: isDefined(container) && canInsertToWidget ? 0 : resultX,
+              relative:
+                isDefined(container) && canInsertToWidget ? 0 : Math.round((Number(resultX) / parentWidth) * 100),
+              unit: widgetModel.getStyleProperties('left').unit,
+            },
+          },
+          top: {
+            ...widgetProps.style.top,
+            value: {
+              absolute: isDefined(container) && canInsertToWidget ? 0 : resultY,
+              relative:
+                isDefined(container) && canInsertToWidget ? 0 : Math.round((Number(resultY) / parentHeight) * 100),
+              unit: widgetModel.getStyleProperties('top').unit,
+            },
+          },
+          right: {
+            ...widgetProps.style.right,
+            value: {
+              absolute:
+                parentWidth -
+                (isDefined(container) && canInsertToWidget ? 0 : resultX) -
+                widgetModel.getStyleProperties('width').absolute,
+              relative:
+                100 -
+                (isDefined(container) && canInsertToWidget
+                  ? 0
+                  : Math.round(
+                      ((Number(resultX) + widgetModel.getStyleProperties('width').relative) / parentWidth) * 100
+                    )),
+              unit: widgetModel.getStyleProperties('right').unit,
+            },
+          },
+          bottom: {
+            ...widgetProps.style.bottom,
+            value: {
+              absolute:
+                parentHeight -
+                (isDefined(container) && canInsertToWidget ? 0 : resultY) -
+                widgetModel.getStyleProperties('height').absolute,
+              relative:
+                100 -
+                (isDefined(container) && canInsertToWidget
+                  ? 0
+                  : Math.round(
+                      ((Number(resultY) + widgetModel.getStyleProperties('height').relative) / parentHeight) * 100
+                    )),
+              unit: widgetModel.getStyleProperties('bottom').unit,
+            },
+          },
+        },
+      });
+      ctx.getCommand()?.append(updateWidgetCommand);
     });
     // console.log(newParentChildPermittedRelationMap.get(desModel?.getWidgetTypeId() as number));
     // console.log(

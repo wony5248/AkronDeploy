@@ -11,6 +11,7 @@ import {
   WidgetTypeEnum,
 } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
+import PageModel from 'models/node/PageModel';
 import WidgetModel from 'models/node/WidgetModel';
 
 export type AppJson = {
@@ -139,6 +140,26 @@ class AppParser {
   }
 
   /**
+   * page가 아닌 일반 WidgetModel을 생성하는 함수입니다.
+   */
+  private createPageComponent(item: NodeJson) {
+    const { componentID, componentType, name, contentsData, stylesData } = item;
+    const contents = contentsData;
+    const styles = stylesData;
+
+    return new PageModel({
+      id: componentID,
+      widgetCategory: '',
+      widgetType: componentType as WidgetTypeEnum,
+      name: name,
+      properties: {
+        content: contents,
+        style: styles,
+      },
+    });
+  }
+
+  /**
    * node 생성 작업을 수행합니다. node 를 parent 에 append 합니다.
    */
   private onCreateNode(node: WidgetModel, ctx: AppParserContext): void {
@@ -174,7 +195,7 @@ class AppParser {
         break;
       }
       case 'Page': {
-        node = this.createComponent(item);
+        node = this.createPageComponent(item);
         break;
       }
       default: {

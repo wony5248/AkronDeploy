@@ -1,6 +1,10 @@
+import { IWidgetCommonProperties, WidgetContent, WidgetContentValue, WidgetTypeEnum } from '@akron/runner';
 import ToolPaneComponentButton from 'components/toolpane/ToolPaneComponentButton';
 import useEditorStore from 'hooks/useEditorStore';
 import { observer } from 'mobx-react-lite';
+import WidgetRepository from 'models/repository/WidgetRepository';
+import CommandEnum from 'models/store/command/common/CommandEnum';
+import { InsertWidgetCommandProps } from 'models/store/command/handler/WidgetEditCommandHandler';
 import * as React from 'react';
 import { getPropsHandler, IRibbonItemProp } from 'store/ribbon-menu/RibbonMenuComponentInfo';
 import {
@@ -43,6 +47,40 @@ const Item: React.FC<IItemProps> = observer(({ item, searchValue }: IItemProps) 
       disabled={disabled}
       selected={selected}
       onClick={(commandPropName, commandType, ...args) => {
+        console.log(commandPropName, commandType, args);
+        const commandProps: InsertWidgetCommandProps = {
+          commandID: CommandEnum.INSERT_WIDGET,
+          widgetType: commandPropName as WidgetTypeEnum,
+          widgetID: WidgetRepository.generateWidgetID(),
+          initializeProperties: defaultProperties => {
+            const tempContent: WidgetContent = {
+              className: {
+                value: '',
+                locked: true,
+              },
+            };
+
+            Object.keys(defaultProperties.content).forEach(key => {
+              const contentValues = defaultProperties.content[key];
+              tempContent[key] = {
+                // locked: contentValues.locked,
+                value: contentValues.defaultValue,
+              } as WidgetContentValue;
+            });
+
+            return {
+              ...defaultProperties,
+              content: {
+                ...defaultProperties.content,
+                ...tempContent,
+              },
+              style: {
+                ...defaultProperties.style,
+              },
+            } as IWidgetCommonProperties;
+          },
+        };
+        editorStore.handleCommandEvent(commandProps);
         // ribbonStore.onClickedRibbonButton(commandPropName, commandType, ...args);
       }}
     />

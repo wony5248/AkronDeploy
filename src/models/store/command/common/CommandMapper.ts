@@ -1,8 +1,6 @@
 import { boundMethod } from 'autobind-decorator';
 import CommandHandler from './CommandHandler';
 import CommandEnum from './CommandEnum';
-
-export interface AkronCommandMapper extends CommandMapper {}
 /**
  * CommandMapper 는 command ID 에 따라 어떤 command handler 들이 동작하는지를 정의한 class 입니다.
  * Command manager 가 command ID 를 받으면 command mapper 에서 command handler list 를 받을 수 있습니다.

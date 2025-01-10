@@ -21,7 +21,7 @@ export const widgetSelectionViewHandleSquare = css`
   z-index: 2000;
 `;
 
-export const widgetSelectionOverlay = css`
+export const pageWidgetSelection = css`
   left: 0;
   top: 0;
   width: 100%;
