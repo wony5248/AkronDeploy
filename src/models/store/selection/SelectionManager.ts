@@ -4,7 +4,7 @@ import SelectionContainer from '../container/SelectionContainer';
 import WidgetSelection from './WidgetSelection';
 import AkronContext from 'models/store/context/AkronContext';
 import WidgetModel from 'models/node/WidgetModel';
-import { isDefined } from '@akron/runner';
+import { isDefined, WidgetTypeEnum } from '@akron/runner';
 import { writeNodeState } from 'components/toolpane/TreeNodeComponent';
 import PageModel from 'models/node/PageModel';
 
@@ -159,27 +159,32 @@ export default class SelectionManager {
               while (
                 isDefined(currentWidgetModel) &&
                 currentWidgetModel?.getWidgetType() !==
-                  'Page' /*&& !checkBusinessOrPageDialogModel(currentWidgetModel)*/
+                  WidgetTypeEnum.Page /*&& !checkBusinessOrPageDialogModel(currentWidgetModel)*/
               ) {
-                writeNodeState(ctx.getAppID(), (currentWidgetModel as WidgetModel).getID(), true);
+                writeNodeState(ctx.getAppID(), currentWidgetModel.getID(), true);
                 currentWidgetModel = currentWidgetModel?.getParent();
               }
+              // treeView re-render
               ctx.getEditorUIStore().treeRerender();
               newSelectionContainer.setWidgetSelection(model);
             });
 
-            const thumbnailModels = ctx.getCommandProps()?.selectionProp?.thumbnailModels;
-            if (isDefined(thumbnailModels)) {
-              thumbnailModels?.forEach(model => {
+            const selectPageModels = ctx.getCommandProps()?.selectionProp?.selectPageModels;
+            if (isDefined(selectPageModels)) {
+              // 다중 선택
+              selectPageModels?.forEach(model => {
                 newSelectionContainer.setSelectedPage(model);
               });
+              // 화면에 보여질 페이지
               if (ctx.getCommandProps()?.selectionProp?.editingPageModel) {
                 newSelectionContainer.setEditingPage(ctx.getCommandProps()?.selectionProp?.editingPageModel);
               }
-            } else if (ctx.getCommandProps()?.selectionProp?.editingPageModel instanceof PageModel) {
+            } else if (ctx.getCommandProps()?.selectionProp?.editingPageModel) {
+              // 페이지 단일 선택
               newSelectionContainer.setEditingPage(ctx.getCommandProps()?.selectionProp?.editingPageModel);
               newSelectionContainer.setSelectedPage(ctx.getCommandProps()?.selectionProp?.editingPageModel);
             } else if (isDefined(ctx.getSelectionContainer()?.getEditingPage())) {
+              // 페이지 선택X -> 기존 페이지 유지
               newSelectionContainer.setEditingPage(ctx.getSelectionContainer()?.getEditingPage());
               newSelectionContainer.setSelectedPage(ctx.getSelectionContainer()?.getEditingPage());
             }

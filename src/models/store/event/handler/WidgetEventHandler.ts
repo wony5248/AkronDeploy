@@ -67,7 +67,7 @@ class WidgetEventHandler extends AkronEventHandler {
         return true;
       }
       const commandProps = {
-        commandID: CommandEnum.SELECT_WIDGET,
+        commandID: CommandEnum.SELECT_PAGE_THUMBNAIL,
         targetModel: hitModel,
       };
       ctx.setCommandProps(commandProps);

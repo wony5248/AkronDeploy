@@ -37,6 +37,7 @@ import { isEditAppMode, isEditWidgetMode } from 'util/AppModeUtil';
 import RenameWidgetCommand from 'models/store/command/widget/RenameWidgetCommand';
 import { WidgetStyle, Position, Length, Constraint } from 'models/widget/WidgetPropTypes';
 import { commonStyleMeta, getMetaDataByType } from 'models/util/LocalMetaData';
+import PageModel from 'models/node/PageModel';
 
 /**
  * 삽입과 동시에 속성을 특정 값으로 설정해야 할 때 사용.
@@ -966,7 +967,9 @@ class WidgetEditCommandHandler extends CommandHandler {
    */
   @boundMethod
   private createWidgetSelectionProp(ctx: AkronContext, newWidgetModel: WidgetModel): void {
-    const editingTopWidgetModel = ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getNewAppModel().getFirstChild();
+    // 셀렉트된 페이지. 없다면 첫번째 페이지
+    const editingTopWidgetModel =
+      ctx.getSelectionContainer()?.getEditingPage() ?? (ctx.getNewAppModel().getFirstChild() as PageModel);
     const selectionProp: SelectionProp = {
       selectionType: SelectionEnum.WIDGET,
       widgetModels: [newWidgetModel],
