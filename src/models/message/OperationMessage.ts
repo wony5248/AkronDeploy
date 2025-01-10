@@ -14,7 +14,7 @@ export interface OperationMessage {
   nextId?: number | null;
   childId?: number | null;
   elementType: ContentType;
-  behavior: Behavior;
+  behavior?: Behavior;
   contentData?: string;
   oldPrevId?: number;
   oldParentId?: number;

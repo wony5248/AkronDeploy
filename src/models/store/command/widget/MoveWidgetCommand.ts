@@ -118,14 +118,10 @@ class MoveWidgetCommand extends SimpleCommand {
    */
   @boundMethod
   public override makeApplyUpdateMessage(): IOperationMessage[] | undefined {
-    const updateRelationMessage = this.target.makeOperationMessage() as IOperationMessage;
+    const updateRelationMessage = (this.target.makeOperationMessage('ue') as IOperationMessage[])[0];
     updateRelationMessage.parentId = this.destParent.getID();
-    updateRelationMessage.prevId = this.destPrevSibling?.getID();
     updateRelationMessage.nextId = this.destNextSibling?.getID();
-    updateRelationMessage.oldParentId = this.depParent.getID();
-    updateRelationMessage.behavior = 'ue';
     updateRelationMessage.elementType = ContentType.COMPONENT;
-    updateRelationMessage.objectType = ObjectType.DEFAULT;
     return [updateRelationMessage];
   }
 
@@ -134,14 +130,10 @@ class MoveWidgetCommand extends SimpleCommand {
    */
   @boundMethod
   public override makeUnApplyUpdateMessage(): IOperationMessage[] | undefined {
-    const updateRelationMessage = this.target.makeOperationMessage() as IOperationMessage;
+    const updateRelationMessage = (this.target.makeOperationMessage('ue') as IOperationMessage[])[0];
     updateRelationMessage.parentId = this.depParent.getID();
-    updateRelationMessage.prevId = this.depPrevSibling?.getID();
     updateRelationMessage.nextId = this.depNextSibling?.getID();
-    updateRelationMessage.oldParentId = this.destParent.getID();
-    updateRelationMessage.behavior = 'ue';
     updateRelationMessage.elementType = ContentType.COMPONENT;
-    updateRelationMessage.objectType = ObjectType.DEFAULT;
     return [updateRelationMessage];
   }
 

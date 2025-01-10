@@ -1,4 +1,12 @@
-import { dError, isDefined, isUndefined, Nullable, WidgetTypeEnum } from '@akron/runner';
+import {
+  dError,
+  isDefined,
+  isUndefined,
+  IWidgetContentProperties,
+  IWidgetStyleProperties,
+  Nullable,
+  WidgetTypeEnum,
+} from '@akron/runner';
 import WidgetModel from 'models/node/WidgetModel';
 import CommandEnum from 'models/store/command/common/CommandEnum';
 import RemoveWidgetCommand from 'models/store/command/widget/RemoveWidgetCommand';
@@ -339,4 +347,14 @@ export function clearWidgetModelEditContext(ctx: AkronContext): void {
     }
   });
   selectionContainer?.clearFloatingWidgetModels();
+}
+
+export function getPropertyKeys(properties: IWidgetContentProperties | IWidgetStyleProperties) {
+  const keys = [];
+  for (const key in properties) {
+    if (isDefined(properties.key)) {
+      keys.push(key);
+    }
+  }
+  return keys;
 }

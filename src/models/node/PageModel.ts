@@ -2,9 +2,10 @@ import { IWidgetCommonProperties } from '@akron/runner';
 import { makeObservable } from 'mobx';
 import WidgetModel, { IWidgetModelInitProps } from 'models/node/WidgetModel';
 
-// interface PageModelInitProps extends IWidgetModelInitProps<null> {}
+interface PageModelInitProps extends IWidgetModelInitProps<IWidgetCommonProperties> {}
 
 class PageModel extends WidgetModel<IWidgetCommonProperties> {
+  protected pageSize: any;
   /**
    * 생성자
    */
