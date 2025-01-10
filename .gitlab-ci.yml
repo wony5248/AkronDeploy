@@ -1,0 +1,25 @@
+stages:
+    - libs
+    - build
+
+npm:
+    stage: libs
+    only:
+        - master
+    cache:
+        paths:
+            - node_modules
+        script:
+            - npm install
+
+build:
+    stage: build
+    only:
+        - master
+    cache:
+        paths:
+            - dist
+        script:
+            - npm run build
+        tags:
+            - akron-client
