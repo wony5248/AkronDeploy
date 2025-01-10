@@ -6,6 +6,7 @@ import {
   DeepReadonly,
   WidgetTypeEnum,
   WidgetEditingState,
+  IWidgetStyleProperties,
 } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { runInAction } from 'mobx';
@@ -40,6 +41,7 @@ import { WidgetStyle, Position, Length, Constraint } from 'models/widget/WidgetP
 import { commonStyleMeta, getMetaDataByType } from 'models/util/LocalMetaData';
 import PageModel from 'models/node/PageModel';
 import MoveWidgetCommand from 'models/store/command/widget/MoveWidgetCommand';
+import { applyStyleByEditingState } from 'util/WidgetEditUtil';
 
 /**
  * 삽입과 동시에 속성을 특정 값으로 설정해야 할 때 사용.
@@ -994,6 +996,7 @@ class WidgetEditCommandHandler extends CommandHandler {
     const appModeContainer = ctx.getAppModeContainer();
     const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
     const { targetModels } = props;
+    const idContainerController = ctx.getIdContainerController();
     const editingWidgetModel = ctx.getEditingWidgetModel();
     const selectionContainer = ctx.getSelectionContainer();
     const zoomRatio = ctx.getZoomRatio() / 100;
@@ -1001,53 +1004,28 @@ class WidgetEditCommandHandler extends CommandHandler {
       return;
     }
 
+    const editingPage = isEditAppMode(appModeContainer) ? selectionContainer.getEditingPage() : editingWidgetModel;
+
+    if (isUndefined(editingPage)) {
+      return;
+    }
+
     selectionContainer.setFloatingWidgetModels(
       targetModels.map(widgetModel => {
-        const copiedWidgetModel = widgetModel.cloneNode(ctx.getIdContainerController());
+        const copiedWidgetModel = widgetModel.cloneNode(idContainerController);
+        copiedWidgetModel.setProperties({
+          ...copiedWidgetModel.getProperties(),
+        });
         copiedWidgetModel.setEditingState(WidgetEditingState.FLOATING);
-        const targetRefWidth = widgetModel.getRefStyle()?.width;
-        const targetRefHeight = widgetModel.getRefStyle()?.height;
-        const targetRefLeft = widgetModel.getRefStyle()?.left;
-        const targetRefTop = widgetModel.getRefStyle()?.top;
-        const targetRefWidthToPx =
-          targetRefWidth !== undefined ? Number(targetRefWidth.slice(0, targetRefWidth.length - 2)) : 0;
-        const targetRefHeightToPx =
-          targetRefHeight !== undefined ? Number(targetRefHeight.slice(0, targetRefHeight.length - 2)) : 0;
-        // copiedWidgetModel.getProperties().forEach((prop, propId) => {
-        //   if (prop.propMeta.name === 'width') {
-        //     prop.value = targetRefWidthToPx;
-        //   } else if (prop.propMeta.name === 'height') {
-        //     prop.value = targetRefHeightToPx;
-        //   }
-        // });
-        const widgetX = widgetModel.getRefX();
-        // const parentX = parent?.getRefX();
-        const leftValue = widgetX !== undefined ? widgetX : 0;
 
-        const widgetY = widgetModel.getRefY();
-        // const parentY = parent?.getRefY();
-        const topValue = widgetY !== undefined ? widgetY : 0;
-
-        // copiedWidgetModel.setPosition({
-        //   left: { value: leftValue / zoomRatio, unit: 'px' },
-        //   top: { value: topValue / zoomRatio, unit: 'px' },
-        // });
-        widgetEditInfoContainer.setEditingFloatingWidget(copiedWidgetModel, widgetModel);
-
-        const refPosition = {
-          x: leftValue / zoomRatio,
-          y: topValue / zoomRatio,
-          width: targetRefWidthToPx,
-          height: targetRefHeightToPx,
-        };
-        widgetEditInfoContainer.setRefPositionMap(copiedWidgetModel, refPosition);
-
+        copiedWidgetModel.append(editingPage);
         return copiedWidgetModel;
       })
     );
     // editingState 변경
     targetModels.forEach(targetWidgetModel => {
       targetWidgetModel.setEditingState(WidgetEditingState.RESIZE);
+      applyStyleByEditingState(targetWidgetModel);
     });
 
     widgetEditInfoContainer.setEditingState(WidgetEditingState.RESIZE);
@@ -1091,7 +1069,7 @@ class WidgetEditCommandHandler extends CommandHandler {
    * Bound 관련 style 계산
    */
   private calculateStyle(
-    widgetStyle: WidgetStyle,
+    widgetModel: WidgetModel,
     resizeHandle: WidgetResizeHandle,
     refPosition: WidgetPosition,
     deltaWidth: number,
@@ -1102,173 +1080,156 @@ class WidgetEditCommandHandler extends CommandHandler {
     pageModelHeight: number,
     parentWidth: number,
     parentHeight: number
-  ) {
-    const x: Position = isVerticalCenterHandle(resizeHandle)
+  ): IWidgetStyleProperties {
+    const x = isVerticalCenterHandle(resizeHandle)
       ? {
-          ...widgetStyle.x,
+          ...widgetModel.getProperties().style.x,
         }
       : {
-          ...widgetStyle.x,
-          absolute: this.calculateX(resizeHandle, refPosition, deltaWidth, deltaX),
-          relative: this.calculateRelativePosition(
-            this.calculateX(resizeHandle, refPosition, deltaWidth, deltaX),
-            parentWidth
-          ),
-        };
-
-    const y: Position = isHorizontalCenterHandle(resizeHandle)
-      ? {
-          ...widgetStyle.y,
-        }
-      : {
-          ...widgetStyle.y,
-          absolute: this.calculateY(resizeHandle, refPosition, deltaHeight, deltaY),
-          relative: this.calculateRelativePosition(
-            this.calculateY(resizeHandle, refPosition, deltaHeight, deltaY),
-            parentHeight
-          ),
-        };
-
-    const width: Length = isVerticalCenterHandle(resizeHandle)
-      ? {
-          ...widgetStyle.width,
-        }
-      : {
-          ...widgetStyle.width,
-          absolute: refPosition.width * deltaWidth,
-          relative: ((refPosition.width * deltaWidth) / pageModelWidth) * 100,
-          type: widgetStyle.width.type === 'relative' ? 'relative' : 'absolute',
-          unit: widgetStyle.width.type === 'relative' ? '%' : 'px',
-        };
-
-    const height: Length = isHorizontalCenterHandle(resizeHandle)
-      ? {
-          ...widgetStyle.height,
-        }
-      : {
-          ...widgetStyle.height,
-          absolute: refPosition.height * deltaHeight,
-          relative: ((refPosition.height * deltaHeight) / pageModelHeight) * 100,
-          type: widgetStyle.height.type === 'relative' ? 'relative' : 'absolute',
-          unit: widgetStyle.height.type === 'relative' ? '%' : 'px',
-        };
-
-    const { frameType } = widgetStyle;
-
-    const left: Constraint = isVerticalCenterHandle(resizeHandle)
-      ? {
-          ...widgetStyle.left,
-        }
-      : {
-          ...widgetStyle.left,
-          absolute: this.calculateX(resizeHandle, refPosition, deltaWidth, deltaX),
-          relative: this.calculateRelativePosition(
-            this.calculateX(resizeHandle, refPosition, deltaWidth, deltaX),
-            parentWidth
-          ),
-        };
-
-    const top: Constraint = isHorizontalCenterHandle(resizeHandle)
-      ? {
-          ...widgetStyle.top,
-        }
-      : {
-          ...widgetStyle.top,
-          absolute: this.calculateY(resizeHandle, refPosition, deltaHeight, deltaY),
-          relative: this.calculateRelativePosition(
-            this.calculateY(resizeHandle, refPosition, deltaHeight, deltaY),
-            parentHeight
-          ),
-        };
-
-    const right: Constraint = isVerticalCenterHandle(resizeHandle)
-      ? {
-          ...widgetStyle.right,
-        }
-      : {
-          ...widgetStyle.right,
-          absolute:
-            parentWidth -
-            this.calculateX(resizeHandle, refPosition, deltaWidth, deltaX) -
-            refPosition.width * deltaWidth,
-          relative:
-            100 -
-            this.calculateRelativePosition(
+          ...widgetModel.getProperties().style.x,
+          value: {
+            absolute: this.calculateX(resizeHandle, refPosition, deltaWidth, deltaX),
+            relative: this.calculateRelativePosition(
               this.calculateX(resizeHandle, refPosition, deltaWidth, deltaX),
               parentWidth
-            ) -
-            ((refPosition.width * deltaWidth) / parentWidth) * 100,
+            ),
+            unit: widgetModel.getStyleProperties('x').unit,
+          },
         };
 
-    const bottom: Constraint = isHorizontalCenterHandle(resizeHandle)
+    const y = isHorizontalCenterHandle(resizeHandle)
       ? {
-          ...widgetStyle.bottom,
+          ...widgetModel.getProperties().style.y,
         }
       : {
-          ...widgetStyle.bottom,
-          absolute:
-            parentHeight -
-            this.calculateY(resizeHandle, refPosition, deltaHeight, deltaY) -
-            refPosition.height * deltaHeight,
-          relative:
-            100 -
-            this.calculateRelativePosition(
+          ...widgetModel.getProperties().style.y,
+          value: {
+            absolute: this.calculateY(resizeHandle, refPosition, deltaHeight, deltaY),
+            relative: this.calculateRelativePosition(
               this.calculateY(resizeHandle, refPosition, deltaHeight, deltaY),
               parentHeight
-            ) -
-            ((refPosition.height * deltaHeight) / parentHeight) * 100,
+            ),
+            unit: widgetModel.getStyleProperties('y').unit,
+          },
         };
 
-    return {
-      style: {
-        x,
-        y,
-        width,
-        height,
-        frameType,
-        left,
-        top,
-        right,
-        bottom,
-      },
+    const width = isVerticalCenterHandle(resizeHandle)
+      ? {
+          ...widgetModel.getProperties().style.width,
+        }
+      : {
+          ...widgetModel.getProperties().style.width,
+          value: {
+            absolute: refPosition.width * deltaWidth,
+            relative: ((refPosition.width * deltaWidth) / pageModelWidth) * 100,
+            unit: widgetModel.getStyleProperties('width').unit,
+          },
+        };
+
+    const height = isHorizontalCenterHandle(resizeHandle)
+      ? {
+          ...widgetModel.getProperties().style.height,
+        }
+      : {
+          ...widgetModel.getProperties().style.height,
+          value: {
+            absolute: refPosition.height * deltaHeight,
+            relative: ((refPosition.height * deltaHeight) / pageModelHeight) * 100,
+            unit: widgetModel.getStyleProperties('height').unit,
+          },
+        };
+
+    const frameType = widgetModel.getProperties().style.frameType;
+
+    const left = isVerticalCenterHandle(resizeHandle)
+      ? {
+          ...widgetModel.getProperties().style.left,
+        }
+      : {
+          ...widgetModel.getProperties().style.left,
+          value: {
+            absolute: this.calculateX(resizeHandle, refPosition, deltaWidth, deltaX),
+            relative: this.calculateRelativePosition(
+              this.calculateX(resizeHandle, refPosition, deltaWidth, deltaX),
+              parentWidth
+            ),
+            unit: widgetModel.getStyleProperties('left').unit,
+          },
+        };
+
+    const top = isHorizontalCenterHandle(resizeHandle)
+      ? {
+          ...widgetModel.getProperties().style.top,
+        }
+      : {
+          ...widgetModel.getProperties().style.top,
+          value: {
+            absolute: this.calculateY(resizeHandle, refPosition, deltaHeight, deltaY),
+            relative: this.calculateRelativePosition(
+              this.calculateY(resizeHandle, refPosition, deltaHeight, deltaY),
+              parentHeight
+            ),
+            unit: widgetModel.getStyleProperties('top').unit,
+          },
+        };
+
+    const right = isVerticalCenterHandle(resizeHandle)
+      ? {
+          ...widgetModel.getProperties().style.right,
+        }
+      : {
+          ...widgetModel.getProperties().style.right,
+          value: {
+            absolute:
+              parentWidth -
+              this.calculateX(resizeHandle, refPosition, deltaWidth, deltaX) -
+              refPosition.width * deltaWidth,
+            relative:
+              100 -
+              this.calculateRelativePosition(
+                this.calculateX(resizeHandle, refPosition, deltaWidth, deltaX),
+                parentWidth
+              ) -
+              ((refPosition.width * deltaWidth) / parentWidth) * 100,
+            unit: widgetModel.getStyleProperties('right').unit,
+          },
+        };
+
+    const bottom = isHorizontalCenterHandle(resizeHandle)
+      ? {
+          ...widgetModel.getProperties().style.bottom,
+        }
+      : {
+          ...widgetModel.getProperties().style.bottomv,
+          value: {
+            absolute:
+              parentHeight -
+              this.calculateY(resizeHandle, refPosition, deltaHeight, deltaY) -
+              refPosition.height * deltaHeight,
+            relative:
+              100 -
+              this.calculateRelativePosition(
+                this.calculateY(resizeHandle, refPosition, deltaHeight, deltaY),
+                parentHeight
+              ) -
+              ((refPosition.height * deltaHeight) / parentHeight) * 100,
+            unit: widgetModel.getStyleProperties('bottom').unit,
+          },
+        };
+
+    const calcStyle: IWidgetStyleProperties = {
+      x,
+      y,
+      width,
+      height,
+      frameType,
+      left,
+      top,
+      right,
+      bottom,
     };
-  }
 
-  /**
-   * Bound 관련 style 계산
-   */
-  private calculateNewStyle(
-    widgetRefStyle: WidgetPosition | undefined,
-    deltaWidth: number,
-    deltaHeight: number,
-    deltaX: number,
-    deltaY: number
-  ) {
-    if (widgetRefStyle === undefined) {
-      return undefined;
-    }
-
-    const leftValue = widgetRefStyle.x ?? 0;
-
-    const topValue = widgetRefStyle.y ?? 0;
-
-    const widthValue = widgetRefStyle.width ?? 0;
-
-    const heightValue = widgetRefStyle.height ?? 0;
-
-    const left = leftValue + deltaX;
-    const top = topValue + deltaY;
-    const width = widthValue * deltaWidth;
-    const height = heightValue * deltaHeight;
-
-    return {
-      style: {
-        left,
-        top,
-        width,
-        height,
-      },
-    };
+    return calcStyle;
   }
 
   /**
@@ -1278,135 +1239,80 @@ class WidgetEditCommandHandler extends CommandHandler {
   private resizeWidgetEnd(ctx: AkronContext, props: WidgetResizeEndCommandProps): void {
     const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
     const command = ctx.getCommand();
-    const selectionContainer = ctx.getSelectionContainer();
+    const { targetModels: widgetModels, deltaX, deltaY, deltaWidth, deltaHeight } = props;
 
-    if (selectionContainer === undefined) {
+    const resizeHandle = widgetEditInfoContainer.getResizeHandle();
+
+    const isPage = widgetModels.find(widgetModel => checkPageModel(widgetModel)) !== undefined;
+    if (isPage) {
       return;
     }
 
-    const { targetModels: widgetModels, deltaX, deltaY, deltaWidth, deltaHeight } = props;
-    const models = selectionContainer.getSelectedWidgets(); // [widgetModelDemo, widgetModelDemo2, widgetModelDemo3];
-    // const model = widgetModelDemo;
-    const resizeHandle = widgetEditInfoContainer.getResizeHandle();
-
-    // const isPage = models.find(widgetModel => checkPageModel(widgetModel)) !== undefined;
-    // if (isPage) {
-    //   return;
-    // }
-    if (command === undefined) {
+    if (isUndefined(command)) {
       dError('command is not exist');
       return;
     }
 
-    models.forEach(widgetModel => {
+    const page = ctx.getSelectionContainer()?.getEditingPage();
+    if (isUndefined(page)) {
+      return;
+    }
+    const pageModelWidth = page.getStyleProperties('width').absolute;
+    const pageModelHeight = page.getStyleProperties('height').absolute;
+
+    ctx
+      .getSelectionContainer()
+      ?.getFloatingWidgetModels()
+      .forEach(floatingWidgetModel => {
+        const parent = floatingWidgetModel.getParent();
+        if (isDefined(parent)) {
+          floatingWidgetModel.remove(parent);
+        }
+      });
+    ctx.getSelectionContainer()?.clearFloatingWidgetModels();
+
+    widgetModels.forEach(widgetModel => {
       // editingState 변경
       widgetModel.setEditingState(WidgetEditingState.NONE);
-
-      // style 변경용 Command 생성
-      const widgetProps = widgetModel.getProperties();
-
-      // const targetFloatingModel = widgetEditInfoContainer.getEditingFloatingWidget(widgetModel);
-
-      // if (isUndefined(targetFloatingModel)) {
-      //   return;
-      // }
-      // const refPositionMap = widgetEditInfoContainer.getRefPositionMap(targetFloatingModel);
-
-      // const widgetStyle = widgetProps.getStyle();
+      applyStyleByEditingState(widgetModel);
 
       // parent의 absolute 값으로 relative 계산
-      // const parentWidget = widgetModel.getParent();
-      // if (!parentWidget) {
-      //   return;
-      // }
-
-      // const updatedStyle = this.calculateNewStyle(refPositionMap, deltaWidth, deltaHeight, deltaX, deltaY);
-
-      // if (updatedStyle === undefined) {
-      //   return;
-      // }
-
-      // 임시 포지션
-      // const position = widgetModel.getPosition();
-      let newLeft;
-      let leftUnit = 'px';
-      let newTop;
-      let topUnit = 'px';
-
-      if (deltaX !== 0) {
-        newLeft = deltaX;
+      const parentWidget = widgetModel.getParent();
+      if (!parentWidget) {
+        return;
       }
+      const parentWidth = parentWidget.getStyleProperties('width').absolute;
+      const parentHeight = parentWidget.getStyleProperties('height').absolute;
 
-      if (deltaY !== 0) {
-        newTop = deltaY;
-      }
+      const refPosition = widgetEditInfoContainer.getRefPositionMap(widgetModel) ?? {
+        x: widgetModel.getStyleProperties('x').absolute,
+        y: widgetModel.getStyleProperties('y').absolute,
+        width: widgetModel.getStyleProperties('width').absolute,
+        height: widgetModel.getStyleProperties('height').absolute,
+      };
 
-      // dialog의 경우 내부에서 absolute로 위치하기 때문에 부모 position을 반영한 후처리가 필요
-      // if (checkDialogFrameWidget(parentWidget) && newLeft && newTop) {
-      //   const parentPosition = (parentWidget as WidgetModel).getPosition();
-      //   // gx에서 string으로 된 position이 없음
-      //   const parentLeft = typeof parentPosition.left === 'string' ? 0 : parentPosition.left.value;
-      //   const parentTop = typeof parentPosition.top === 'string' ? 0 : parentPosition.top.value;
+      const updatedStyle = this.calculateStyle(
+        widgetModel,
+        resizeHandle,
+        refPosition,
+        deltaWidth,
+        deltaHeight,
+        deltaX,
+        deltaY,
+        pageModelWidth,
+        pageModelHeight,
+        parentWidth,
+        parentHeight
+      );
 
-      //   newLeft -= parentLeft;
-      //   newTop -= parentTop;
-      // }
-
-      // command화 필요
-      // const newPosition = {
-      //   left: newLeft !== undefined ? { value: newLeft, unit: leftUnit } : position.left,
-      //   top: newTop !== undefined ? { value: newTop, unit: topUnit } : position.top,
-      // };
-      const updateWidgetCommand = new UpdateWidgetCommand(widgetModel, widgetProps);
-      command.append(updateWidgetCommand);
-      // for (const [key, value] of Object.entries(updatedStyle.style)) {
-      //     const updateWidgetCommand = new UpdateWidgetCommand(widgetModel, key, true, value);
-      //     command.append(updateWidgetCommand);
-      // }
-
-      // width,height setting
-      const width = widgetModel.getRefWidth();
-      const height = widgetModel.getRefHeight();
-      const newWidth = { value: width, unit: width };
-      const newHeight = { value: height, unit: height };
-      // switch (width?.unit) {
-      //   case 'px':
-      //     newWidth.value = updatedStyle.style.width;
-      //     break;
-      //   case '%':
-      //     newWidth.value = (updatedStyle.style.width / parentWidth) * 100;
-      //     break;
-      //   case 'auto':
-      //     newWidth.value = updatedStyle.style.width;
-      //     newWidth.unit = 'px';
-      //     break;
-      //   default:
-      //     break;
-      // }
-      // switch (height?.unit) {
-      //   case 'px':
-      //     newHeight.value = updatedStyle.style.height;
-      //     break;
-      //   case '%':
-      //     newHeight.value = (updatedStyle.style.height / parentHeight) * 100;
-      //     break;
-      //   case 'auto':
-      //     newHeight.value = updatedStyle.style.height;
-      //     newHeight.unit = 'px';
-      //     break;
-      //   default:
-      //     break;
-      // }
-      const updateSizeCommand = new UpdateWidgetCommand(widgetModel, {
-        style: {
-          width: { value: newWidth, defaultValue: newWidth, variableId: 0 },
-          height: { value: newHeight, defaultValue: newHeight, variableId: 0 },
-        },
-        content: {},
+      const updateWidgetCommand = new UpdateWidgetCommand(widgetModel, {
+        content: widgetModel.getProperties().content,
+        style: { ...widgetModel.getProperties().style, ...updatedStyle },
       });
-      command.append(updateSizeCommand);
-      // updatePinnedChildren(widgetModel, Number(newWidth.value), Number(newHeight.value), ctx);
+
+      command.append(updateWidgetCommand);
     });
+
     runInAction(() => {
       ctx.setMouseMode('Normal');
     });
@@ -1638,6 +1544,7 @@ class WidgetEditCommandHandler extends CommandHandler {
         ...curProps,
       });
       widgetModel.setEditingState(WidgetEditingState.MOVE);
+      applyStyleByEditingState(widgetModel);
     });
     widgetEditInfoContainer.setEditingState(WidgetEditingState.MOVE);
   }
@@ -1681,6 +1588,7 @@ class WidgetEditCommandHandler extends CommandHandler {
       const canInsertToWidget = checkInsertableItem(container, widgetModel);
 
       widgetModel.setEditingState(WidgetEditingState.NONE);
+      applyStyleByEditingState(widgetModel);
 
       const refPositionMap = widgetEditInfoContainer.getRefPositionMap(widgetModel);
 
