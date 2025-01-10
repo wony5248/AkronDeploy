@@ -1,4 +1,4 @@
-import { BaseWidgetModel, Nullable } from '@akron/runner';
+import { Nullable } from '@akron/runner';
 import WidgetModel from 'models/node/WidgetModel';
 import WidgetEditInfoContainer, { DragState, DragScrollState } from 'models/store/container/WidgetEditInfoContainer';
 import AkronContext from 'models/store/context/AkronContext';
@@ -148,7 +148,7 @@ export function isWidgetInSelectionGuideBox(widget: WidgetModel, selectionGuideB
 /**
  * viewport 이동이 가능한지 판별하는 함수
  */
-export function moveViewPortPossible(widgetModel: BaseWidgetModel): boolean {
+export function moveViewPortPossible(widgetModel: WidgetModel): boolean {
   if (widgetModel instanceof WidgetModel) {
     let currentModel: Nullable<WidgetModel> = widgetModel;
     let returnValue = true;

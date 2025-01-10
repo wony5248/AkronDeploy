@@ -3,6 +3,7 @@ import {
   dWarn,
   isDefined,
   isNotNull,
+  isNull,
   isUndefined,
   IWidgetContentProperties,
   IWidgetStyleProperties,
@@ -101,7 +102,7 @@ class AppParser {
 
     return {
       contents: contents,
-      id: items[0].appID,
+      id: 0,
     } as AppParserContext;
   }
 
@@ -223,7 +224,7 @@ class AppParser {
   }
 
   private parse() {
-    if (!this.ctx.id) {
+    if (isUndefined(this.ctx.id) || isNull(this.ctx.id)) {
       dWarn(`AppParser: ctx.id is ${this.ctx.id}.`);
       return;
     }

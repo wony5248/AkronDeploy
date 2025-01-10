@@ -8,9 +8,12 @@ import {
 } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { action, makeObservable, observable, override } from 'mobx';
+import { Behavior } from 'models/message/OperationMessage';
 import { IOperationMessage } from 'models/message/OperationMessageType';
 import { ContentType, WidgetEditingState } from 'models/store/command/widget/WidgetModelTypes';
 import IdContainerController from 'models/store/container/IdContainerController';
+import { makeInstanceMessageRecursive, makeRelationMessageRecursive } from 'util/WidgetMessageUtil';
+import { getPropertyKeys } from 'util/WidgetUtil';
 
 export type WidgetID = number;
 
@@ -452,7 +455,7 @@ class WidgetModel<
   }
 
   public getContentType(): ContentType {
-    return ContentType.INVALID;
+    return ContentType.COMPONENT;
   }
 
   /**
@@ -501,20 +504,112 @@ class WidgetModel<
   }
 
   /**
-   * Operation Message를 생성합니다.
+   * 컴포넌트 삽입, relation update시 사용되는 Message 생성 api
    */
   @boundMethod
-  public makeOperationMessage(): Nullable<IOperationMessage> {
+  public makeOperationMessage(behavior: Behavior): Nullable<IOperationMessage[]> {
+    if (behavior === 'ie') {
+      const relationMessage = this.makeRelationMessages(behavior);
+      const instanceMessage = this.makeInstanceMessages(behavior);
+      const contentMessage = this.makeContentMessage();
+      const styleMessage = this.makeStyleMessage();
+      return [...relationMessage, ...instanceMessage, ...contentMessage, ...styleMessage];
+    }
+    const relationMessage = this.makeRelationMessage(behavior);
+    return [relationMessage];
+  }
+
+  /**
+   * Model 하위가 전체 바뀌는 경우를 위한 재귀 Relation Message 생성
+   */
+  @boundMethod
+  public makeRelationMessages(behavior: Behavior): IOperationMessage[] {
+    const messages = new Array<IOperationMessage>();
+    messages.push(...makeRelationMessageRecursive(this, behavior));
+    return messages;
+  }
+
+  /**
+   * Model 1개의 변경에서 사용되는 Relation Message 생성
+   */
+  @boundMethod
+  public makeRelationMessage(behavior: Behavior): IOperationMessage {
     return {
       elementId: this.getID(),
+      elementType: this.getContentType(),
       parentId: this.getParent()?.getID(),
-      prevId: this.getPrevSibling()?.getID(),
       nextId: this.getNextSibling()?.getID(),
       childId: this.getFirstChild()?.getID(),
-      elementType: this.getContentType(),
-      objectType: 1,
-      // contentData: this.getContentJsonString(),
+      behavior: behavior,
     };
+  }
+
+  /**
+   * Model 하위가 전체 Instance 변경시 사용되는 Message 생성
+   */
+  @boundMethod
+  public makeInstanceMessages(behavior: Behavior): IOperationMessage[] {
+    const messages = new Array<IOperationMessage>();
+    messages.push(...makeInstanceMessageRecursive(this, behavior));
+    return messages;
+  }
+
+  /**
+   * Model 1개의 Instance 변경에서 사용되는 Message 생성
+   */
+  @boundMethod
+  public makeInstanceMessage(behavior: Behavior): IOperationMessage {
+    return {
+      elementId: this.getID(),
+      elementType: ContentType.COMPONENT,
+      componentType: this.getWidgetType(),
+      name: this.getName(),
+      locked: false, // 필드 추가해야함
+      hidden: false, // 필드 추가해야함
+      behavior: behavior,
+    };
+  }
+
+  /**
+   * 컴포넌트 삽입시, Content Property Message를 생성합니다.
+   */
+  private makeContentMessage(): IOperationMessage[] {
+    const contentKeys = getPropertyKeys(this.getProperties().style);
+    const messageList: IOperationMessage[] = [];
+
+    contentKeys.map(contentKey => {
+      return {
+        elementId: this.getID(),
+        elementType: ContentType.COMPONENT_CONTENT,
+        objectType: 1,
+        behavior: 'ie',
+        key: contentKey,
+        value: this.getProperties().style[contentKey].value,
+      } as IOperationMessage;
+    });
+
+    return messageList;
+  }
+
+  /**
+   * 컴포넌트 삽입시, Style Property Message를 생성합니다.
+   */
+  private makeStyleMessage(): IOperationMessage[] {
+    const styleKeys = getPropertyKeys(this.getProperties().style);
+    const messageList: IOperationMessage[] = [];
+
+    styleKeys.map(styleKey => {
+      return {
+        elementId: this.getID(),
+        elementType: ContentType.COMPONENT_STYLE,
+        objectType: 1,
+        behavior: 'ie',
+        key: styleKey,
+        value: this.getProperties().style[styleKey].value,
+      } as IOperationMessage;
+    });
+
+    return messageList;
   }
 }
 

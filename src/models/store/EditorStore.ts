@@ -9,14 +9,14 @@ import SelectionManager from 'models/store/selection/SelectionManager';
 import EditorUIStore from 'store/app/EditorUIStore';
 import TooltipStore from 'store/tooltip/TooltipStore';
 import WidgetLayerContainer from 'models/widget/WidgetLayerContainer';
-import WidgetCommandProps, { SelectionProp } from 'models/store/command/widget/WidgetCommandProps';
+import WidgetCommandProps from 'models/store/command/widget/WidgetCommandProps';
 import AppModeContainer, { AppModeType } from 'models/store/container/AppModeContainer';
 import AppModel from 'models/node/AppModel';
 import ContextMenuContainer from 'store/context-menu/ContextMenuContainer';
 import AkronContext from 'models/store/context/AkronContext';
 import EventState from 'models/store/event/EventState';
 import { LeftToolPaneType } from 'store/toolpane/ToolPaneComponentInfo';
-import { BaseWidgetModel, isUndefined, Nullable } from '@akron/runner';
+import { BaseWidgetModel, Nullable } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { AppInfo } from 'store/app/AppInfo';
 import CompositeComponentContainer from 'models/store/container/CompositeComponentContainer';
@@ -24,7 +24,6 @@ import WidgetModel from 'models/node/WidgetModel';
 import CommandEnum from 'models/store/command/common/CommandEnum';
 import AppParser, { AppJson } from 'models/parser/AppParser';
 import { defaultDeviceInfo, DeviceInfo } from 'util/DeviceUtil';
-import CommandHandlerFactory from 'models/store/command/factory/CommandHandlerFactory';
 
 /**
  * Editor Store 생성자 파라미터 Interface 입니다.
@@ -271,7 +270,6 @@ class EditorStore {
    */
   @boundMethod
   public sendUpdateMessage(): void {
-    const ctx = this.getCtxAsAppContext();
     const updateMessageContainer = this.ctx.getUpdateMessageContainer();
 
     if (this.saveTimerId) {
@@ -285,7 +283,6 @@ class EditorStore {
     ) {
       if (this.getSaveState() === SaveState.SAVE_COMPLETE) {
         updateMessageContainer.setTransformed(true);
-        console.log(global);
         this.saveTimerId = setTimeout(() => {
           this.setSaveState(SaveState.SAVING);
           this.handleSave({ commandID: CommandEnum.SAVE });
@@ -324,10 +321,7 @@ class EditorStore {
       return;
     }
 
-    const ctxAs = this.getCtxAsAppContext();
-    const id = ctxAs.getAppID();
-
-    updateMessageContainer.appendUpdateMessages(updateMessages, id);
+    updateMessageContainer.appendUpdateMessages(updateMessages);
   }
 
   /**

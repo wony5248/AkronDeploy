@@ -1,14 +1,10 @@
 import { isDefined, dLog, dError, Nullable, IWidgetCommonProperties } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
-import { AxiosResponse } from 'axios';
 import API from 'models/API/API';
 import { IOperationMessage } from 'models/message/OperationMessageType';
-import UpdateMessage from 'models/message/UpdateMessage';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
 import { AppJson, NodeJson } from 'models/parser/AppParser';
-import { APIMessage } from 'models/store/container/UpdateMessageContainer';
-import AkronContext from 'models/store/context/AkronContext';
-import { SaveState } from 'models/store/EditorStore';
+import { UpdateMessage } from 'models/store/container/UpdateMessageContainer';
 import { HandlerID, ChainID } from 'models/widget/WidgetPropTypes';
 import { AppType } from 'store/app/AppInfo';
 import { DeviceInfo } from 'util/DeviceUtil';
@@ -23,6 +19,11 @@ export interface IUserDTO {
   position?: string;
   phoneNumber?: string;
   email?: string;
+}
+
+export interface UpdateMessageDTO {
+  appId: number;
+  updateMessages: UpdateMessage[];
 }
 
 /**
@@ -481,86 +482,8 @@ class AppRepository {
    * FormData를 생성하여 서버로 POST합니다.
    */
   @boundMethod
-  public async sendUpdateMessage(ctx: AkronContext): Promise<UpdateResult> {
-    const updateMessageContainer = ctx.getUpdateMessageContainer();
-    // FormData for Request
-    const formData = new FormData();
-
-    // Append documentContent
-    const updateMessages = updateMessageContainer.getUpdateMessages() as IOperationMessage[];
-    const apiMessages = updateMessageContainer.getAPIMessages();
-    const newContentsMessages = new Array<ContentMessageLog>();
-    let reSaveMessage = '';
-    let executeApiMessages: Array<APIMessage> = [];
-
-    if (ctx.getSaveState() === SaveState.RESAVING) {
-      reSaveMessage = updateMessageContainer.getReUpdateMessages();
-      formData.append('appContent', reSaveMessage);
-      executeApiMessages = updateMessageContainer.getReExecuteAPIMessages();
-    } else {
-      ctx.setNeedSaveState(false);
-      if (updateMessages) {
-        formData.append('appContent', JSON.stringify(newContentsMessages));
-        updateMessageContainer.clearUpdateMessage();
-      }
-      if (apiMessages) {
-        executeApiMessages = apiMessages;
-        updateMessageContainer.clearApiMessage();
-      }
-    }
-
-    let updateResult: boolean | AxiosResponse<any> = true;
-    let messageResponse: boolean | undefined;
-    if (updateMessages.length > 0 || reSaveMessage.length > 0) {
-      const requestUrl = '/app/update';
-      updateResult = await API.post<FormData>(requestUrl, formData, {
-        headers: { 'Content-Type': 'multipart/form-data', appID: ctx.getAppID() },
-      }).catch(() => {
-        return false;
-      });
-    }
-    if (typeof updateResult !== 'boolean' && updateResult.status === 200) {
-      messageResponse = true;
-      updateMessageContainer.setReUpdateMessages('');
-    } else if (!updateResult || (typeof updateResult !== 'boolean' && updateResult.status !== 200)) {
-      updateMessageContainer.setReUpdateMessages(JSON.stringify(newContentsMessages));
-      updateMessageContainer.setReExecuteAPIMessages(executeApiMessages);
-      messageResponse = false;
-      return 'updateError';
-    }
-
-    let apiResponse: boolean | undefined;
-    let head = executeApiMessages.shift();
-    while (head) {
-      apiResponse = await head();
-      if (!apiResponse) {
-        executeApiMessages.unshift(head);
-        updateMessageContainer.setReExecuteAPIMessages(executeApiMessages);
-        break;
-      } else {
-        head = executeApiMessages.shift();
-      }
-    }
-    if (!apiResponse) {
-      return 'updateError';
-    }
-
-    if (messageResponse === undefined) {
-      if (apiResponse === undefined) {
-        return 'nonUpdate';
-      }
-      if (apiResponse === true) {
-        return 'updateComplete';
-      }
-    } else if (messageResponse === true) {
-      if (apiResponse === true) {
-        return 'updateComplete';
-      }
-      if (apiResponse === undefined) {
-        return 'updateComplete';
-      }
-    }
-    return 'updateError';
+  public async sendUpdateMessage(inputDTO: UpdateMessageDTO): Promise<void> {
+    await API.post('/app/update', inputDTO);
   }
 
   /**

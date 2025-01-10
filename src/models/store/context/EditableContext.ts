@@ -1,7 +1,7 @@
 import { Nullable } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { observable, makeObservable, action, runInAction } from 'mobx';
-import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
+import WidgetModel from 'models/node/WidgetModel';
 import Command from 'models/store/command/common/Command';
 import WidgetCommandProps, { SelectionProp } from 'models/store/command/widget/WidgetCommandProps';
 import AppModeContainer from 'models/store/container/AppModeContainer';

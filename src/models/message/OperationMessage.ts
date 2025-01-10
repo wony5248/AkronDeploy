@@ -1,4 +1,6 @@
-import { WidgetTypeEnum } from '@akron/runner';
+import { ContentType } from 'models/store/command/widget/WidgetModelTypes';
+
+export type Behavior = 'ie' | 'ue' | 'de';
 
 /**
  * @interface OperationMessage - operation message를 담고 있는 인터페이스
@@ -11,9 +13,8 @@ export interface OperationMessage {
   prevId?: number | null;
   nextId?: number | null;
   childId?: number | null;
-  elementType: number;
-  objectType: number;
-  behavior?: string;
+  elementType: ContentType;
+  behavior?: Behavior;
   contentData?: string;
   oldPrevId?: number;
   oldParentId?: number;

@@ -71,14 +71,8 @@ class AppendWidgetCommand extends SimpleCommand {
     if (isUndefined(this.target)) {
       return undefined;
     }
-    const targetOpMessages: IOperationMessage[] = [];
-    const componentMsg = this.target.makeOperationMessage() as IOperationMessage;
-    componentMsg.behavior = 'ie';
-    componentMsg.elementType = ContentType.COMPONENT;
-    // componentMsg.codeData = this.ctx.getNewMetaDataContainer().getComponentCodeData();
-    componentMsg.propMap = (this.target as WidgetModel).getProperties();
-    targetOpMessages.push(componentMsg);
-    return targetOpMessages;
+    // TODO: command prop 으로 behavior 받아서 기존에 있던 model의 이동이면 ue, 신규 생성도니 model의 삽입이면 ue로 변환 필요
+    return this.target.makeOperationMessage('ie') as IOperationMessage[];
   }
 
   /**
@@ -89,10 +83,8 @@ class AppendWidgetCommand extends SimpleCommand {
     if (isUndefined(this.target)) {
       return undefined;
     }
-
-    const targetOpmessage = this.target.makeOperationMessage() as IOperationMessage;
-    targetOpmessage.behavior = 'de';
-    return [targetOpmessage];
+    // TODO: command prop 으로 behavior 받아서 기존에 있던 model의 이동이면 ue, 신규 생성도니 model의 삽입이면 ue로 변환 필요
+    return this.target.makeOperationMessage('de') as IOperationMessage[];
   }
 
   /**
