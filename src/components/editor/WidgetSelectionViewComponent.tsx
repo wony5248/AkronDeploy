@@ -149,7 +149,8 @@ const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props
 
   if (
     /*isReactNodeProp && */
-    model.getDragHovered() === true
+    model.getDragHovered() === true &&
+    model.getSelected() === false
   ) {
     outline = 'solid 2px #0043f2';
   }
@@ -308,6 +309,8 @@ const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props
           onKeyDown={childInAkronProject ? doNothing : handleKeyDown}
           onMouseOver={childInAkronProject ? doNothing : handleMouseOver}
           onFocus={doNothing}
+          onMouseEnter={e => model.setDragHovered(true)}
+          onMouseLeave={e => model.setDragHovered(false)}
         >
           {renderResizeHandles()}
           <div

@@ -374,3 +374,22 @@ export function isAncestor(ancestor: WidgetModel, targetModel: WidgetModel) {
   }
   return false;
 }
+
+/**
+ * 순서 속성이 있는 container 내부에서 드래그 or 드랍 시 마우스 커서 위치에 따라 들어가게 될 위치의 next sibling을 알려줌.
+ * undefined이면 가장 마지막임.
+ */
+export function findNextSiblingDragInContainer(
+  container: WidgetModel,
+  mousePosition: { x: number; y: number },
+  selectedWidgets: WidgetModel[] | undefined
+): WidgetModel | undefined {
+  let nextSibling: WidgetModel | undefined;
+  // next sibling이 이미 선택된 위젯인 경우 바로 그 다음의 선택되지 않은 위젯으로 지정
+  if (isDefined(selectedWidgets)) {
+    while (isDefined(nextSibling) && selectedWidgets.includes(nextSibling)) {
+      nextSibling = nextSibling.getNextSibling();
+    }
+  }
+  return nextSibling;
+}

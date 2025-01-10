@@ -2,6 +2,7 @@ import { Nullable } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { action } from 'mobx';
 import AppModel from 'models/node/AppModel';
+import PageModel from 'models/node/PageModel';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
 import Command from 'models/store/command/common/Command';
 import WidgetCommandProps from 'models/store/command/widget/WidgetCommandProps';
@@ -338,8 +339,10 @@ export default class AkronContext {
   @boundMethod
   public createSelectionContainer(appModel: AppModel): SelectionContainer {
     const selectionContainer = new SelectionContainer();
-    // TODO: workArea 삭제 시 수정해야함
+    const firstPage = appModel.getFirstChild() as PageModel;
     selectionContainer.setEditingPage(appModel.getFirstChild());
+    firstPage.setSelected(true);
+    selectionContainer.setSelectedPage(firstPage);
     return selectionContainer;
   }
 

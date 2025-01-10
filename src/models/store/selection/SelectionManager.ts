@@ -178,6 +178,7 @@ export default class SelectionManager {
               // 화면에 보여질 페이지
               if (ctx.getCommandProps()?.selectionProp?.editingPageModel) {
                 newSelectionContainer.setEditingPage(ctx.getCommandProps()?.selectionProp?.editingPageModel);
+                newSelectionContainer.setSelectedPage(ctx.getCommandProps()?.selectionProp?.editingPageModel);
               }
             } else if (ctx.getCommandProps()?.selectionProp?.editingPageModel) {
               // 페이지 단일 선택

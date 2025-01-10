@@ -2,7 +2,9 @@ import PageThumbnailTitleComponent from 'components/toolpane/PageThumbnailTitleC
 import useContextMenuContainer from 'hooks/useContextMenuContainer';
 import useEditorStore from 'hooks/useEditorStore';
 import { observer } from 'mobx-react-lite';
-import WidgetModel from 'models/node/WidgetModel';
+import PageModel from 'models/node/PageModel';
+import CommandEnum from 'models/store/command/common/CommandEnum';
+import { PageThumbnailSelectCommandProps } from 'models/store/command/handler/WidgetSelectionCommandHandler';
 import { useEffect, useRef, useState } from 'react';
 import PageThumbnailContextMenuData from 'store/ribbon-menu/PageThumbnailContextMenuData';
 import { pageThumbnail } from 'styles/toolpane/PageList';
@@ -14,7 +16,7 @@ export const THUMBNAIL_WIDTH = THUMBNAIL_WIDTH_WITH_BORDER - 6;
  * 썸네일을 렌더하는 컴포넌트 입니다. title과 썸네일 페이지로 이루어져 있습니다.
  */
 interface IProps {
-  pageModel: WidgetModel;
+  pageModel: PageModel;
   sectionSelected: boolean;
   idx: number;
 }
@@ -33,7 +35,7 @@ const PageThumbnailComponent: React.FC<IProps> = (props: IProps) => {
   const locked = false; // pageModel?.getComponentSpecificProperties().locked ?? false;
   const [arrowClicked, setArrowClicked] = useState<boolean>(false);
 
-  const isSelectedThumbnailPage = true; // editorStore.isSelectedThumbnail(pageModel);
+  const isSelectedThumbnailPage = editorStore.isSelectedThumbnail(pageModel);
 
   let arrowType: string;
   if (locked && !(isSelectedThumbnailPage || isHover)) {
@@ -63,14 +65,14 @@ const PageThumbnailComponent: React.FC<IProps> = (props: IProps) => {
     e: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
     mouseDown: boolean
   ) => {
-    // const commandProps: PageThumbnailSelectCommandProps = {
-    //     commandID: CommandEnum.SELECT_PAGE_THUMBNAIL,
-    //     targetModel: pageModel,
-    //     isMouseDown: mouseDown,
-    //     isAdded: e.ctrlKey,
-    //     isShiftPressed: e.shiftKey,
-    // };
-    // editorStore.handleCommandEvent(commandProps);
+    const commandProps: PageThumbnailSelectCommandProps = {
+      commandID: CommandEnum.SELECT_PAGE_THUMBNAIL,
+      targetModel: pageModel,
+      isMouseDown: mouseDown,
+      isAdded: e.ctrlKey,
+      isShiftPressed: e.shiftKey,
+    };
+    editorStore.handleCommandEvent(commandProps);
     setIsMouseDown(isMouseDown);
   };
 

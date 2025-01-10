@@ -38,6 +38,7 @@ import {
 import AkronEventManager from 'models/store/event/AkronEventManager';
 import AkronEventMapper from 'models/store/event/AkronEventMapper';
 import AkronCommandMapper from 'models/store/command/akron/AkronCommandMapper';
+import PageModel from 'models/node/PageModel';
 
 /**
  * Editor Store 생성자 파라미터 Interface 입니다.
@@ -212,6 +213,21 @@ class EditorStore {
    */
   public getEditingPageRefPosition() {
     return this.getCtxAsAppContext().getEditingPageRefPosition();
+  }
+
+  /**
+   * 파라미터로 받은 Page Widget이 선택된 Page인지 확인하여 반환하는 함수
+   */
+  public isSelectedThumbnail(pageModel: PageModel) {
+    const selectionContainer = this.getCtxAsAppContext().getSelectionContainer();
+    if (selectionContainer === undefined) {
+      return false;
+    }
+    const widgetModels = selectionContainer.getSelectedPages();
+
+    return widgetModels.some(widgetModel => {
+      return widgetModel === pageModel;
+    });
   }
 
   /**

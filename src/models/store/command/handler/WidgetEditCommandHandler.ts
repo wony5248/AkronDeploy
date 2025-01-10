@@ -28,6 +28,7 @@ import {
   checkInsertableItem,
   checkPageModel,
   clearWidgetModelEditContext,
+  findNextSiblingDragInContainer,
   getDeletableWidgetModels,
   isWidgetsDeletable,
 } from 'util/WidgetUtil';
@@ -38,6 +39,7 @@ import RenameWidgetCommand from 'models/store/command/widget/RenameWidgetCommand
 import { WidgetStyle, Position, Length, Constraint } from 'models/widget/WidgetPropTypes';
 import { commonStyleMeta, getMetaDataByType } from 'models/util/LocalMetaData';
 import PageModel from 'models/node/PageModel';
+import MoveWidgetCommand from 'models/store/command/widget/MoveWidgetCommand';
 
 /**
  * 삽입과 동시에 속성을 특정 값으로 설정해야 할 때 사용.
@@ -45,6 +47,8 @@ import PageModel from 'models/node/PageModel';
  * 이유: 속성 ID는 모델 생성 뒤에 나옴.
  */
 // type InitializeProperties = Array<WidgetProp>;
+
+let widgetId = 1000;
 
 /**
  * Widget 삽입 시 필요한 Props
@@ -652,7 +656,7 @@ class WidgetEditCommandHandler extends CommandHandler {
   private createNewWidgetModel(ctx: AkronContext, widgetType: WidgetTypeEnum, widgetID: WidgetID) {
     const { metaData, name } = getMetaDataByType(widgetType);
     const widget = new WidgetModel({
-      id: 1000,
+      id: widgetId,
       widgetType: widgetType,
       widgetCategory: '',
       name: name,
@@ -662,6 +666,7 @@ class WidgetEditCommandHandler extends CommandHandler {
       },
       ref: undefined,
     });
+    widgetId += 1;
     return widget;
     // const defaultWidgetModel = ctx.getMetaDataContainer().getDefaultWidgetModelMap().get(widgetType);
     // const pageWidth = ctx.getNewAppModel().getFirstChild()?.getFirstChild()?.getProperties().getStyle().width.absolute;
@@ -1611,17 +1616,6 @@ class WidgetEditCommandHandler extends CommandHandler {
     selectionContainer.setFloatingWidgetModels(
       targetModels.map(widgetModel => {
         const copiedWidgetModel = widgetModel.cloneNode(idContainerController);
-        const refX = widgetModel.getRefX();
-        const refY = widgetModel.getRefY();
-        // const content = {
-        //   ...getWidgetContentProperty(widgetModel, dataStore, metaDataContainer),
-        // };
-        // const style = { ...getWidgetStyleProperty(widgetModel, dataStore) };
-
-        // copiedWidgetModel.setOriginWidgetPosition(
-        //   refX ? (refX - editingPageRefPosition.x) / (zoomRatio / 100) : widgetModel.getProperties().style.x.absolute,
-        //   refY ? (refY - editingPageRefPosition.y) / (zoomRatio / 100) : widgetModel.getProperties().style.y.absolute
-        // );
         copiedWidgetModel.setProperties({
           ...copiedWidgetModel.getProperties(),
         });
@@ -1639,9 +1633,6 @@ class WidgetEditCommandHandler extends CommandHandler {
         dError('moveWidgetStart assertion failed.');
         return;
       }
-      // if (widgetModel.getComponentSpecificProperties().locked) {
-      //   return;
-      // }
 
       widgetModel.setProperties({
         ...curProps,
@@ -1667,11 +1658,6 @@ class WidgetEditCommandHandler extends CommandHandler {
     const zoomRatio = ctx.getZoomRatio() / 100;
     const editingPageRefPosition = ctx.getEditingPageRefPosition();
 
-    // ConditionalLayout이 end container일 경우 하위 FragmentLayout를 container로 지정
-    // if (container && checkConditionalLayout(container)) {
-    //     container = getConditionalLayoutEditedFrameModel(container) as WidgetModel; // Conditional Layout
-    // }
-
     const page = ctx.getSelectionContainer()?.getEditingPage();
     if (isUndefined(page)) {
       return;
@@ -1690,33 +1676,13 @@ class WidgetEditCommandHandler extends CommandHandler {
       });
     ctx.getSelectionContainer()?.clearFloatingWidgetModels();
 
-    // if (isDefined(container) && !isInsertableRepeatableLayout(container, widgetModels[0], editorUIStore)) {
-    //     this.clearWidgetModelEditContext(ctx);
-    //     widgetModels.forEach(widgetModel => {
-    //         widgetModel.getProperties().setEditingState(WidgetEditingState.NONE);
-    //     });
-    //     return;
-    // }
-
-    const forceParentChange = false;
-    // const isSelectReactNodeProp =
-    //     isDefined(desModel) &&
-    // isDefined(ctx.getMetaDataContainer().getReactNodeTypePropMap().get(desModel?.getWidgetType()));
-
     widgetModels.forEach(widgetModel => {
       const widgetProps = widgetModel.getProperties();
       const canInsertToWidget = checkInsertableItem(container, widgetModel);
 
-      // const newWidgetProps: IWidgetCommonProperties = {
-      //     ...widgetProps,
-      //     editingState: WidgetEditingState.NONE,
-      // };
-      // widgetModel.setProperties(newWidgetProps);
       widgetModel.setEditingState(WidgetEditingState.NONE);
 
       const refPositionMap = widgetEditInfoContainer.getRefPositionMap(widgetModel);
-
-      const styleProperties = widgetModel.getProperties().style;
 
       // 마우스를 통한 이동 시 absolute 계산
       const isRelative = byKeyEvent && widgetModel.getStyleProperties('frameType') === 'relative';
@@ -1742,22 +1708,6 @@ class WidgetEditCommandHandler extends CommandHandler {
       const parentHeight = isMovedToPage
         ? page.getStyleProperties('height').absolute
         : parentWidget.getStyleProperties('height').absolute;
-
-      // 페이지 밖으로 나간 경우 다시 페이지 안쪽으로 위치 시킴
-      // if (resultY * -1 >= (widgetModel.getRefHeight() ?? 0) / (zoomRatio / 100)) {
-      //   // 위쪽으로 나간 경우
-      //   resultY = 0;
-      // } else if (resultY >= editingPageRefPosition.height / (zoomRatio / 100)) {
-      //   // 아래쪽으로 나간 경우
-      //   resultY -= widgetModel.getStyleProperties('height').absolute;
-      // }
-      // if (resultX * -1 >= (widgetModel.getRefWidth() ?? 0) / (zoomRatio / 100)) {
-      //   // 왼쪽으로 나간 경우
-      //   resultX = 0;
-      // } else if (resultX >= editingPageRefPosition.width / (zoomRatio / 100)) {
-      //   // 오른쪽으로 나간 경우
-      //   resultX -= widgetModel.getStyleProperties('width').absolute;
-      // }
 
       const updateWidgetCommand = new UpdateWidgetCommand(widgetModel, {
         ...widgetProps,
@@ -1838,211 +1788,50 @@ class WidgetEditCommandHandler extends CommandHandler {
       });
       ctx.getCommand()?.append(updateWidgetCommand);
     });
-    // console.log(newParentChildPermittedRelationMap.get(desModel?.getWidgetTypeId() as number));
-    // console.log(
-    //     newParentChildPermittedRelationMap
-    //         .get(desModel?.getWidgetTypeId() as number)
-    //         ?.has(widgetModel.getWidgetTypeId())
-    // );
 
     const selectedWidgets = ctx.getSelectionContainer()?.getSelectedWidgets();
 
-    // VERSION2_FIXME: 셀렉션 및 이동관련 세부 기획 필요, Composite인 경우, Tree 관계 변경 불가
-    // if (desModel && selectedWidgets) {
-    //   if (
-    //     checkCompositeChildModel(compositeComponentContainer, desModel) ||
-    //     checkCompositeChildModel(compositeComponentContainer, selectedWidgets[0])
-    //   ) {
-    //     ctx.getHitContainer().setStartHitItem(undefined);
-    //     this.clearWidgetModelEditContext(ctx);
-    //     return;
-    //   }
-    // }
+    if (isDefined(container)) {
+      // 마우스 커서가 위치한 곳으로 삽입하기 위해 next sibling 찾음
+      const { mousePosition } = props;
+      const hitModel = ctx.getHitContainer().getStartHitItem()?.getModel();
+      let nextSibling: WidgetModel | undefined;
+      if (isDefined(mousePosition) && isDefined(hitModel)) {
+        nextSibling = findNextSiblingDragInContainer(
+          container,
+          mousePosition,
+          selectedWidgets?.includes(hitModel) ? selectedWidgets : selectedWidgets?.concat(hitModel)
+        );
+      }
 
-    // if (isDefined(desModel)) {
-    //   if (
-    //     desModel.getWidgetTypeId() === SystemComponentType.WorkArea ||
-    //     desModel.getWidgetTypeId() === SystemComponentType.Page ||
-    //     checkWidgetForAbsoluteChild(desModel)
-    //   ) {
-    //     const { pureWidgetModels } = classifyWidgetModelsForSelection(ctx, widgetModels);
-    //     // workArea 혹은 page로 이동
-    //     pureWidgetModels.forEach(widgetModel => {
-    //       const parentWidgetModel = widgetModel.getParent();
-    //       // 특정 컴포넌트 하위에만 존재해야 하는 컴포넌트는 이동 불가하도록 추가
-    //       if (!isInsertableItemToWorkAreaOrPage(widgetModel) || !(widgetModel instanceof NewWidgetModel)) {
-    //         return;
-    //       }
-    //       // app 별 parent rect style 가져오기
-    //       const {
-    //         parentRefX,
-    //         parentRefY,
-    //         parentRefWidth: parentWidth,
-    //         parentRefHeight: parentHeight,
-    //       } = getTargetParentRectStyle(ctx, desModel);
-    //       if (parentWidgetModel && parentWidgetModel !== desModel) {
-    //         const removeWidgetCommand = new NewRemoveWidgetCommand(widgetModel, parentWidgetModel);
-    //         ctx.getCommand()?.append(removeWidgetCommand);
+      widgetModels.forEach(widgetModel => {
+        if (isDefined(container) && checkInsertableItem(container, widgetModel)) {
+          // Widget node 이동시킴
+          const moveWidgetCommand = new MoveWidgetCommand(
+            widgetModel,
+            widgetModel.getParent()!,
+            container,
+            nextSibling
+          );
+          ctx.getCommand()?.append(moveWidgetCommand);
 
-    //         const appendCompositeCommand = new NewAppendWidgetCommand(ctx, widgetModel, desModel);
-    //         ctx.getCommand()?.append(appendCompositeCommand);
-
-    //         const targetFloatingModel = widgetEditInfoContainer.getEditingFloatingWidget(widgetModel);
-    //         if (
-    //           targetFloatingModel &&
-    //           (widgetModel.getParent() instanceof SystemComponentModel || checkWidgetForAbsoluteChild(desModel))
-    //         ) {
-    //           // frame에서 page 혹은 workArea로 이동 시 postion의 계산이 필요함
-    //           const position = targetFloatingModel.getPosition();
-
-    //           const leftUnit = typeof position.left === 'string' ? 'px' : position.left.unit;
-    //           const widgetX = targetFloatingModel.getRefX();
-    //           const parentX = parentRefX;
-    //           const leftValue = widgetX !== undefined && parentX !== undefined ? (widgetX - parentX) / zoomRatio : 0;
-
-    //           const topUnit = typeof position.top === 'string' ? 'px' : position.top.unit;
-    //           const widgetY = targetFloatingModel.getRefY();
-    //           const parentY = parentRefY;
-    //           const topValue = widgetY !== undefined && parentY !== undefined ? (widgetY - parentY) / zoomRatio : 0;
-
-    //           const newPosition = {
-    //             left: {
-    //               value: leftUnit === 'px' ? leftValue : (leftValue / parentWidth) * 100,
-    //               unit: leftUnit,
-    //             },
-    //             top: {
-    //               value: topUnit === 'px' ? topValue : (topValue / parentHeight) * 100,
-    //               unit: topUnit,
-    //             },
-    //             pinnedDirections: widgetModel.getPinnedDirections().join(','),
-    //           };
-    //           const updatePositionCommand = new UpdatePositionCommand(widgetModel, newPosition);
-    //           ctx.getCommand()?.append(updatePositionCommand);
-    //         }
-    //       }
-    //     });
-    //   } else {
-    //     widgetModels.forEach(widgetModel => {
-    //       // frame 하위로 이동
-    //       const childCapable = // desModel이 widgetModel을 child로 가질 수 있는지 판단
-    //         newParentChildPermittedRelationMap.get(desModel.getWidgetTypeId()) &&
-    //         newParentChildPermittedRelationMap.get(desModel.getWidgetTypeId())?.has(widgetModel.getWidgetTypeId());
-    //       if (childCapable) {
-    //         const removeWidgetCommand = new NewRemoveWidgetCommand(
-    //           widgetModel,
-    //           widgetModel.getParent() as BaseWidgetModel
-    //         );
-    //         ctx.getCommand()?.append(removeWidgetCommand);
-
-    //         const appendCompositeCommand = new NewAppendWidgetCommand(ctx, widgetModel, desModel);
-    //         ctx.getCommand()?.append(appendCompositeCommand);
-    //       } else if (desModel instanceof PublishedComponentModel) {
-    //         // PGX 하위로 삽입 시도 시 최상위 부모가 변경되게 되면 workArea or page로 parent 변경
-    //         const removeWidgetCommand = new NewRemoveWidgetCommand(
-    //           widgetModel,
-    //           widgetModel.getParent() as BaseWidgetModel
-    //         );
-    //         ctx.getCommand()?.append(removeWidgetCommand);
-
-    //         const appendCompositeCommand = new NewAppendWidgetCommand(
-    //           ctx,
-    //           widgetModel,
-    //           checkTopParentIsWorkArea(desModel) ? workAreaModel : workAreaModel.getFirstChild()
-    //         );
-    //         ctx.getCommand()?.append(appendCompositeCommand);
-    //       }
-    //     });
-    //   }
-    // }
-    // if (isSelectReactNodeProp) {
-    //     runInAction(() => {
-    //         ctx.setDialogType(ribbonDialogContentMap.SelectReactNodeProp);
-    //         ctx.setDialogOpen(true);
-    //     });
-    //     ctx.setDragDesModel(desModel);
-
-    //     if (isDefined(changeTopWidgetModel)) {
-    //         // 컴포넌트 내 속성 다이얼로그 조건 충족 시에 WorkArea에서 Page로 이동했을 경우 parent 변경
-    //         widgetModels.forEach(widgetModel => {
-    //             const parentWidgetModel = widgetModel.getParent();
-    //             if (parentWidgetModel) {
-    //                 const moveWidgetCommand = new MoveWidgetCommand(
-    //                     widgetModel,
-    //                     parentWidgetModel,
-    //                     changeTopWidgetModel
-    //                 );
-    //                 ctx.getCommand()?.append(moveWidgetCommand);
-    //             }
-    //         });
-    //     }
-    // } else if (isDefined(container)) {
-    //     // 마우스 커서가 위치한 곳으로 삽입하기 위해 next sibling 찾음
-    //     const { mousePosition } = props;
-    //     const hitModel = ctx.getHitContainer().getStartHitItem()?.getModel();
-    //     let nextSibling: WidgetModel | undefined;
-    //     if (isDefined(mousePosition) && isDefined(hitModel)) {
-    //         nextSibling = findNextSiblingDragInContainer(
-    //             container,
-    //             mousePosition,
-    //             selectedWidgets?.includes(hitModel) ? selectedWidgets : selectedWidgets?.concat(hitModel)
-    //         );
-    //     }
-
-    //     widgetModels.forEach(widgetModel => {
-    //         if (
-    //             isDefined(container) &&
-    //             checkInsertableItem(container, widgetModel) &&
-    //             !isErrorWidgetModelsInTree(ctx.getErrorBoundaryContainer(), [container])
-    //         ) {
-    //             // Widget node 이동시킴
-    //             const moveWidgetCommand = new MoveWidgetCommand(
-    //                 widgetModel,
-    //                 widgetModel.getParent()!,
-    //                 container,
-    //                 nextSibling
-    //             );
-    //             ctx.getCommand()?.append(moveWidgetCommand);
-
-    //             // 컨테이너 내부에 item 삽입 시 sibling re-render
-    //             container.forEachChild(child => {
-    //                 if (child !== widgetModel) {
-    //                     child.triggerRerender();
-    //                 }
-    //             });
-    //         }
-    //     });
-    // } else if (isDefined(changeTopWidgetModel)) {
-    //     widgetModels.forEach(widgetModel => {
-    //         const parentWidgetModel = widgetModel.getParent();
-    //         if (parentWidgetModel) {
-    //             const moveWidgetCommand = new MoveWidgetCommand(
-    //                 widgetModel,
-    //                 parentWidgetModel,
-    //                 changeTopWidgetModel
-    //             );
-    //             ctx.getCommand()?.append(moveWidgetCommand);
-    //         }
-    //     });
-    // } else if (forceParentChange) {
-    //     // 정상적인 마우스 이벤트 종료가 아닌 Page 내 컴포넌트가 비정상적인 방식으로
-    //     //  WorkArea로의 좌표 이동이 일어났을 경우 parent WorkArea로 이동
-    //     widgetModels.forEach(widgetModel => {
-    //         const parentWidgetModel = widgetModel.getParent();
-    //         if (parentWidgetModel) {
-    //             const moveWidgetCommand = new MoveWidgetCommand(widgetModel, parentWidgetModel, workAreaModel);
-    //             ctx.getCommand()?.append(moveWidgetCommand);
-    //         }
-    //     });
-    // } else if (isMovedToPage) {
-    //     const destParent = checkTopParentIsWorkArea(desModel) ? workAreaModel : workAreaModel.getFirstChild()!;
-    //     widgetModels.forEach(widgetModel => {
-    //         const parentWidgetModel = widgetModel.getParent();
-    //         if (parentWidgetModel && !checkBusinessOrPageDialogModel(widgetModel.getParent())) {
-    //             const moveWidgetCommand = new MoveWidgetCommand(widgetModel, parentWidgetModel, destParent);
-    //             ctx.getCommand()?.append(moveWidgetCommand);
-    //         }
-    //     });
-    // }
+          // 컨테이너 내부에 item 삽입 시 sibling re-render
+          container.forEachChild(child => {
+            if (child !== widgetModel) {
+              child.triggerRerender();
+            }
+          });
+        }
+      });
+    } else if (isMovedToPage) {
+      widgetModels.forEach(widgetModel => {
+        const parentWidgetModel = widgetModel.getParent();
+        if (parentWidgetModel && !checkPageModel(widgetModel.getParent())) {
+          const moveWidgetCommand = new MoveWidgetCommand(widgetModel, parentWidgetModel, page);
+          ctx.getCommand()?.append(moveWidgetCommand);
+        }
+      });
+    }
     ctx.getHitContainer().setStartHitItem(undefined);
     this.clearWidgetModelEditContext(ctx);
   }

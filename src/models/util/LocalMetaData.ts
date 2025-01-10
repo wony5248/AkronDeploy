@@ -211,6 +211,34 @@ export const basicButtonContentMeta = {
   },
 };
 
+export const BasicContainerContentMeta = {
+  className: {
+    value: undefined,
+    defaultValue: '',
+    variableId: -1,
+  },
+  component: {
+    value: undefined,
+    defaultValue: '',
+    variableId: -1,
+  },
+  disableGutters: {
+    value: undefined,
+    defaultValue: false,
+    variableId: -1,
+  },
+  fixed: {
+    value: undefined,
+    defaultValue: false,
+    variableId: -1,
+  },
+  maxWidth: {
+    value: undefined,
+    defaultValue: 'lg',
+    variableId: -1,
+  },
+};
+
 export function getMetaDataByType(widgetType: WidgetTypeEnum): { metaData: IWidgetContentProperties; name: string } {
   let metaData: IWidgetContentProperties = {};
   let name: string = '';
@@ -218,11 +246,18 @@ export function getMetaDataByType(widgetType: WidgetTypeEnum): { metaData: IWidg
     case WidgetTypeEnum.BasicButton: {
       metaData = basicButtonContentMeta;
       name = 'BasicButton';
+      break;
+    }
+    case WidgetTypeEnum.BasicContainer: {
+      metaData = BasicContainerContentMeta;
+      name = 'BasicContainer';
+      break;
     }
     default: {
       // 없으면 버튼
       metaData = basicButtonContentMeta;
       name = 'BasicButton';
+      break;
     }
   }
   return { metaData, name };
