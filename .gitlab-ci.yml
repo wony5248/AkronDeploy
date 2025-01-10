@@ -10,8 +10,8 @@ npm:
     cache:
         paths:
             - node_modules
-        script:
-            - npm install
+    script:
+        - npm install
 
 lint:
     stage: lint
@@ -27,7 +27,7 @@ build:
     cache:
         paths:
             - dist
-        script:
-            - npm run build
-        tags:
-            - akron-client
+    script:
+        - npm run build
+    tags:
+        - akron-client
