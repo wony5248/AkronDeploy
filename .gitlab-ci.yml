@@ -1,5 +1,6 @@
 stages:
     - libs
+    - lint
     - build
 
 npm:
@@ -11,6 +12,13 @@ npm:
             - node_modules
         script:
             - npm install
+
+lint:
+    stage: lint
+    only:
+        - master
+    script:
+        - npm run lint
 
 build:
     stage: build
