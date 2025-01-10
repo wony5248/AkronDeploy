@@ -13,6 +13,9 @@ npm:
         paths:
             - node_modules
     script:
+        - npm cache verify
+        - npm cache clean --force
+        - rm -rf package-lock.json
         - npm install --legacy-peer-deps
 
 lint:
