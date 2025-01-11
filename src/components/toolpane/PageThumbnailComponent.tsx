@@ -79,6 +79,7 @@ const PageThumbnailComponent: React.FC<IProps> = (props: IProps) => {
   return (
     <div
       id={pageModel.getID().toString()}
+      tabIndex={0}
       className={'a-page-thumbnail-container'}
       onContextMenu={e => {
         contextMenuContainer.openContextMenu(e, ContextMenuData);
@@ -93,6 +94,14 @@ const PageThumbnailComponent: React.FC<IProps> = (props: IProps) => {
       onMouseDown={e => handleSelectPageThumbnail(e, true)}
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
+      onKeyDown={e => {
+        if (e.code === 'Delete') {
+          const commandProps = {
+            commandID: CommandEnum.DELETE_PAGE,
+          };
+          editorStore.handleCommandEvent(commandProps);
+        }
+      }}
     >
       <div css={pageThumbnail(isSelectedThumbnailPage)}>
         <PageThumbnailTitleComponent pageModel={pageModel} idx={idx} ref={titleRef} />

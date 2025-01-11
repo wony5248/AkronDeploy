@@ -81,13 +81,6 @@ export default class SelectionManager {
         case CommandEnum.REDO:
           ctx.setPrevSelectionContainer(ctx.getSelectionContainer());
           break;
-        case CommandEnum.DELETE_WIDGET:
-          //   this.updateSelectionByDeleteWidget(ctx);
-          break;
-        case CommandEnum.DELETE_PAGE: {
-          //   this.updateSelectionByDeletePage(ctx);
-          break;
-        }
         case CommandEnum.CLIPBOARD_CUT_PROCESS: {
           //   if (
           //     !isCutPossible(ctx.selectionContainer as SelectionContainer, ctx.appWidgetModel, ctx.appModeContainer)
@@ -170,20 +163,23 @@ export default class SelectionManager {
             });
 
             const selectPageModels = ctx.getCommandProps()?.selectionProp?.selectPageModels;
+            const editingPageModel = ctx.getCommandProps()?.selectionProp?.editingPageModel;
             if (isDefined(selectPageModels)) {
               // 다중 선택
               selectPageModels?.forEach(model => {
-                newSelectionContainer.setSelectedPage(model);
+                if (model !== editingPageModel) {
+                  newSelectionContainer.setSelectedPage(model);
+                }
               });
               // 화면에 보여질 페이지
-              if (ctx.getCommandProps()?.selectionProp?.editingPageModel) {
-                newSelectionContainer.setEditingPage(ctx.getCommandProps()?.selectionProp?.editingPageModel);
-                newSelectionContainer.setSelectedPage(ctx.getCommandProps()?.selectionProp?.editingPageModel);
+              if (editingPageModel) {
+                newSelectionContainer.setEditingPage(editingPageModel);
+                newSelectionContainer.setSelectedPage(editingPageModel);
               }
-            } else if (ctx.getCommandProps()?.selectionProp?.editingPageModel) {
+            } else if (editingPageModel) {
               // 페이지 단일 선택
-              newSelectionContainer.setEditingPage(ctx.getCommandProps()?.selectionProp?.editingPageModel);
-              newSelectionContainer.setSelectedPage(ctx.getCommandProps()?.selectionProp?.editingPageModel);
+              newSelectionContainer.setEditingPage(editingPageModel);
+              newSelectionContainer.setSelectedPage(editingPageModel);
             } else if (isDefined(ctx.getSelectionContainer()?.getEditingPage())) {
               // 페이지 선택X -> 기존 페이지 유지
               newSelectionContainer.setEditingPage(ctx.getSelectionContainer()?.getEditingPage());

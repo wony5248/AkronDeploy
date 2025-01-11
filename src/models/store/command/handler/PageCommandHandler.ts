@@ -363,78 +363,39 @@ class PageCommandHandler extends CommandHandler {
     }
 
     const targetModels = selectionContainer.getSelectedPages();
-    if (!isPagesDeletable(selectionContainer.getSelectedWidgets(), appWidgetModel, appModeContainer)) {
+    if (!isPagesDeletable(targetModels, appWidgetModel, appModeContainer)) {
       return;
     }
 
     let deletableModels = getDeletablePageModels(targetModels, appWidgetModel, appModeContainer);
 
     if (deletableModels.length === appWidgetModel.getChildCount()) {
-      // 모든 페이지 선택 시 첫 페이지는 하위 컴포넌트만 삭제
+      // 모든 페이지 선택 시 첫 페이지 제외 하위 컴포넌트만 삭제
       const firstPage = appWidgetModel.getFirstChild();
       if (firstPage) {
         deletableModels = deletableModels.filter(page => page !== firstPage);
-
-        firstPage.forEachChild(child => {
-          //   appendDeleteWidgetBusinessLogicCommands(ctx, child);
-
-          const removeWidgetCommand = new RemoveWidgetCommand(child, firstPage);
-          command.append(removeWidgetCommand);
-        });
       }
     }
 
-    this.updateSectionWhenPageDelete(ctx);
+    let nextSelectPage;
+    appWidgetModel.forEachChild(page => {
+      if (!deletableModels.includes(page)) {
+        nextSelectPage = page;
+      }
+    });
 
-    // Widget 삭제 시 dataStore의 reference를 동기화합니다..
-    // deletableModels.forEach(targetModel => {
-    //   syncSubstrackDataStoreReference(targetModel, ctx.dataStore, ctx.getCommand());
-    //   // gx page component 삭제 시, 해당 prop/state 삭제
-    //   if (checkGXProject(ctx.appModeContainer)) {
-    //     deletePropsStatesByComponentID(ctx, targetModel.getID());
-    //   }
-    // });
+    // selectionProp set
+    const commandProps = ctx.getCommandProps();
+    const selectionPropObj: SelectionProp = {
+      selectionType: SelectionEnum.WIDGET,
+      widgetModels: [],
+      editingPageModel: nextSelectPage,
+    };
+    if (isDefined(commandProps)) {
+      commandProps.selectionProp = selectionPropObj;
+    }
 
     deletableModels.forEach(targetModel => {
-      // referenced page라면 해당 page에 가서 innerPage props update 필요
-      const innerPageInfo = ctx.getPageContainer().getInnerPageMap().get(targetModel.getID());
-      // if (isDefined(innerPageInfo)) {
-      //   // 삭제 대상 page의 innerPageInfo가 존재할 때, innerPageMap Update 필요
-      //   const { referencedPageIDs } = innerPageInfo;
-      //   if (referencedPageIDs) {
-      //     // referencedPageIDs가 존재한다면, 해당 page의 innerPageLayout 속성을 undefined로 변경 한 뒤, map 구조 반영.
-      //     referencedPageIDs.forEach(pageID => {
-      //       const innerPageLayout = ctx.getPageContainer().getInnerPageMap().get(pageID)?.innerPageLayout;
-      //       if (isDefined(innerPageLayout)) {
-      //         const innerPageProps: IWidgetCommonProperties = innerPageLayout.getProperties();
-      //         const newInnerPageProps: IWidgetCommonProperties = {
-      //           ...innerPageProps,
-      //           content: {
-      //             ...innerPageProps.content,
-      //             pageID: {
-      //               ...innerPageProps.content.pageID,
-      //               value: '',
-      //             },
-      //           },
-      //         };
-      //         // const updateInnerPageMapCommand = new UpdateInnerPageMapCommand(
-      //         //   ctx,
-      //         //   CommandEnum.WIDGET_UPDATE_PROPERTIES,
-      //         //   pageID,
-      //         //   innerPageLayout,
-      //         //   newInnerPageProps
-      //         // );
-      //         // command.append(updateInnerPageMapCommand);
-      //       }
-      //     });
-      //   }
-      //   // 해당 page의 key를 InnerPageMap에서 delete 하는 command 수행.
-      //   // const updateInnerPageMapCommand = new UpdateInnerPageMapCommand(ctx, props.commandID, targetModel.getID());
-      //   // command.append(updateInnerPageMapCommand);
-      // }
-
-      //   appendDeleteWidgetBusinessLogicCommands(ctx, targetModel);
-
       targetModel.forEachChild(childModel =>
         appendDeleteWidgetCommandsRecursive(childModel, ctx, CommandEnum.DELETE_WIDGET)
       );

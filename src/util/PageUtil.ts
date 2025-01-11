@@ -347,9 +347,7 @@ export function getDeletablePageModels(
     return [];
   }
 
-  const deletablePageModels = widgetModels.filter(
-    widgetModel => widgetModel.getProperties().content.locked.value === false
-  );
+  const deletablePageModels = widgetModels;
 
   return deletablePageModels;
 }
