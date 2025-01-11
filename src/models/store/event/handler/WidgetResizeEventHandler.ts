@@ -19,6 +19,7 @@ import HitItem from 'models/store/selection/HitItem';
 import {
   calcResizeDeltaBounds,
   calculateDeltaClientXY,
+  correctCoordinateForSnap,
   initEditCoordinate,
   overrideHitWidgetModel,
 } from 'util/WidgetEditUtil';
@@ -36,7 +37,7 @@ class WidgetResizeEventHandler extends AkronEventHandler {
     const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
     const selectionContainer = ctx.getSelectionContainer();
     const propContainer = ctx.getPropContainer();
-    if (event.isLButton() === false) {
+    if (event.isLButton() === false || selectionContainer === undefined) {
       this.finishResizeOnInterrupted(ctx);
       return true;
     }
@@ -48,38 +49,7 @@ class WidgetResizeEventHandler extends AkronEventHandler {
     // init coordinate
     initEditCoordinate(event, widgetEditInfoContainer);
 
-    // container 삽입 모드
-    if (state === EventState.WIDGET_INSERT) {
-      // const insertContainerType = widgetEditInfoContainer.getInsertContainerType();
-      //   if (!insertContainerType || !getInsertableWidgetTypeNames().includes(insertContainerType)) {
-      //     return false;
-      //   }
-
-      // change state
-      // ctx.state = EventState.WIDGET_RESIZE;
-      widgetEditInfoContainer.setWidgetEditSubEventState(WidgetEditSubEventState.PRESSED);
-
-      const commandProps: InsertWidgetAtCommandProps = {
-        commandID: CommandEnum.INSERT_WIDGET_AT,
-        widgetType: ctx.getEditingWidgetModel().getWidgetType(),
-        widgetID: WidgetRepository.generateWidgetID(),
-        posX: event.getClientX() - ctx.getEditingPageRefPosition().x,
-        posY: event.getClientY() - ctx.getEditingPageRefPosition().y,
-      };
-
-      ctx.setCommandProps(commandProps);
-      return true;
-    }
-
-    // resize validation check
-    const resizedWidgetModels = selectionContainer
-      ?.getSelectedWidgets()
-      .filter(widgetModel => widgetModel.getParent()?.getWidgetCategory() !== '' && !widgetModel.getProperties());
-
-    // if (propContainer.getWidgetPropContainer().checkDisableOnError() || resizedWidgetModels?.length === 0) {
-    //   return true;
-    // }
-
+    const resizedWidgetModels = selectionContainer.getSelectedWidgets();
     const targetResizeHandle = this.getTargetResizeHandle(event, state, widgetEditSubEventState);
     if (!targetResizeHandle) {
       if (widgetEditSubEventState !== WidgetEditSubEventState.RELEASED) {
@@ -113,9 +83,13 @@ class WidgetResizeEventHandler extends AkronEventHandler {
     const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
     const selectionContainer = ctx.getSelectionContainer();
     const propContainer = ctx.getPropContainer();
-
     const widgetEditSubEventState = widgetEditInfoContainer.getWidgetEditSubEventState();
-    if (state !== EventState.WIDGET_INSERT && widgetEditInfoContainer.getEditingWidgetModels().length === 0) {
+
+    if (selectionContainer === undefined) {
+      return true;
+    }
+
+    if (widgetEditInfoContainer.getEditingWidgetModels().length === 0) {
       return true;
     }
 
@@ -127,7 +101,6 @@ class WidgetResizeEventHandler extends AkronEventHandler {
     event.preventDefault();
     event.stopPropagation();
     const hitModel = ctx.getHitContainer().getStartHitItem()?.getModel();
-    const editInfo = widgetEditInfoContainer;
     const selectedWidgets = selectionContainer?.getSelectedWidgets();
     if (selectedWidgets?.length === 1 && hitModel?.getParent()?.getWidgetType() === 'Page') {
       propContainer.getWidgetPropContainer().setIsSmartGuide(true);
@@ -142,9 +115,8 @@ class WidgetResizeEventHandler extends AkronEventHandler {
     }
 
     // 입력 값 검증
-    const hitWidgetProps = hitModel?.getProperties();
-    if (isUndefined(hitWidgetProps)) {
-      dError('hitModelProps are undefined');
+    if (isUndefined(hitModel)) {
+      dError('hitModel is undefined');
       return false;
     }
 
@@ -155,7 +127,7 @@ class WidgetResizeEventHandler extends AkronEventHandler {
     const editingState = hitModel.getEditingState();
 
     // 드래그로 container 삽입 후 리사이징 시작
-    if (state === EventState.WIDGET_INSERT && editingState === WidgetEditingState.NONE) {
+    if (editingState === WidgetEditingState.NONE) {
       // MouseDown 때 container가 삽입되며 해당 container만 단일 선택으로 존재함
       const insertedContainer = selectedWidgets;
       const hitItem = new HitItem<WidgetModel>();
@@ -188,31 +160,91 @@ class WidgetResizeEventHandler extends AkronEventHandler {
     }
 
     const eventTargetModel = event.getTargetModel();
-    // if (eventTargetModel.getWidgetType() === WidgetTypeEnum) {
-    //   this.finishResizeOnInterrupted(ctx);
-    //   return true;
-    // }
+    if (eventTargetModel.getID() === 0) {
+      // appModel
+      this.finishResizeOnInterrupted(ctx);
+      return true;
+    }
 
     // 리사이징 중
     // WidgetStyle 기준으로 변화해야 하는 Bounds 값 계산
     const deltaClientXY = calculateDeltaClientXY(event, ctx);
+    const correctDeltaXY = correctCoordinateForSnap(ctx, eventTargetModel, deltaClientXY.x, deltaClientXY.y, 'resize');
     const { deltaX, deltaY, deltaWidth, deltaHeight } = calcResizeDeltaBounds(
-      deltaClientXY.x,
-      deltaClientXY.y,
-      editInfo.getResizeHandle(),
-      ctx.getWidgetEditInfoContainer().getRefPositionMap(hitModel) ?? {
-        x: hitWidgetProps.style.x.value,
-        y: hitWidgetProps.style.y.value,
-        width: hitWidgetProps.style.width.value,
-        height: hitWidgetProps.style.height.value,
+      correctDeltaXY.correctedX,
+      correctDeltaXY.correctedY,
+      widgetEditInfoContainer.getResizeHandle(),
+      widgetEditInfoContainer.getRefPositionMap(hitModel) ?? {
+        x: hitModel.getStyleProperties('x').absolute,
+        y: hitModel.getStyleProperties('y').absolute,
+        width: hitModel.getStyleProperties('width').absolute,
+        height: hitModel.getStyleProperties('height').absolute,
       }
     );
 
-    editInfo.setDeltaX(deltaX / (ctx.getZoomRatio() / 100));
-    editInfo.setDeltaY(deltaY / (ctx.getZoomRatio() / 100));
+    const prevDeltaX = widgetEditInfoContainer.getDeltaX();
+    const prevDeltaY = widgetEditInfoContainer.getDeltaY();
+    const prevDeltaWidth = widgetEditInfoContainer.getDeltaWidth();
+    const prevDeltaHeight = widgetEditInfoContainer.getDeltaHeight();
 
-    editInfo.setDeltaWidth(deltaWidth);
-    editInfo.setDeltaHeight(deltaHeight);
+    widgetEditInfoContainer.setDeltaX(deltaX / (ctx.getZoomRatio() / 100));
+    widgetEditInfoContainer.setDeltaY(deltaY / (ctx.getZoomRatio() / 100));
+
+    widgetEditInfoContainer.setDeltaWidth(deltaWidth);
+    widgetEditInfoContainer.setDeltaHeight(deltaHeight);
+
+    const floatingWidgetModels = ctx.getSelectionContainer()?.getFloatingWidgetModels();
+    floatingWidgetModels?.forEach(model => {
+      const modelProperties = model.getProperties();
+      const modelTop = model.getStyleProperties('top');
+      const modelLeft = model.getStyleProperties('left');
+      const modelWidth = model.getStyleProperties('width');
+      const modelHeight = model.getStyleProperties('height');
+      model.setProperties({
+        ...modelProperties,
+        style: {
+          ...modelProperties.style,
+          left:
+            deltaX !== 0
+              ? {
+                  ...modelProperties.style.left,
+                  value: {
+                    absolute: modelLeft.absolute + deltaClientXY.x - prevDeltaX,
+                    relative: 0,
+                    unit: 'px',
+                  },
+                }
+              : { ...modelProperties.style.left },
+          top:
+            deltaY !== 0
+              ? {
+                  ...modelProperties.style.top,
+                  value: {
+                    absolute: modelTop.absolute + deltaClientXY.y - prevDeltaY,
+                    relative: 0,
+                    unit: 'px',
+                  },
+                }
+              : { ...modelProperties.style.top },
+          width: {
+            ...modelProperties.style.width,
+            value: {
+              absolute: (modelWidth.absolute / prevDeltaWidth) * deltaWidth,
+              relative: 0,
+              unit: 'px',
+            },
+          },
+          height: {
+            ...modelProperties.style.height,
+            value: {
+              absolute: (modelHeight.absolute / prevDeltaHeight) * deltaHeight,
+              relative: 0,
+              unit: 'px',
+            },
+          },
+        },
+      });
+    });
 
     return true;
   }
@@ -240,9 +272,8 @@ class WidgetResizeEventHandler extends AkronEventHandler {
     const selectedWidgets = selectionContainer?.getSelectedWidgets();
 
     // 입력 값 검증
-    const hitWidgetProps = hitModel.getProperties();
-    if (isUndefined(hitWidgetProps)) {
-      dError('hitModelProps are undefined');
+    if (isUndefined(hitModel)) {
+      dError('hitModel is undefined');
       return false;
     }
 
@@ -260,9 +291,7 @@ class WidgetResizeEventHandler extends AkronEventHandler {
     }
 
     // 리사이즈 정상 종료
-    const resizedWidgetModels = selectedWidgets?.filter(
-      widgetModel => widgetModel.getParent()?.getWidgetCategory() !== ''
-    );
+    const resizedWidgetModels = selectedWidgets ?? [];
     const deltaClientX = (event.getClientX() - widgetEditInfoContainer.getFromClientX()) / (ctx.getZoomRatio() / 100);
     const deltaClientY = (event.getClientY() - widgetEditInfoContainer.getFromClientY()) / (ctx.getZoomRatio() / 100);
     const { deltaX, deltaY, deltaWidth, deltaHeight } = calcResizeDeltaBounds(
@@ -270,16 +299,16 @@ class WidgetResizeEventHandler extends AkronEventHandler {
       deltaClientY,
       widgetEditInfoContainer.getResizeHandle(),
       widgetEditInfoContainer.getRefPositionMap(hitModel) ?? {
-        x: hitWidgetProps.style.x.value,
-        y: hitWidgetProps.style.y.value,
-        width: hitWidgetProps.style.width.value,
-        height: hitWidgetProps.style.height.value,
+        x: hitModel.getStyleProperties('x').absolute,
+        y: hitModel.getStyleProperties('y').absolute,
+        width: hitModel.getStyleProperties('width').absolute,
+        height: hitModel.getStyleProperties('height').absolute,
       }
     );
 
     const props: WidgetResizeCommandProps = {
       commandID: CommandEnum.WIDGET_RESIZE_END,
-      targetModels: resizedWidgetModels ?? [],
+      targetModels: resizedWidgetModels,
       deltaX,
       deltaY,
       deltaWidth,
@@ -294,14 +323,8 @@ class WidgetResizeEventHandler extends AkronEventHandler {
    * Mouse Leave
    */
   public override onMouseLeave(event: MouseEvent<WidgetModel>, ctx: AkronContext): boolean {
-    const state = ctx.getState();
-
-    if (state !== EventState.WIDGET_INSERT) {
-      this.finishResizeOnInterrupted(ctx);
-      return true;
-    }
-
-    return false;
+    this.finishResizeOnInterrupted(ctx);
+    return true;
   }
 
   /**
@@ -412,10 +435,7 @@ class WidgetResizeEventHandler extends AkronEventHandler {
   private onMouseMoveValidCheck(eventState: EventState, widgetEditInfoContainer: WidgetEditInfoContainer): boolean {
     const widgetEditSubEventState = widgetEditInfoContainer.getWidgetEditSubEventState();
 
-    if (
-      !(eventState === EventState.WIDGET_RESIZE || eventState === EventState.WIDGET_INSERT) ||
-      widgetEditSubEventState !== WidgetEditSubEventState.DRAG
-    ) {
+    if (!(eventState === EventState.WIDGET_RESIZE) || widgetEditSubEventState !== WidgetEditSubEventState.DRAG) {
       return false;
     }
 
@@ -438,7 +458,7 @@ class WidgetResizeEventHandler extends AkronEventHandler {
     const widgetEditSubEventState = widgetEditInfoContainer.getWidgetEditSubEventState();
 
     if (
-      !(eventState === EventState.WIDGET_RESIZE || eventState === EventState.WIDGET_INSERT) ||
+      !(eventState === EventState.WIDGET_RESIZE) ||
       widgetEditSubEventState !== WidgetEditSubEventState.RELEASED ||
       !selectionContainer ||
       selectionContainer.getSelectedWidgets().length === 0

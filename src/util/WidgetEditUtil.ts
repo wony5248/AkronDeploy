@@ -1,4 +1,4 @@
-import { isDefined, dWarn, dLog, MouseEvent } from '@akron/runner';
+import { isDefined, dWarn, dLog, MouseEvent, WidgetEditingState } from '@akron/runner';
 import WidgetModel from 'models/node/WidgetModel';
 import WidgetEditInfoContainer, {
   WidgetResizeHandle,
@@ -238,4 +238,18 @@ export function correctCoordinateForSnap(
   //     }
   //   }
   return { correctedX: newX, correctedY: newY };
+}
+
+export function applyStyleByEditingState(widgetModel: WidgetModel) {
+  const htmlDom = document.getElementById(`widget-${widgetModel.getID()}`);
+  if (htmlDom) {
+    if (
+      widgetModel.getEditingState() === WidgetEditingState.MOVE ||
+      widgetModel.getEditingState() === WidgetEditingState.RESIZE
+    ) {
+      htmlDom.style.opacity = '0.4';
+    } else {
+      htmlDom.style.opacity = '';
+    }
+  }
 }
