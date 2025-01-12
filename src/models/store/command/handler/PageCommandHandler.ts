@@ -377,19 +377,24 @@ class PageCommandHandler extends CommandHandler {
       }
     }
 
-    let nextSelectPage;
-    appWidgetModel.forEachChild(page => {
-      if (!deletableModels.includes(page)) {
-        nextSelectPage = page;
+    let currentPage = appWidgetModel.getLastChild();
+    let nextPage = currentPage?.getPrevSibling();
+    let nextSelectPage = currentPage;
+    while (currentPage && nextPage) {
+      if (deletableModels.includes(currentPage) && !deletableModels.includes(nextPage)) {
+        nextSelectPage = nextPage;
+        break;
       }
-    });
+      currentPage = nextPage;
+      nextPage = currentPage?.getPrevSibling();
+    }
 
     // selectionProp set
     const commandProps = ctx.getCommandProps();
     const selectionPropObj: SelectionProp = {
       selectionType: SelectionEnum.WIDGET,
       widgetModels: [],
-      editingPageModel: nextSelectPage,
+      editingPageModel: nextSelectPage as PageModel,
     };
     if (isDefined(commandProps)) {
       commandProps.selectionProp = selectionPropObj;
