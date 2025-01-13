@@ -8,6 +8,7 @@ import AppModeContainer from 'models/store/container/AppModeContainer';
 import ClipboardContainer from 'models/store/container/ClipboardContainer';
 import HitContainer from 'models/store/container/HitContainer';
 import IdContainerController from 'models/store/container/IdContainerController';
+import MetadataContainer from 'models/store/container/MetadataContainer';
 import PageContainer from 'models/store/container/PageContainer';
 import PropContainer from 'models/store/container/PropContainer';
 import SelectionContainer from 'models/store/container/SelectionContainer';
@@ -271,6 +272,9 @@ class EditableContext extends EditableContextBase {
   @observable
   private appModeContainer: AppModeContainer;
 
+  @observable
+  private metadataContainer: MetadataContainer;
+
   /**
    * 현재 event 에서 실행되어야 할 command 를 보관하는 자료구조 입니다.
    */
@@ -366,6 +370,7 @@ class EditableContext extends EditableContextBase {
     this.pageContainer = initProp.pageContainer;
     this.editorUIStore = initProp.editorUIStore;
     this.contextMenuContainer = initProp.contextMenuContainer;
+    this.metadataContainer = initProp.metadataContainer;
     this.idContainerController = initProp.idContainerController;
     // this.fileMessageContainer = initProp.fileMessageContainer;
     // this.registeredLibraryInfoMap = initProp.registeredLibraryInfoMap;
@@ -825,6 +830,13 @@ class EditableContext extends EditableContextBase {
   @boundMethod
   public setHitContainer(hitContainer: HitContainer<WidgetModel>): void {
     this.hitContainer = hitContainer;
+  }
+
+  /**
+   * metadataContainer를  반환합니다
+   */
+  public getMetadataContainer(): MetadataContainer {
+    return this.metadataContainer;
   }
 
   /**

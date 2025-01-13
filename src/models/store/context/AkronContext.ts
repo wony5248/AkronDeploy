@@ -12,6 +12,7 @@ import ClipboardContainer from 'models/store/container/ClipboardContainer';
 import HitContainer from 'models/store/container/HitContainer';
 import { IdList } from 'models/store/container/IdContainer';
 import IdContainerController from 'models/store/container/IdContainerController';
+import MetadataContainer from 'models/store/container/MetadataContainer';
 import PageContainer from 'models/store/container/PageContainer';
 import PropContainer from 'models/store/container/PropContainer';
 import SelectionContainer from 'models/store/container/SelectionContainer';
@@ -94,7 +95,7 @@ export default class AkronContext {
       newAppModel: initProp.newAppModel,
       appID: initProp.appID,
       appInfo: initProp.appInfo,
-      // newMetaDataContainer: initProp.newMetaDataContainer,
+      metadataContainer: initProp.metadataContainer,
       // appStylesContainer: this.createAppStylesContainer(initProp.appInfo.globalCSSs),
       appStylesContainer: this.createAppStylesContainer(),
       // businessContainer: initProp.businessContainer,
@@ -848,20 +849,12 @@ export default class AkronContext {
   // }
 
   /**
-   * newMetaDataContainer를 반환합니다
+   * MetaDataContainer를 반환합니다
    */
-  // @boundMethod
-  // public getNewMetaDataContainer(): NewMetaDataContainer {
-  //   return this.appEditableContext.getNewMetaDataContainer();
-  // }
-
-  // /**
-  //  * newMetaDataContainer를 설정합니다
-  //  */
-  // @boundMethod
-  // public setNewMetaDataContainer(newMetaDataContainer: NewMetaDataContainer): void {
-  //   this.appEditableContext.setNewMetaDataContainer(newMetaDataContainer);
-  // }
+  @boundMethod
+  public getMetadataContainer(): MetadataContainer {
+    return this.appEditableContext.getMetadataContainer();
+  }
 
   /**
    * AppStylesContainer를 반환합니다
