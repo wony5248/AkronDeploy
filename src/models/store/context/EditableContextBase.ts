@@ -2,6 +2,7 @@ import { boundMethod } from 'autobind-decorator';
 import { observable, makeObservable } from 'mobx';
 import AppModel from 'models/node/AppModel';
 import { WidgetID } from 'models/node/WidgetModel';
+import AppStylesContainer from 'models/store/container/AppStylesContainer';
 import { EditableContextBaseProp } from 'models/store/context/ContextTypes';
 import { NavigateFunction } from 'react-router-dom';
 import { AppInfo } from 'store/app/AppInfo';
@@ -39,8 +40,8 @@ class AppEditableContextBase {
   /**
    * 앱에서 쓰이는 스타일들에 대한 정보들을 담고 있습니다.
    */
-  // @observable
-  // private appStylesContainer: AppStylesContainer;
+  @observable
+  private appStylesContainer: AppStylesContainer;
 
   /**
    * Business Component에 대한 정보를 담는 Container
@@ -146,7 +147,7 @@ class AppEditableContextBase {
     this.appID = initProp.appID;
     this.appInfo = initProp.appInfo;
     // this.newMetaDataContainer = initProp.newMetaDataContainer;
-    // this.appStylesContainer = initProp.appStylesContainer;
+    this.appStylesContainer = initProp.appStylesContainer;
     // this.businessContainer = initProp.businessContainer;
     // this.newBusinessContainer = initProp.newBusinessContainer;
     // this.dataStore = initProp.dataStore;
@@ -233,18 +234,18 @@ class AppEditableContextBase {
   /**
    * AppStylesContainer를 반환합니다
    */
-  //   @boundMethod
-  //   public getAppStylesContainer(): AppStylesContainer {
-  //     return this.appStylesContainer;
-  //   }
+  @boundMethod
+  public getAppStylesContainer(): AppStylesContainer {
+    return this.appStylesContainer;
+  }
 
-  //   /**
-  //    * AppStylesContainer를 설정합니다
-  //    */
-  //   @boundMethod
-  //   public setAppStylesContainer(appStylesContainer: AppStylesContainer): void {
-  //     this.appStylesContainer = appStylesContainer;
-  //   }
+  /**
+   * AppStylesContainer를 설정합니다
+   */
+  @boundMethod
+  public setAppStylesContainer(appStylesContainer: AppStylesContainer): void {
+    this.appStylesContainer = appStylesContainer;
+  }
 
   //   /**
   //    * BusinessContainer를 반환합니다

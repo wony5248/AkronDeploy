@@ -12,6 +12,7 @@ export interface SelectionProp {
   // editingPageModel을 따로 주지 않는 경우, 기존 SelectionContainer에서 승계됩니다.
   editingPageModel?: PageModel; // currentPage
   selectPageModels?: PageModel[]; // selectPages
+  thumbnailModels?: WidgetModel[];
 }
 
 /**

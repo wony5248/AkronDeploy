@@ -9,6 +9,7 @@ export enum ContentType {
   COMPONENT_PAGE,
   COMPONENT_CONTENT,
   COMPONENT_STYLE,
+  APP_STYLES,
 }
 
 /**

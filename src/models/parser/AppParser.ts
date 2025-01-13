@@ -163,7 +163,7 @@ class AppParser {
    * node 생성 작업을 수행합니다. node 를 parent 에 append 합니다.
    */
   private onCreateNode(node: WidgetModel, ctx: AppParserContext): void {
-    if (!!ctx.parentNode) {
+    if (Boolean(ctx.parentNode)) {
       node.append(ctx.parentNode);
       return;
     }
@@ -219,13 +219,13 @@ class AppParser {
     const siblingIDSet: Set<number> = new Set();
 
     for (this.ctx.id = firstChildID; isNotNull(this.ctx.id); ) {
-      if (!!this.ctx.id) {
+      if (Boolean(this.ctx.id)) {
         siblingIDSet.add(this.ctx.id);
       }
 
       this.ctx.parentNode = parentNode;
 
-      if (!!this.ctx.id) {
+      if (Boolean(this.ctx.id)) {
         const childItem = this.getJson(this.ctx.id);
         this.parse();
         const nextID = childItem?.nextID;

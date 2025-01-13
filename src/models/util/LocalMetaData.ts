@@ -241,7 +241,7 @@ export const BasicContainerContentMeta = {
 
 export function getMetaDataByType(widgetType: WidgetTypeEnum): { metaData: IWidgetContentProperties; name: string } {
   let metaData: IWidgetContentProperties = {};
-  let name: string = '';
+  let name = '';
   switch (widgetType) {
     case WidgetTypeEnum.BasicButton: {
       metaData = basicButtonContentMeta;

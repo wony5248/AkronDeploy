@@ -5,6 +5,7 @@ import AppModel from 'models/node/AppModel';
 import WidgetModel from 'models/node/WidgetModel';
 import SimpleCommand from 'models/store/command/common/SimpleCommand';
 import { ContentType, ObjectType } from 'models/store/command/widget/WidgetModelTypes';
+import { isUndefined } from '@akron/runner';
 
 /**
  * 위젯모델의 name를 바꾸는 simple command입니다.
@@ -65,16 +66,21 @@ class RenameWidgetCommand extends SimpleCommand {
    */
   @boundMethod
   public override makeApplyUpdateMessage(): Array<IOperationMessage> | undefined {
-    const targetOpMessage: IOperationMessage = {
-      behavior: 'ue',
-      elementType: ContentType.COMPONENT,
-      objectType: ObjectType.DEFAULT,
-      elementId: this.model.getID(),
-      name: this.model.getName(),
-      updateProp: 4, // 기존 enum 4
-    };
+    if (isUndefined(this.model)) {
+      return undefined;
+    }
+    // TODO: command prop 으로 behavior 받아서 기존에 있던 model의 이동이면 ue, 신규 생성도니 model의 삽입이면 ue로 변환 필요
+    return this.model.makeOperationMessage('ue') as IOperationMessage[];
+    // const targetOpMessage: IOperationMessage = {
+    //   behavior: 'ue',
+    //   elementType: ContentType.COMPONENT,
+    //   objectType: ObjectType.DEFAULT,
+    //   elementId: this.model.getID(),
+    //   name: this.model.getName(),
+    //   updateProp: 4, // 기존 enum 4
+    // };
 
-    return [targetOpMessage];
+    // return [targetOpMessage];
   }
 
   /**

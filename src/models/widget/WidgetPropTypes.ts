@@ -1,3 +1,4 @@
+import { PageItem } from 'components/toolpane/PageListComponent';
 import WidgetModel, { WidgetID, WidgetTypeID } from 'models/node/WidgetModel';
 import { CSSProperties } from 'react';
 

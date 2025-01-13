@@ -3,6 +3,7 @@ import AppModel from 'models/node/AppModel';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
 import WidgetCommandProps from 'models/store/command/widget/WidgetCommandProps';
 import AppModeContainer from 'models/store/container/AppModeContainer';
+import AppStylesContainer from 'models/store/container/AppStylesContainer';
 import ClipboardContainer from 'models/store/container/ClipboardContainer';
 import CompositeComponentContainer from 'models/store/container/CompositeComponentContainer';
 import HitContainer from 'models/store/container/HitContainer';
@@ -94,7 +95,7 @@ export interface EditableContextBaseProp {
   appID: number;
   appInfo: AppInfo;
   //   newMetaDataContainer: NewMetaDataContainer;
-  //   appStylesContainer: AppStylesContainer;
+  appStylesContainer: AppStylesContainer;
   //   businessContainer: BusinessContainerBase;
   //   newBusinessContainer: NewBusinessContainer;
   //   dataStore: DataStoreBase;

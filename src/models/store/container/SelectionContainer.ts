@@ -2,7 +2,9 @@ import { isDefined } from '@akron/runner';
 import { action, makeObservable } from 'mobx';
 import PageModel from 'models/node/PageModel';
 import WidgetModel from 'models/node/WidgetModel';
+import SectionSelection from 'models/store/selection/SectionSelection';
 import WidgetSelection from 'models/store/selection/WidgetSelection';
+import { PageSection } from 'models/widget/WidgetPropTypes';
 
 /**
  * SuperUX의 Selection 정보를 담기 위한 Class
@@ -25,7 +27,7 @@ export default class SelectionContainer {
   // TODO 구조가 좋지 않아 보여 추후 수정필요
   private isMove?: boolean;
 
-  //   private sectionSelection?: SectionSelection;
+  private sectionSelection?: SectionSelection;
 
   private editingPage?: WidgetModel;
 
@@ -43,7 +45,7 @@ export default class SelectionContainer {
     this.pageSelections = Array<WidgetSelection>();
     this.floatingWidgetModels = Array<WidgetModel>();
     this.isMove = false;
-    // this.sectionSelection = undefined;
+    this.sectionSelection = undefined;
     this.editingPage = undefined;
     this.selectableWidgetModels = Array<WidgetModel>();
     this.hoverableWidgetModel = undefined;
@@ -60,15 +62,16 @@ export default class SelectionContainer {
     this.widgetSelections.forEach(selection => {
       selection.setSelected(selected);
     });
-    // this.pageSelections.forEach(selection => {
-    //     selection.setSelected(selected);
-    // }); this.widgetSelections.forEach(selection => {
-    //     selection.setSelected(selected);
-    // });
-    // this.pageSelections.forEach(selection => {
-    //     selection.setSelected(selected);
-    // });
-    // this.sectionSelection?.setSelected(selected);
+    this.pageSelections.forEach(selection => {
+      selection.setSelected(selected);
+    });
+    this.widgetSelections.forEach(selection => {
+      selection.setSelected(selected);
+    });
+    this.pageSelections.forEach(selection => {
+      selection.setSelected(selected);
+    });
+    this.sectionSelection?.setSelected(selected);
   }
 
   /**
@@ -102,15 +105,15 @@ export default class SelectionContainer {
   /**
    * section selection을 설정함. 구역을  생성하지 않으면 없음
    */
-  //   @action.bound
-  //   public setSelectedSection(
-  //     appWidgetModel: WidgetModel,
-  //     pageSection: PageSection,
-  //     widgetModels: WidgetModel[] | undefined
-  //   ): void {
-  //     const sectionSelection = new SectionSelection(appWidgetModel, pageSection, widgetModels);
-  //     this.sectionSelection = sectionSelection;
-  //   }
+  @action.bound
+  public setSelectedSection(
+    appWidgetModel: WidgetModel,
+    pageSection: PageSection,
+    widgetModels: WidgetModel[] | undefined
+  ): void {
+    const sectionSelection = new SectionSelection(appWidgetModel, pageSection, widgetModels);
+    this.sectionSelection = sectionSelection;
+  }
 
   /**
    * floatingWidgetModels 셋팅.
@@ -179,9 +182,9 @@ export default class SelectionContainer {
   /**
    * 선택된 구역 셀렉션을 반환. 구역 페이지들의 정보와 구역 정보를 가지고 있음
    */
-  //   public getSelectedSection() {
-  //     return this.sectionSelection;
-  //   }
+  public getSelectedSection() {
+    return this.sectionSelection;
+  }
 
   /**
    * 선택된 페이지들이 이동중인 상태인지를 세팅하는 함수

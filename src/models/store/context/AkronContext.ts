@@ -7,6 +7,7 @@ import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
 import Command from 'models/store/command/common/Command';
 import WidgetCommandProps from 'models/store/command/widget/WidgetCommandProps';
 import AppModeContainer from 'models/store/container/AppModeContainer';
+import AppStylesContainer from 'models/store/container/AppStylesContainer';
 import ClipboardContainer from 'models/store/container/ClipboardContainer';
 import HitContainer from 'models/store/container/HitContainer';
 import { IdList } from 'models/store/container/IdContainer';
@@ -29,7 +30,7 @@ import EditableContext, { PageRefPosition } from 'models/store/context/EditableC
 import { SaveState } from 'models/store/EditorStore';
 import EventState from 'models/store/event/EventState';
 import { NavigateFunction } from 'react-router-dom';
-import { AppInfo } from 'store/app/AppInfo';
+import { AppInfo, CSSInfo } from 'store/app/AppInfo';
 import EditorUIStore from 'store/app/EditorUIStore';
 import ContextMenuContainer from 'store/context-menu/ContextMenuContainer';
 import { ContextMenu } from 'store/context-menu/ContextMenuTypes';
@@ -95,7 +96,7 @@ export default class AkronContext {
       appInfo: initProp.appInfo,
       // newMetaDataContainer: initProp.newMetaDataContainer,
       // appStylesContainer: this.createAppStylesContainer(initProp.appInfo.globalCSSs),
-      // appStylesContainer: this.createAppStylesContainer(),
+      appStylesContainer: this.createAppStylesContainer(),
       // businessContainer: initProp.businessContainer,
       // newBusinessContainer: initProp.newBusinessContainer,
       // dataStore: initProp.dataStore,
@@ -173,12 +174,12 @@ export default class AkronContext {
   /**
    * AppStylesContainer를 생성해 반환합니다
    */
-  // @boundMethod
-  // public createAppStylesContainer(globalCsss?: [string, CSSInfo][]): AppStylesContainer {
-  //   const appStylesContainer = new AppStylesContainer();
-  //   appStylesContainer.setAllGlobalCSSs(globalCsss ?? []);
-  //   return appStylesContainer;
-  // }
+  @boundMethod
+  public createAppStylesContainer(globalCsss?: [string, CSSInfo][]): AppStylesContainer {
+    const appStylesContainer = new AppStylesContainer();
+    appStylesContainer.setAllGlobalCSSs(globalCsss ?? []);
+    return appStylesContainer;
+  }
 
   /**
    * AppID를 반환합니다
@@ -330,6 +331,24 @@ export default class AkronContext {
   @boundMethod
   public getSelectionContainer(): SelectionContainer | undefined {
     return this.appEditableContext.getSelectionContainer();
+  }
+
+  /**
+   * DocumentContext
+   * SelectionContainer을 설정합니다
+   */
+  @boundMethod
+  public setClipboardContainer(clipboardContainer: ClipboardContainer) {
+    return this.appEditableContext.setClipboardContainer(clipboardContainer);
+  }
+
+  /**
+   * DocumentContext
+   * SelectionContainer을 반환합니다
+   */
+  @boundMethod
+  public getClipboardContainer(): ClipboardContainer {
+    return this.appEditableContext.getClipboardContainer();
   }
 
   /**
@@ -844,21 +863,21 @@ export default class AkronContext {
   //   this.appEditableContext.setNewMetaDataContainer(newMetaDataContainer);
   // }
 
-  // /**
-  //  * AppStylesContainer를 반환합니다
-  //  */
-  // @boundMethod
-  // public getAppStylesContainer(): AppStylesContainer {
-  //   return this.appEditableContext.getAppStylesContainer();
-  // }
+  /**
+   * AppStylesContainer를 반환합니다
+   */
+  @boundMethod
+  public getAppStylesContainer(): AppStylesContainer {
+    return this.appEditableContext.getAppStylesContainer();
+  }
 
-  // /**
-  //  * AppStylesContainer를 설정합니다
-  //  */
-  // @boundMethod
-  // public setAppStylesContainer(appStylesContainer: AppStylesContainer): void {
-  //   this.appEditableContext.setAppStylesContainer(appStylesContainer);
-  // }
+  /**
+   * AppStylesContainer를 설정합니다
+   */
+  @boundMethod
+  public setAppStylesContainer(appStylesContainer: AppStylesContainer): void {
+    this.appEditableContext.setAppStylesContainer(appStylesContainer);
+  }
 
   // /**
   //  * BusinessContainer를 반환합니다
