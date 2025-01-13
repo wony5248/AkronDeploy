@@ -2,7 +2,7 @@ import { Nullable, WidgetCategory, WidgetTypeEnum } from '@akron/runner';
 import { makeObservable, observable } from 'mobx';
 import WidgetModel from 'models/node/WidgetModel';
 import AppRepository from 'models/repository/AppRepository';
-import { createContentData, createStyleData } from 'util/MetadataUtil';
+import { createContentData, createStyleData, parseContentsToMap, parseStylesToMap } from 'util/MetadataUtil';
 
 export interface MetadataContainerProp {
   componentMetadatas: ComponentMetadata[];
@@ -13,8 +13,8 @@ export interface ComponentMetadata {
   componentType: string;
   componentCategory: string;
   code?: string;
-  contents: Map<string, ContentMetadata>;
-  styles: Map<string, StyleMetadata>;
+  contents: { [key: string]: ContentMetadata };
+  styles: { [key: string]: StyleMetadata };
 }
 
 export interface ContentMetadata {
@@ -100,8 +100,8 @@ class MetadataContainer {
         },
       });
 
-      contentMetadatas.set(widgetType, metadata.contents);
-      styleMetadatas.set(widgetType, metadata.styles);
+      contentMetadatas.set(widgetType, parseContentsToMap(metadata.contents));
+      styleMetadatas.set(widgetType, parseStylesToMap(metadata.styles));
       widgetModels.set(widgetType, widgetModel);
     });
 
@@ -122,8 +122,8 @@ class MetadataContainer {
         },
       });
 
-      this.contentMetadatas.set(widgetType, metadata.contents);
-      this.styleMetadatas.set(widgetType, metadata.styles);
+      this.contentMetadatas.set(widgetType, parseContentsToMap(metadata.contents));
+      this.styleMetadatas.set(widgetType, parseStylesToMap(metadata.styles));
       this.defaultWidgetModels.set(widgetType, widgetModel);
     });
   }

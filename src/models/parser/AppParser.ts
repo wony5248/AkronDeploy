@@ -150,17 +150,18 @@ class AppParser {
    */
   private createPageComponent(item: NodeJson) {
     const { componentID, componentType, name, contentsData, stylesData } = item;
+    const widgetType = componentType as WidgetTypeEnum;
     const contents = contentsData;
     const styles = stylesData;
 
     return new PageModel({
       id: componentID,
       widgetCategory: '',
-      widgetType: componentType as WidgetTypeEnum,
+      widgetType: widgetType,
       name: name,
       properties: {
-        content: contents,
-        style: styles,
+        content: this.createContents(contents, widgetType),
+        style: this.createStyles(styles, widgetType),
       },
     });
   }
@@ -275,16 +276,13 @@ class AppParser {
     const result: IWidgetContentProperties = {};
     const contentMetadatas = this.metadataContainer.getWidgetContentMetadata(widgetType);
 
-    if (contentMetadatas) {
-      for (const key in contentMetadatas) {
-        const contentMetadata = contentMetadatas.get(key) as ContentMetadata;
-        result[key] = {
-          value: contents[key].value ?? null,
-          defaultValue: contents[key].defaultValue ?? contentMetadata.defaultValue,
-          variableId: contents[key].variableId,
-        };
-      }
-    }
+    contentMetadatas?.forEach((contentMetadata, key) => {
+      result[key] = {
+        value: contents[key]?.value ?? null,
+        defaultValue: contents[key]?.defaultValue ?? contentMetadata.defaultValue,
+        variableId: contents[key]?.variableId ?? null,
+      };
+    });
 
     return result;
   }
@@ -293,16 +291,13 @@ class AppParser {
     const result: IWidgetContentProperties = {};
     const styleMetadatas = this.metadataContainer.getWidgetStyleMetadata(widgetType);
 
-    if (styleMetadatas) {
-      for (const key in styleMetadatas) {
-        const styleMetadata = styleMetadatas.get(key) as StyleMetadata;
-        result[key] = {
-          value: styles[key].value ?? null,
-          defaultValue: styles[key].defaultValue ?? styleMetadata.defaultValue,
-          variableId: styles[key].variableId,
-        };
-      }
-    }
+    styleMetadatas?.forEach((styleMetadata, key) => {
+      result[key] = {
+        value: styles[key]?.value ?? null,
+        defaultValue: styles[key]?.defaultValue ?? styleMetadata.defaultValue,
+        variableId: styles[key]?.variableId ?? null,
+      };
+    });
 
     return result;
   }
