@@ -54,6 +54,7 @@ const MainPageComponent = () => {
     const metadatas = await AppRepository.getAppMetadatas({ appId: Number(appId) });
 
     const params: EditorStoreInitParams = {
+      appId: Number(appId),
       eventMapper: new AkronEventMapper(new EventHandlerFactory()),
       mode: 'EDIT_APP',
       appName: '',

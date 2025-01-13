@@ -45,6 +45,7 @@ import { DialogContentType } from 'store/ribbon-menu/RibbonMenuComponentInfo';
  * Editor Store 생성자 파라미터 Interface 입니다.
  */
 export interface EditorStoreInitParams {
+  appId: number;
   eventMapper: AkronEventMapper;
   mode: AppModeType;
   appName: string;
@@ -108,7 +109,7 @@ class EditorStore {
     let eventState = EventState.EDIT;
     (this.saveState = SaveState.SAVE_COMPLETE),
       (this.ctx = new AkronContext({
-        appID: appModel.getID(),
+        appID: params.appId,
         appInfo: params.appInfo,
         newAppModel: appModel,
         eventState,
