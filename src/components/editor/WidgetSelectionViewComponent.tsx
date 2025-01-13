@@ -4,6 +4,8 @@ import useEventListener from 'hooks/util/useEventListener';
 import useWidgetSelectionViewComponentEventListner from 'hooks/widget/useWidgetSelectionViewComponentEventListner';
 import { observer } from 'mobx-react-lite';
 import WidgetModel from 'models/node/WidgetModel';
+import CommandEnum from 'models/store/command/common/CommandEnum';
+import { InsertWidgetAtCommandProps } from 'models/store/command/handler/WidgetEditCommandHandler';
 import {
   isBottomSide,
   isLeftSide,
@@ -252,17 +254,6 @@ const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props
 
   // child Selection들 render
   const renderChildrenSelection = () => {
-    // ESLint가 mutually recursive한 함수들(a()가 b()를 호출, b()가 a()를 호출)을 제대로 처리 못함 -> 이 줄 한해서 off.
-    // ConditionalLayout은 현재 렌더링하는 FragmentLayout 하위 widget의 selection view만 렌더링
-    // if (checkConditionalLayout(model)) {
-    //   const childWidgetModels = model.mapChild(childWidgetModel => childWidgetModel);
-    //   const renderedChildIndex = model.getProperties().content.flag.value ? 0 : 1;
-
-    //   return childWidgetModels[renderedChildIndex]?.mapChild(grandChild => (
-    //     // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    //     <WidgetSelectionViewBaseComponent key={grandChild.getID()} model={grandChild} />
-    //   ));
-    // }
     if (model.isRepeatableLayoutWidgetType()) {
       return null;
     }
@@ -329,7 +320,6 @@ const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props
               <></>
               // <WidgetTextViewComponent key={model.getID()} model={model} />
             )}
-            {/* UX에서는 1 depth selection만 렌더링함 */}
             {renderChildrenSelection()}
           </div>
         </div>
@@ -345,6 +335,7 @@ WidgetSelectionViewBaseComponent.displayName = 'WidgetSelectionViewBaseComponent
  * Page widget의 selection overlay를 그립니다.
  */
 const PageWidgetSelectionViewComponent: React.FC<Props> = observer((props: Props) => {
+  const editorStore = useEditorStore();
   const { model } = props;
   const {
     handleMouseDown,
@@ -358,8 +349,6 @@ const PageWidgetSelectionViewComponent: React.FC<Props> = observer((props: Props
   } = useEventListener(model);
   // child Selection들 render
   const renderChildrenSelection = () => {
-    // ESLint가 mutually recursive한 함수들(a()가 b()를 호출, b()가 a()를 호출)을 제대로 처리 못함 -> 이 줄 한해서 off.
-
     return model.mapChild(child => <WidgetSelectionViewComponent key={child.getID()} model={child} />);
   };
 
@@ -381,6 +370,26 @@ const PageWidgetSelectionViewComponent: React.FC<Props> = observer((props: Props
       onDrag={handleDrag}
       onMouseOver={handleMouseOver}
       onFocus={doNothing}
+      onDrop={e => {
+        e.preventDefault();
+        const widgetId = e.dataTransfer.getData('widgetId');
+        const widgetType = e.dataTransfer.getData('widgetType');
+        if (widgetId && widgetId) {
+          const pageDomId = `widget-${model.getID()}`;
+          const pageDom = document.getElementById(pageDomId);
+          const commandProps: InsertWidgetAtCommandProps = {
+            commandID: CommandEnum.INSERT_WIDGET_AT,
+            widgetType: widgetType as WidgetTypeEnum,
+            widgetID: 0, // 임시. id 정책이 반영되어야함
+            posX: e.clientX - (pageDom?.getBoundingClientRect().x ?? 0),
+            posY: e.clientY - (pageDom?.getBoundingClientRect().y ?? 0),
+          };
+          editorStore.handleCommandEvent(commandProps);
+        }
+      }}
+      onDragOver={e => {
+        e.preventDefault();
+      }}
     >
       {renderChildrenSelection()}
     </div>
