@@ -524,10 +524,7 @@ class WidgetEditCommandHandler extends CommandHandler {
       newWidgetModel,
       isClone: isDefined(props.cloneWidget),
       initializeProperties: defaultProperties => {
-        const parentWidgetModel =
-          ctx.getMouseMode() === 'InsertContainer'
-            ? (ctx.getSelectionContainer()?.getEditingPage() ?? this.getParentToInsert(ctx, newWidgetModel))
-            : this.getParentToInsert(ctx, newWidgetModel);
+        const parentWidgetModel = this.getParentToInsert(ctx, newWidgetModel);
         const parentWidth = parentWidgetModel?.getProperties().style.width.value;
         const parentHeight = parentWidgetModel?.getProperties().style.height.value;
 
@@ -536,6 +533,44 @@ class WidgetEditCommandHandler extends CommandHandler {
           ...initialProps,
           style: {
             ...defaultProperties.style,
+            x: {
+              ...newWidgetModel.getProperties().style.x,
+              value: { absolute: props.posX, relative: Math.round((props.posX / parentWidth) * 100), unit: 'px' },
+            },
+            y: {
+              ...newWidgetModel.getProperties().style.y,
+              value: { absolute: props.posY, relative: Math.round((props.posY / parentHeight) * 100), unit: 'px' },
+            },
+            left: {
+              ...newWidgetModel.getProperties().style.left,
+              value: { absolute: props.posX, relative: Math.round((props.posX / parentWidth) * 100), unit: 'px' },
+            },
+            top: {
+              ...newWidgetModel.getProperties().style.top,
+              value: { absolute: props.posY, relative: Math.round((props.posY / parentHeight) * 100), unit: 'px' },
+            },
+            right: {
+              ...newWidgetModel.getProperties().style.right,
+              value: {
+                absolute: parentWidth - props.posX - defaultProperties.style.width.defaultValue.absolute,
+                relative:
+                  100 -
+                  Math.round((props.posX / parentWidth) * 100) -
+                  defaultProperties.style.width.defaultValue.relative,
+                unit: 'px',
+              },
+            },
+            bottom: {
+              ...newWidgetModel.getProperties().style.bottom,
+              value: {
+                absolute: parentHeight - props.posY - defaultProperties.style.height.defaultValue.absolute,
+                relative:
+                  100 -
+                  Math.round((props.posY / parentHeight) * 100) -
+                  defaultProperties.style.height.defaultValue.relative,
+                unit: 'px',
+              },
+            },
           },
         };
       },
