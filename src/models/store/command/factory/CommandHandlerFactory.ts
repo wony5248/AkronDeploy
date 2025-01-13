@@ -1,8 +1,13 @@
 import CommandHandler from 'models/store/command/common/CommandHandler';
 import AppCommandHandler from 'models/store/command/handler/AppCommandHandler';
+import AppStylesCommandHandler from 'models/store/command/handler/AppStylesCommandHandler';
+import ClipboardCommandHandler from 'models/store/command/handler/clipboard/ClipboardCommandHandler';
 import PageCommandHandler from 'models/store/command/handler/PageCommandHandler';
+import PageListSortCommandHandler from 'models/store/command/handler/PageListSortCommandHandler';
 import WidgetEditCommandHandler from 'models/store/command/handler/WidgetEditCommandHandler';
+import WidgetLayerCommandHandler from 'models/store/command/handler/WidgetLayerCommandHandler';
 import WidgetSelectCommandHandler from 'models/store/command/handler/WidgetSelectionCommandHandler';
+import EditorZoomInOutCommandHandler from 'models/store/command/handler/ZoomInOutCommandHandler';
 
 /**
  * Command handler 를 생성하는 abstract factory 입니다.
@@ -16,12 +21,12 @@ class CommandHandlerFactory {
     return new WidgetEditCommandHandler();
   }
 
-  //   /**
-  //    * WidgetLayerCommandHandler 반환
-  //    */
-  //   public createWidgetLayerCommandHandler(): CommandHandler {
-  //     return new WidgetLayerCommandHandler();
-  //   }
+  /**
+   * WidgetLayerCommandHandler 반환
+   */
+  public createWidgetLayerCommandHandler(): CommandHandler {
+    return new WidgetLayerCommandHandler();
+  }
 
   /**
    * WidgetEditCommandHandler 반환
@@ -30,12 +35,12 @@ class CommandHandlerFactory {
     return new WidgetSelectCommandHandler();
   }
 
-  //   /**
-  //    * ClipboardCommandHandler 반환
-  //    */
-  //   public createClipboardCommandHandler(): CommandHandler {
-  //     return new ClipboardCommandHandler();
-  //   }
+  /**
+   * ClipboardCommandHandler 반환
+   */
+  public createClipboardCommandHandler(): CommandHandler {
+    return new ClipboardCommandHandler();
+  }
 
   /**
    * PkgCommandHandler 반환
@@ -86,19 +91,19 @@ class CommandHandlerFactory {
   //     return new DataCommandHandler();
   //   }
 
-  //   /**
-  //    * EditorZoomInOutCommandHandler 반환
-  //    */
-  //   public createEditorZoomInOutCommandHandler(): CommandHandler {
-  //     return new EditorZoomInOutCommandHandler();
-  //   }
+  /**
+   * EditorZoomInOutCommandHandler 반환
+   */
+  public createEditorZoomInOutCommandHandler(): CommandHandler {
+    return new EditorZoomInOutCommandHandler();
+  }
 
-  //   /**
-  //    * PageListSortCommandHandler 반환
-  //    */
-  //   public createPageListSortCommandHandler(): CommandHandler {
-  //     return new PageListSortCommandHandler();
-  //   }
+  /**
+   * PageListSortCommandHandler 반환
+   */
+  public createPageListSortCommandHandler(): CommandHandler {
+    return new PageListSortCommandHandler();
+  }
 
   //   /**
   //    * BusinessDialogWidgetCommandHandler 반환
@@ -114,12 +119,12 @@ class CommandHandlerFactory {
   //     return new ExternalServiceCommandHandler();
   //   }
 
-  //   /**
-  //    * AppStylesCommandHandler 반환
-  //    */
-  //   public createAppStylesCommandHandler(): CommandHandler {
-  //     return new AppStylesCommandHandler();
-  //   }
+  /**
+   * AppStylesCommandHandler 반환
+   */
+  public createAppStylesCommandHandler(): CommandHandler {
+    return new AppStylesCommandHandler();
+  }
 
   //   /**
   //    * OSCommandHandler 반환

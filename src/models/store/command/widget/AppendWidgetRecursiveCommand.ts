@@ -109,15 +109,10 @@ class AppendWidgetRecursiveCommand extends SimpleCommand {
     childOpMgs: IOperationMessage[] = [],
     behavior: string
   ): void {
-    const modelMsg = model.makeOperationMessage() as IOperationMessage;
-    modelMsg.behavior = behavior;
-    modelMsg.elementType = ContentType.COMPONENT;
+    const modelMsg = this.target.makeOperationMessage('ie') as IOperationMessage[];
     // modelMsg.codeData = this.ctx.getNewMetaDataContainer().getComponentCodeData();
-    modelMsg.propMap = (model as WidgetModel).getProperties();
-    childOpMgs.push(modelMsg);
-
     model.forEachChild((child: WidgetModel) => {
-      this.makeOperationMessageRecursive(child, childOpMgs, behavior);
+      this.makeOperationMessageRecursive(child, modelMsg, behavior);
     });
   }
 }

@@ -20,7 +20,7 @@ class AkronCommandMapper extends CommandMapper {
     this.setWidgetSelectCommandMap(factory);
 
     // // Widget Layer
-    // this.setWidgetLayerCommandMap(factory);
+    this.setWidgetLayerCommandMap(factory);
 
     // // Style
     // this.setStyleCommandMap(factory);
@@ -104,16 +104,16 @@ class AkronCommandMapper extends CommandMapper {
     this.commandMap.set(CommandEnum.RESET_WIDGET_CONTENT, [widgetEditCommandHandler]);
   }
 
-  //   /**
-  //    * WidgetLayerHandler에서 처리하는
-  //    * CommandEnum을 등록합니다
-  //    */
-  //   @boundMethod
-  //   private setWidgetLayerCommandMap(factory: CommandHandlerFactory): void {
-  //     const widgetLayerCommandHandler = factory.createWidgetLayerCommandHandler();
-  //     // Widget Layer
-  //     this.commandMap.set(CommandEnum.LAYER_MOVE, [widgetLayerCommandHandler]);
-  //   }
+  /**
+   * WidgetLayerHandler에서 처리하는
+   * CommandEnum을 등록합니다
+   */
+  @boundMethod
+  private setWidgetLayerCommandMap(factory: CommandHandlerFactory): void {
+    const widgetLayerCommandHandler = factory.createWidgetLayerCommandHandler();
+    // Widget Layer
+    this.commandMap.set(CommandEnum.LAYER_MOVE, [widgetLayerCommandHandler]);
+  }
 
   /**
    * WidgetSelectHandler에서 처리하는
@@ -129,36 +129,36 @@ class AkronCommandMapper extends CommandMapper {
     this.commandMap.set(CommandEnum.SELECT_SECTION, [widgetSelectCommandHandler]);
   }
 
-  //   /**
-  //    * Style 관련 CommandHandler에서 처리하는
-  //    * CommandEnum을 등록합니다
-  //    */
-  //   @boundMethod
-  //   private setStyleCommandMap(factory: CommandHandlerFactory): void {
-  //     const appStylesCommandHandler = factory.createAppStylesCommandHandler();
-  //     this.commandMap.set(CommandEnum.ADD_APP_STYLES, [appStylesCommandHandler]);
-  //     this.commandMap.set(CommandEnum.DELETE_APP_STYLES, [appStylesCommandHandler]);
-  //     this.commandMap.set(CommandEnum.APPLY_APP_STYLES, [appStylesCommandHandler]);
-  //     this.commandMap.set(CommandEnum.UNAPPLY_APP_STYLES, [appStylesCommandHandler]);
-  //   }
+  /**
+   * Style 관련 CommandHandler에서 처리하는
+   * CommandEnum을 등록합니다
+   */
+  @boundMethod
+  private setStyleCommandMap(factory: CommandHandlerFactory): void {
+    const appStylesCommandHandler = factory.createAppStylesCommandHandler();
+    this.commandMap.set(CommandEnum.ADD_APP_STYLES, [appStylesCommandHandler]);
+    this.commandMap.set(CommandEnum.DELETE_APP_STYLES, [appStylesCommandHandler]);
+    this.commandMap.set(CommandEnum.APPLY_APP_STYLES, [appStylesCommandHandler]);
+    this.commandMap.set(CommandEnum.UNAPPLY_APP_STYLES, [appStylesCommandHandler]);
+  }
 
-  //   /**
-  //    * Clipboard 관련 CommandEnum을 등록합니다
-  //    */
-  //   @boundMethod
-  //   private setClipboardCommandMap(factory: CommandHandlerFactory): void {
-  //     const clipboardCommandHandler = factory.createClipboardCommandHandler();
-  //     const pageCommandHandler = factory.createPageCommandHandler();
-  //     const widgetEditCommandHandler = factory.createWidgetEditCommandHandler();
+  /**
+   * Clipboard 관련 CommandEnum을 등록합니다
+   */
+  @boundMethod
+  private setClipboardCommandMap(factory: CommandHandlerFactory): void {
+    const clipboardCommandHandler = factory.createClipboardCommandHandler();
+    const pageCommandHandler = factory.createPageCommandHandler();
+    const widgetEditCommandHandler = factory.createWidgetEditCommandHandler();
 
-  //     this.commandMap.set(CommandEnum.CLIPBOARD_COPY_PROCESS, [clipboardCommandHandler]);
-  //     this.commandMap.set(CommandEnum.CLIPBOARD_CUT_PROCESS, [
-  //       clipboardCommandHandler,
-  //       widgetEditCommandHandler,
-  //       pageCommandHandler,
-  //     ]);
-  //     this.commandMap.set(CommandEnum.CLIPBOARD_PASTE_PROCESS, [clipboardCommandHandler]);
-  //   }
+    this.commandMap.set(CommandEnum.CLIPBOARD_COPY_PROCESS, [clipboardCommandHandler]);
+    this.commandMap.set(CommandEnum.CLIPBOARD_CUT_PROCESS, [
+      clipboardCommandHandler,
+      widgetEditCommandHandler,
+      pageCommandHandler,
+    ]);
+    this.commandMap.set(CommandEnum.CLIPBOARD_PASTE_PROCESS, [clipboardCommandHandler]);
+  }
 
   /**
    * App의 DB저장 관련 CommandHandler에서 처리하는
@@ -273,28 +273,28 @@ class AkronCommandMapper extends CommandMapper {
   //     this.commandMap.set(CommandEnum.UPDATE_VARIABLE_DATA_TYPE_REF, [dataCommandHandler]);
   //   }
 
-  //   /**
-  //    * Editor Zoom 관련 CommandEnum을 등록합니다.
-  //    */
-  //   private setEditorZoomCommandMap(factory: CommandHandlerFactory): void {
-  //     const editorZoomInOutCommandHandler = factory.createEditorZoomInOutCommandHandler();
-  //     this.commandMap.set(CommandEnum.ZOOM_IN, [editorZoomInOutCommandHandler]);
-  //     this.commandMap.set(CommandEnum.ZOOM_OUT, [editorZoomInOutCommandHandler]);
-  //     this.commandMap.set(CommandEnum.ZOOM_RATIO, [editorZoomInOutCommandHandler]);
-  //     this.commandMap.set(CommandEnum.FIT_WINDOW, [editorZoomInOutCommandHandler]);
-  //     this.commandMap.set(CommandEnum.ZOOM_IN_CTRL, [editorZoomInOutCommandHandler]);
-  //     this.commandMap.set(CommandEnum.ZOOM_OUT_CTRL, [editorZoomInOutCommandHandler]);
-  //   }
+  /**
+   * Editor Zoom 관련 CommandEnum을 등록합니다.
+   */
+  private setEditorZoomCommandMap(factory: CommandHandlerFactory): void {
+    const editorZoomInOutCommandHandler = factory.createEditorZoomInOutCommandHandler();
+    this.commandMap.set(CommandEnum.ZOOM_IN, [editorZoomInOutCommandHandler]);
+    this.commandMap.set(CommandEnum.ZOOM_OUT, [editorZoomInOutCommandHandler]);
+    this.commandMap.set(CommandEnum.ZOOM_RATIO, [editorZoomInOutCommandHandler]);
+    this.commandMap.set(CommandEnum.FIT_WINDOW, [editorZoomInOutCommandHandler]);
+    this.commandMap.set(CommandEnum.ZOOM_IN_CTRL, [editorZoomInOutCommandHandler]);
+    this.commandMap.set(CommandEnum.ZOOM_OUT_CTRL, [editorZoomInOutCommandHandler]);
+  }
 
-  //   /**
-  //    * page sort 관련 CommandEnum을 등록합니다.
-  //    */
-  //   private setPageListSortCommandMap(factory: CommandHandlerFactory): void {
-  //     const pageListSortCommandHandler = factory.createPageListSortCommandHandler();
-  //     this.commandMap.set(CommandEnum.MOVE_PAGE_THUMBNAIL, [pageListSortCommandHandler]);
-  //     this.commandMap.set(CommandEnum.MOVE_PAGE_THUMBNAIL_IN_SECTION, [pageListSortCommandHandler]);
-  //     this.commandMap.set(CommandEnum.MOVE_SECTION, [pageListSortCommandHandler]);
-  //   }
+  /**
+   * page sort 관련 CommandEnum을 등록합니다.
+   */
+  private setPageListSortCommandMap(factory: CommandHandlerFactory): void {
+    const pageListSortCommandHandler = factory.createPageListSortCommandHandler();
+    this.commandMap.set(CommandEnum.MOVE_PAGE_THUMBNAIL, [pageListSortCommandHandler]);
+    this.commandMap.set(CommandEnum.MOVE_PAGE_THUMBNAIL_IN_SECTION, [pageListSortCommandHandler]);
+    this.commandMap.set(CommandEnum.MOVE_SECTION, [pageListSortCommandHandler]);
+  }
 
   //   /**
   //    * BusinessDialog widget 관련 CommandEnum을 등록합니다.

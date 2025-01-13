@@ -131,15 +131,11 @@ class NewRemoveWidgetCommand extends SimpleCommand {
    */
   @boundMethod
   public override makeApplyUpdateMessage(): IOperationMessage[] | undefined {
-    const targetOpMessages: IOperationMessage[] = [];
-    const behavior = this.keepDB ? 'ur' : 'de';
+    const behavior = this.keepDB ? 'ue' : 'de';
 
-    const modelOpMsg = this.target.makeOperationMessage() as IOperationMessage;
-    modelOpMsg.behavior = behavior;
-    modelOpMsg.elementType = ContentType.COMPONENT;
+    const modelOpMsg = this.target.makeOperationMessage(behavior) as IOperationMessage[];
 
-    targetOpMessages.push(modelOpMsg);
-    return targetOpMessages;
+    return modelOpMsg;
   }
 
   /**
@@ -151,9 +147,8 @@ class NewRemoveWidgetCommand extends SimpleCommand {
       return undefined;
     }
 
-    const targetOpmessage = this.target.makeOperationMessage() as IOperationMessage;
-    targetOpmessage.behavior = 'ie';
-    return [targetOpmessage];
+    const targetOpmessage = this.target.makeOperationMessage('ie') as IOperationMessage[];
+    return targetOpmessage;
   }
 
   /**

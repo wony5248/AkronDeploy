@@ -2,6 +2,7 @@ import PageThumbnailComponent from 'components/toolpane/PageThumbnailComponent';
 import useEditorStore from 'hooks/useEditorStore';
 import PageModel from 'models/node/PageModel';
 import WidgetModel from 'models/node/WidgetModel';
+import { PageSection } from 'models/widget/WidgetPropTypes';
 import { useEffect, useState } from 'react';
 
 /**
@@ -11,6 +12,16 @@ export interface PageItem {
   id: number;
   content: PageModel;
   type: string;
+}
+
+/**
+ * 구역을 담을 Item 입니다. 하위에 pageItem을 리스트로 들고 있을 수 있습니다.
+ */
+export interface SectionItem {
+  id: number;
+  content: PageSection;
+  type: string;
+  children: PageItem[];
 }
 
 /**

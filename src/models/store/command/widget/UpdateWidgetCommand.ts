@@ -96,12 +96,11 @@ class UpdateWidgetCommand extends SimpleCommand {
       return undefined;
     }
 
-    const targetOpmessage = this.model.makeOperationMessage() as IOperationMessage;
+    const targetOpmessage = (this.model.makeOperationMessage('ue') as IOperationMessage[])[0];
 
     // 'ucp'
     targetOpmessage.behavior = 'ue';
-    targetOpmessage.elementType = ContentType.REMOTE_COMPONENT_PROPERTIES;
-    targetOpmessage.objectType = ObjectType.DEFAULT;
+    targetOpmessage.elementType = ContentType.COMPONENT_CONTENT;
     targetOpmessage.propKey = this.propId;
     targetOpmessage.propValue = this.propValue;
     targetOpmessage.eventHandler = this.eventHandler;
@@ -114,12 +113,11 @@ class UpdateWidgetCommand extends SimpleCommand {
    */
   @boundMethod
   public override makeUnApplyUpdateMessage(): IOperationMessage[] | undefined {
-    const targetOpmessage = this.model.makeOperationMessage() as IOperationMessage;
+    const targetOpmessage = (this.model.makeOperationMessage('ue') as IOperationMessage[])[0];
 
     // 'ucp'
     targetOpmessage.behavior = 'ue';
-    targetOpmessage.elementType = ContentType.REMOTE_COMPONENT_PROPERTIES;
-    targetOpmessage.objectType = ObjectType.DEFAULT;
+    targetOpmessage.elementType = ContentType.COMPONENT_CONTENT;
     targetOpmessage.propKey = this.propId;
     targetOpmessage.propValue = this.prevPropValue;
     // targetOpmessage.eventHandler = this.prevEventHandler;

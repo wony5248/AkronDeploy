@@ -333,10 +333,10 @@ type WidgetEditCommandProps =
 /**
  * WidgetModel의 잠금 상태를 반영하는 함수
  */
-// export function applyLockCommand(ctx: AppContext, widgetModel: WidgetModel, locked: boolean): void {
-//     const lockCommand = new UpdateComponentProperties(widgetModel, 'locked', locked);
-//     ctx.command?.append(lockCommand);
-// }
+export function applyLockCommand(ctx: AkronContext, widgetModel: WidgetModel, locked: boolean): void {
+  const lockCommand = new UpdateWidgetCommand(widgetModel, { content: {}, style: {} });
+  ctx.getCommand()?.append(lockCommand);
+}
 
 // /**
 //  * WidgetModel의 숨김 상태를 반영하는 함수
