@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "prepare": "husky",
-    "dev": "vite --mode dev --host",
+    "dev": "vite --host",
     "build": "vite build",
     "lint": "eslint --config ./conf/eslint.config.js",
     "lint:fix": "eslint --fix --config ./conf/eslint.config.js",
