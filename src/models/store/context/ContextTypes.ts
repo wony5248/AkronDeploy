@@ -8,6 +8,7 @@ import ClipboardContainer from 'models/store/container/ClipboardContainer';
 import CompositeComponentContainer from 'models/store/container/CompositeComponentContainer';
 import HitContainer from 'models/store/container/HitContainer';
 import IdContainerController from 'models/store/container/IdContainerController';
+import MetadataContainer from 'models/store/container/MetadataContainer';
 import PageContainer from 'models/store/container/PageContainer';
 import PropContainer from 'models/store/container/PropContainer';
 import SelectionContainer from 'models/store/container/SelectionContainer';
@@ -125,6 +126,7 @@ export interface ContextInitializeProp extends ContextBaseInitializeProp {
   startPageID: number;
   startPageURL: string;
   contextMenuContainer: ContextMenuContainer;
+  metadataContainer: MetadataContainer;
   // customPropertyContentRenderer?: WidgetPropertyContentRenderer;
   activeLeftToolPaneType?: LeftToolPaneType;
   // handleRemoteMessages: (props: RemoteUserCommandProps[]) => void;
@@ -186,6 +188,7 @@ export interface EditableContextProp extends EditableContextBaseProp {
   clipboardContainer: ClipboardContainer;
   propContainer: PropContainer;
   widgetEditInfoContainer: WidgetEditInfoContainer;
+  metadataContainer: MetadataContainer;
   //   errorBoundaryContainer: ErrorBoundaryContainer;
   //   smartGuideContainer: SmartGuideContainer;
   updateMessageContainer: UpdateMessageContainer;

@@ -21,6 +21,7 @@ import AkronCommandMapper from 'models/store/command/akron/AkronCommandMapper';
 import CommandHandlerFactory from 'models/store/command/factory/CommandHandlerFactory';
 import AkronEventMapper from 'models/store/event/AkronEventMapper';
 import EventHandlerFactory from 'models/store/event/factory/EventHandlerFactory';
+import MetadataContainer from 'models/store/container/MetadataContainer';
 // import AsyncComponent from 'components/common/AsyncComponent';
 // import LoadingComponent from 'components/common/LoadingComponent';
 
@@ -90,11 +91,14 @@ const MainPageComponent = () => {
   const { appId } = useParams();
   const getAppData = async () => {
     const appJson = await AppRepository.getAppJson(Number(appId));
+    const metadatas = await AppRepository.getAppMetadatas({ appId: Number(appId) });
+
     const params: EditorStoreInitParams = {
       eventMapper: new AkronEventMapper(new EventHandlerFactory()),
       mode: 'EDIT_APP',
       appName: '',
       appModeContainer: new AppModeContainer(),
+      metadataContainer: new MetadataContainer(metadatas),
       commandMapper: new AkronCommandMapper(new CommandHandlerFactory()),
       appJson,
       appInfo: {

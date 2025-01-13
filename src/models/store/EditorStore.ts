@@ -39,6 +39,7 @@ import AkronEventManager from 'models/store/event/AkronEventManager';
 import AkronEventMapper from 'models/store/event/AkronEventMapper';
 import AkronCommandMapper from 'models/store/command/akron/AkronCommandMapper';
 import PageModel from 'models/node/PageModel';
+import MetadataContainer from 'models/store/container/MetadataContainer';
 
 /**
  * Editor Store 생성자 파라미터 Interface 입니다.
@@ -48,6 +49,7 @@ export interface EditorStoreInitParams {
   mode: AppModeType;
   appName: string;
   appModeContainer: AppModeContainer;
+  metadataContainer: MetadataContainer;
   commandMapper: AkronCommandMapper;
   appJson: AppJson;
   appInfo: AppInfo;
@@ -96,7 +98,7 @@ class EditorStore {
    * 생성자
    */
   constructor(params: EditorStoreInitParams) {
-    const appParser = new AppParser(params.appJson);
+    const appParser = new AppParser(params.appJson, params.metadataContainer);
     const appModel = appParser.getAppModel();
     this.eventManager = new AkronEventManager(params.eventMapper);
     this.commandManager = new CommandManager(params.commandMapper);
@@ -115,6 +117,7 @@ class EditorStore {
         eventState,
         appName: params.appName,
         contextMenuContainer: params.contextMenuContainer,
+        metadataContainer: params.metadataContainer,
         startPageID: params.startPageID || -1,
         startPageURL: params.startPageURL || '',
         activeLeftToolPaneType: params.activeLeftToolPaneType,
@@ -150,6 +153,13 @@ class EditorStore {
    */
   public getAppModel(): AppModel | undefined {
     return this.ctx.getNewAppModel();
+  }
+
+  /**
+   * MetadataContainer를 반환합니다.
+   */
+  public getMetadataContainer(): MetadataContainer {
+    return this.ctx.getMetadataContainer();
   }
 
   /**

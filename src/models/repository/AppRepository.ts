@@ -1,9 +1,10 @@
-import { isDefined, dLog, dError, Nullable, IWidgetCommonProperties } from '@akron/runner';
+import { isDefined, dLog, dError, Nullable, IWidgetCommonProperties, WidgetTypeEnum } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import API from 'models/API/API';
 import { IOperationMessage } from 'models/message/OperationMessageType';
 import WidgetModel, { WidgetID } from 'models/node/WidgetModel';
 import { AppJson, NodeJson } from 'models/parser/AppParser';
+import { ComponentMetadata, MetadataContainerProp } from 'models/store/container/MetadataContainer';
 import { UpdateMessage } from 'models/store/container/UpdateMessageContainer';
 import { HandlerID, ChainID } from 'models/widget/WidgetPropTypes';
 import { AppType } from 'store/app/AppInfo';
@@ -24,6 +25,14 @@ export interface IUserDTO {
 export interface UpdateMessageDTO {
   appId: number;
   updateMessages: UpdateMessage[];
+}
+
+export interface AppMetadataInputDTO {
+  appId: number;
+}
+
+export interface ComponentMetadataInputDTO {
+  componentTypes: WidgetTypeEnum[];
 }
 
 /**
@@ -484,6 +493,26 @@ class AppRepository {
   @boundMethod
   public async sendUpdateMessage(inputDTO: UpdateMessageDTO): Promise<void> {
     await API.post('/app/update', inputDTO);
+  }
+
+  /**
+   * app의 metadata를 서버로부터 가져옵니다.
+   */
+  @boundMethod
+  public async getAppMetadatas(inputDTO: AppMetadataInputDTO): Promise<MetadataContainerProp> {
+    const response = await API.post('/app/metadata', inputDTO);
+    return {
+      componentMetadatas: response.data,
+    };
+  }
+
+  /**
+   * componentTypes를 통해 metadata를 서버로부터 가져옵니다.
+   */
+  @boundMethod
+  public async getComponentMetadatas(inputDTO: ComponentMetadataInputDTO): Promise<ComponentMetadata[]> {
+    const response = await API.post('/component/metadata', inputDTO);
+    return response.data;
   }
 
   /**

@@ -5,6 +5,7 @@ import {
   isNotNull,
   isNull,
   isUndefined,
+  IWidgetCommonProperties,
   IWidgetContentProperties,
   IWidgetStyleProperties,
   Nullable,
@@ -13,6 +14,7 @@ import {
 import { boundMethod } from 'autobind-decorator';
 import PageModel from 'models/node/PageModel';
 import WidgetModel from 'models/node/WidgetModel';
+import MetadataContainer, { ContentMetadata, StyleMetadata } from 'models/store/container/MetadataContainer';
 
 export type AppJson = {
   components: NodeJson[];
@@ -75,15 +77,18 @@ class AppParser {
    */
   private ctx: AppParserContext;
 
+  private metadataContainer: MetadataContainer;
+
   /**
    * 생성자
    * appJson을 토대로 app을 파싱합니다.
    */
-  constructor(appJson: AppJson) {
+  constructor(appJson: AppJson, metadataContainer: MetadataContainer) {
     this.node = undefined;
     this.rootNode = undefined;
     this.widgetIDSet = new Set();
     this.ctx = this.createCtx(appJson.components);
+    this.metadataContainer = metadataContainer;
     this.parse();
   }
 
@@ -124,17 +129,18 @@ class AppParser {
    */
   private createComponent(item: NodeJson) {
     const { componentID, componentType, name, contentsData, stylesData } = item;
+    const widgetType = componentType as WidgetTypeEnum;
     const contents = contentsData;
     const styles = stylesData;
 
     return new WidgetModel({
       id: componentID,
       widgetCategory: '',
-      widgetType: componentType as WidgetTypeEnum,
+      widgetType: widgetType,
       name: name,
       properties: {
-        content: contents,
-        style: styles,
+        content: this.createContents(contents, widgetType),
+        style: this.createStyles(styles, widgetType),
       },
     });
   }
@@ -144,17 +150,18 @@ class AppParser {
    */
   private createPageComponent(item: NodeJson) {
     const { componentID, componentType, name, contentsData, stylesData } = item;
+    const widgetType = componentType as WidgetTypeEnum;
     const contents = contentsData;
     const styles = stylesData;
 
     return new PageModel({
       id: componentID,
       widgetCategory: '',
-      widgetType: componentType as WidgetTypeEnum,
+      widgetType: widgetType,
       name: name,
       properties: {
-        content: contents,
-        style: styles,
+        content: this.createContents(contents, widgetType),
+        style: this.createStyles(styles, widgetType),
       },
     });
   }
@@ -163,7 +170,7 @@ class AppParser {
    * node 생성 작업을 수행합니다. node 를 parent 에 append 합니다.
    */
   private onCreateNode(node: WidgetModel, ctx: AppParserContext): void {
-    if (Boolean(ctx.parentNode)) {
+    if (isDefined(ctx.parentNode)) {
       node.append(ctx.parentNode);
       return;
     }
@@ -219,13 +226,13 @@ class AppParser {
     const siblingIDSet: Set<number> = new Set();
 
     for (this.ctx.id = firstChildID; isNotNull(this.ctx.id); ) {
-      if (Boolean(this.ctx.id)) {
+      if (isDefined(this.ctx.id)) {
         siblingIDSet.add(this.ctx.id);
       }
 
       this.ctx.parentNode = parentNode;
 
-      if (Boolean(this.ctx.id)) {
+      if (isDefined(this.ctx.id)) {
         const childItem = this.getJson(this.ctx.id);
         this.parse();
         const nextID = childItem?.nextID;
@@ -263,6 +270,36 @@ class AppParser {
     }
 
     this.parseChildNode(this.node, item.childID);
+  }
+
+  private createContents(contents: IWidgetContentProperties, widgetType: WidgetTypeEnum): IWidgetContentProperties {
+    const result: IWidgetContentProperties = {};
+    const contentMetadatas = this.metadataContainer.getWidgetContentMetadata(widgetType);
+
+    contentMetadatas?.forEach((contentMetadata, key) => {
+      result[key] = {
+        value: contents[key]?.value ?? null,
+        defaultValue: contents[key]?.defaultValue ?? contentMetadata.defaultValue,
+        variableId: contents[key]?.variableId ?? null,
+      };
+    });
+
+    return result;
+  }
+
+  private createStyles(styles: IWidgetStyleProperties, widgetType: WidgetTypeEnum) {
+    const result: IWidgetContentProperties = {};
+    const styleMetadatas = this.metadataContainer.getWidgetStyleMetadata(widgetType);
+
+    styleMetadatas?.forEach((styleMetadata, key) => {
+      result[key] = {
+        value: styles[key]?.value ?? null,
+        defaultValue: styles[key]?.defaultValue ?? styleMetadata.defaultValue,
+        variableId: styles[key]?.variableId ?? null,
+      };
+    });
+
+    return result;
   }
 }
 

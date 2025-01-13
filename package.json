@@ -6,13 +6,13 @@
   "scripts": {
     "prepare": "husky",
     "dev": "vite --host",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "lint": "eslint --config ./conf/eslint.config.js",
     "lint:fix": "eslint --fix --config ./conf/eslint.config.js",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@akron/runner": "0.0.6",
+    "@akron/runner": "0.0.7",
     "@emotion/css": "^11.13.0",
     "@emotion/react": "^11.13.3",
     "@types/node": "^22.10.5",
