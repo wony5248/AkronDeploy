@@ -229,9 +229,6 @@ class PageCommandHandler extends CommandHandler {
     // Page는 app(root)를 parent로 설정.
     const parentWidgetModel = ctx.getNewAppModel();
 
-    // 위치이동을 위한 previous page model
-    const previousPageID = ctx.getSelectionContainer()?.getSelectedPages()[0].getID();
-
     // Page 컴포넌트의 Property 별도 셋팅.
     newWidgetModel.setProperties({
       ...newWidgetModel.getProperties(),
@@ -251,77 +248,15 @@ class PageCommandHandler extends CommandHandler {
       },
     });
 
-    const appendWidgetCommand = new AppendWidgetCommand(ctx, newWidgetModel, parentWidgetModel);
+    const appendWidgetCommand = new AppendWidgetCommand(
+      ctx,
+      newWidgetModel,
+      parentWidgetModel,
+      ctx.getSelectionContainer()?.getEditingPage()?.getNextSibling()
+    );
     ctx.getCommand()?.append(appendWidgetCommand);
 
-    if (isDefined(props.pageTemplate)) {
-      // template page인 경우
-      //   const template = PageTemplateData.find(_template => _template.template === props.pageTemplate);
-      //   template?.data.forEach(widget => {
-      //     const childWidgetModel = ctx.metaDataContainer
-      //       .getDefaultWidgetModelMap()
-      //       .get(widget.widgetType)
-      //       ?.cloneNode(WidgetRepository.generateWidgetID());
-      //     if (isUndefined(childWidgetModel)) {
-      //       dError('widgetModel creation failed.');
-      //       return;
-      //     }
-      //     childWidgetModel.setName(`${props.widgetType} ${props.widgetID % 100}`);
-      //     childWidgetModel.setProperties({
-      //       ...childWidgetModel.getProperties(),
-      //       ...widget.properties,
-      //     });
-      //     const appendChildWidgetCommand = new AppendWidgetCommand(ctx, childWidgetModel, newWidgetModel);
-      //     ctx.getCommand()?.append(appendChildWidgetCommand);
-      //   });
-    }
-
     this.createWidgetSelectionProp(ctx, newWidgetModel);
-
-    const pageList = getPageList(ctx.getNewAppModel());
-
-    const isSameElementID = (widgetModel: WidgetModel) => previousPageID === widgetModel.getID();
-    const previousPageIndex = Array.prototype.findIndex.call(pageList, isSameElementID);
-    const nextPageModel = previousPageIndex + 1 >= pageList.length ? undefined : pageList[previousPageIndex + 1];
-    const newPageModel = ctx.getCommandProps()?.selectionProp?.editingPageModel;
-
-    if (isDefined(newPageModel)) {
-      const moveWidgetCommand = new MoveWidgetCommand(
-        newPageModel,
-        ctx.getNewAppModel(),
-        ctx.getNewAppModel(),
-        nextPageModel
-      );
-      ctx.getCommand()?.append(moveWidgetCommand);
-    }
-
-    const { sectionList } = parentWidgetModel.getProperties().content;
-    if (isDefined(sectionList)) {
-      const modifiedSection: PageSection[] = [];
-      const sectionPageCountArr = sectionList?.value?.map((section: PageSection) => {
-        return section.pageCount;
-      });
-      const prevSectionIdx = getSectionIdxByPageIdx(sectionPageCountArr, previousPageIndex);
-      sectionList?.value?.forEach((section: PageSection, idx: number) => {
-        modifiedSection.push({
-          ...section,
-          pageCount: idx === prevSectionIdx ? section.pageCount + 1 : section.pageCount,
-        });
-      });
-      const newAppProp: IWidgetCommonProperties = {
-        ...parentWidgetModel.getProperties(),
-        content: {
-          ...parentWidgetModel.getProperties().content,
-          sectionList: {
-            ...parentWidgetModel.getProperties().content.sectionList,
-            value: modifiedSection,
-          },
-        },
-      };
-      const updateWidgetCommand = new UpdateWidgetCommand(parentWidgetModel, newAppProp);
-
-      ctx.getCommand()?.append(updateWidgetCommand);
-    }
   }
 
   /**
