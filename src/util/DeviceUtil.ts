@@ -23,7 +23,6 @@ export const DeviceSizeMap = new Map<string, Map<string, number[]>>([
       ['HD 1080p', [1920, 1080]],
     ]),
   ],
-  ['Custom', new Map<string, number[]>([])], // findIndex 처리를 위한 빈값
 ]);
 /**
  * DeviceInfo.
@@ -53,10 +52,7 @@ export const defaultDeviceInfo: DeviceInfo = {
  * Device 사이즈를 반환하는 함수
  */
 export function getDeviceSize(deviceInfo: DeviceInfo): { width: number; height: number } {
-  const size =
-    deviceInfo.deviceType !== 'Custom'
-      ? (DeviceSizeMap.get(deviceInfo.deviceType)?.get(deviceInfo.deviceName) as number[])
-      : [deviceInfo.userWidth, deviceInfo.userHeight];
+  const size = DeviceSizeMap.get(deviceInfo.deviceType)?.get(deviceInfo.deviceName) as number[];
 
   const isDesktop = deviceInfo.deviceType === 'Desktop';
   const isVertical = deviceInfo.orientation === 'vertical';

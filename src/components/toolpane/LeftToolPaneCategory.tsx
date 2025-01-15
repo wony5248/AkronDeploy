@@ -46,8 +46,12 @@ const Item: React.FC<IItemProps> = observer(({ item, searchValue }: IItemProps) 
       tooltip={item.label ?? ''}
       disabled={disabled}
       selected={selected}
-      onClick={(commandPropName, commandType, ...args) => {
+      onClick={async (commandPropName, commandType, ...args) => {
         console.log(commandPropName, commandType, args);
+        const metaDataContainer = editorStore.getMetadataContainer();
+        if (!metaDataContainer.getDefaultWidgetModel(commandPropName as WidgetTypeEnum)) {
+          await metaDataContainer.updateWidgetModels([commandPropName as WidgetTypeEnum]);
+        }
         const commandProps: InsertWidgetCommandProps = {
           commandID: CommandEnum.INSERT_WIDGET,
           widgetType: commandPropName as WidgetTypeEnum,

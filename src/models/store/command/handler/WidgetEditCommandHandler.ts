@@ -37,8 +37,6 @@ import UpdateWidgetCommand from 'models/store/command/widget/UpdateWidgetCommand
 import AppendWidgetRecursiveCommand from 'models/store/command/widget/AppendWidgetRecursiveCommand';
 import { isEditAppMode, isEditWidgetMode } from 'util/AppModeUtil';
 import RenameWidgetCommand from 'models/store/command/widget/RenameWidgetCommand';
-import { WidgetStyle, Position, Length, Constraint } from 'models/widget/WidgetPropTypes';
-import { commonStyleMeta, getMetaDataByType } from 'models/util/LocalMetaData';
 import PageModel from 'models/node/PageModel';
 import MoveWidgetCommand from 'models/store/command/widget/MoveWidgetCommand';
 import { applyStyleByEditingState } from 'util/WidgetEditUtil';
@@ -691,49 +689,15 @@ class WidgetEditCommandHandler extends CommandHandler {
    */
   @boundMethod
   private createNewWidgetModel(ctx: AkronContext, widgetType: WidgetTypeEnum, widgetID: WidgetID) {
-    const { metaData, name } = getMetaDataByType(widgetType);
-    const widget = new WidgetModel({
-      id: widgetId,
-      widgetType: widgetType,
-      widgetCategory: '',
-      name: name,
-      properties: {
-        content: metaData,
-        style: commonStyleMeta,
-      },
-      ref: undefined,
-    });
-    widgetId += 1;
-    return widget;
-    // const defaultWidgetModel = ctx.getMetaDataContainer().getDefaultWidgetModelMap().get(widgetType);
-    // const pageWidth = ctx.getNewAppModel().getFirstChild()?.getFirstChild()?.getProperties().getStyle().width.absolute;
-    // const pageHeight = ctx.getNewAppModel().getFirstChild()?.getFirstChild()?.getProperties().getStyle()
-    //   .height.absolute;
-    // if (isUndefined(defaultWidgetModel)) {
-    //   return undefined;
-    // }
-    // if (defaultWidgetModel.getWidgetType() === 'Studio') {
-    //   defaultWidgetModel.getProperties().setStyles({
-    //     ...defaultWidgetModel.getProperties().getStyle(),
-    //     width: {
-    //       ...defaultWidgetModel.getProperties().getStyle().width,
-    //       type: 'relative',
-    //       unit: '%',
-    //       absolute: pageWidth ?? 100,
-    //       relative: 100,
-    //     },
-    //     height: {
-    //       ...defaultWidgetModel.getProperties().getStyle().height,
-    //       type: 'relative',
-    //       unit: '%',
-    //       absolute: pageHeight ?? 100,
-    //       relative: 100,
-    //     },
-    //   });
-    // }
-    // const newWidgetModel = defaultWidgetModel.cloneNode(widgetID);
-    // newWidgetModel.setName(`${widgetType.replace('Basic', '')} ${widgetID % 100}`);
-    // return newWidgetModel;
+    const metaDataContainer = ctx.getMetadataContainer();
+    const defaultWidgetModel = metaDataContainer.getDefaultWidgetModels().get(widgetType);
+    if (isUndefined(defaultWidgetModel)) {
+      return undefined;
+    }
+
+    const newWidgetModel = defaultWidgetModel.cloneNode(ctx.getIdContainerController());
+    newWidgetModel.setName(`${widgetType.replace('Basic', '')} ${widgetId % 100}`);
+    return newWidgetModel;
   }
 
   /**
@@ -1921,6 +1885,9 @@ class WidgetEditCommandHandler extends CommandHandler {
   ) {
     const idContainerController = ctx.getIdContainerController();
     const model = this.createNewWidgetModel(ctx, componentType, idContainerController.generateComponentId());
+    if (model === undefined) {
+      return undefined;
+    }
     const appendComponentCommand = new AppendWidgetCommand(ctx, model, parentModel, nextSibling);
     ctx.getCommand()?.append(appendComponentCommand);
     return model;

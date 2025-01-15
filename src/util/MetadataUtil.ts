@@ -6,7 +6,8 @@ export function createContentData(metadatas: { [key: string]: ContentMetadata })
   for (const key in metadatas) {
     const metadata = metadatas[key];
     if (metadata) {
-      const content: IPropertyInstance = { value: null, defaultValue: metadata.defaultValue, variableId: null };
+      let defaultValue = convertMetadataDefaultValue(key, metadata);
+      const content: IPropertyInstance = { value: null, defaultValue: defaultValue, variableId: null };
       contents[key] = content;
     }
   }
@@ -18,7 +19,8 @@ export function createStyleData(metadatas: { [key: string]: StyleMetadata }): IW
   for (const key in metadatas) {
     const metadata = metadatas[key];
     if (metadata) {
-      const style: IPropertyInstance = { value: null, defaultValue: metadata.defaultValue, variableId: null };
+      const defaultValue = convertMetadataDefaultValue(key, metadata);
+      const style: IPropertyInstance = { value: null, defaultValue: defaultValue, variableId: null };
       styles[key] = style;
     }
   }
@@ -31,7 +33,8 @@ export function parseContentsToMap(metadatas: { [key: string]: ContentMetadata }
   for (const key in metadatas) {
     const metadata = metadatas[key];
     if (metadata) {
-      result.set(key, metadata);
+      const defaultValue = convertMetadataDefaultValue(key, metadata);
+      result.set(key, { ...metadata, defaultValue: defaultValue });
     }
   }
 
@@ -44,9 +47,31 @@ export function parseStylesToMap(metadatas: { [key: string]: StyleMetadata }): M
   for (const key in metadatas) {
     const metadata = metadatas[key];
     if (metadata) {
-      result.set(key, metadata);
+      const defaultValue = convertMetadataDefaultValue(key, metadata);
+      result.set(key, { ...metadata, defaultValue: defaultValue });
     }
   }
 
   return result;
+}
+
+export function convertMetadataDefaultValue(key: string, metadata: StyleMetadata | ContentMetadata) {
+  let defaultValue = metadata.defaultValue;
+  if (
+    key === 'x' ||
+    key === 'y' ||
+    key === 'top' ||
+    key === 'left' ||
+    key === 'right' ||
+    key === 'bottom' ||
+    key === 'width' ||
+    key === 'height'
+  ) {
+    defaultValue = JSON.parse(metadata.defaultValue);
+  } else if (defaultValue === 'false') {
+    defaultValue = false;
+  } else if (defaultValue === 'true') {
+    defaultValue = true;
+  }
+  return defaultValue;
 }
