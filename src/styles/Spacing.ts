@@ -1,0 +1,13 @@
+export const spacing50 = '2px';
+export const spacing100 = '4px';
+export const spacing150 = '6px';
+export const spacing200 = '8px';
+export const spacing250 = '10px';
+export const spacing300 = '12px';
+export const spacing400 = '16px';
+export const spacing500 = '20px';
+export const spacing600 = '24px';
+export const spacing700 = '28px';
+export const spacing800 = '32px';
+export const spacing900 = '36px';
+export const spacing1000 = '40px';

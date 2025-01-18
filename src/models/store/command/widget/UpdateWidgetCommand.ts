@@ -51,7 +51,7 @@ class UpdateWidgetCommand extends SimpleCommand {
    */
   @action.bound
   public override apply(): void {
-    const widgetProp = this.model.getProperties();
+    const widgetProp = JSON.parse(JSON.stringify(this.model.getProperties()));
     if (widgetProp) {
       widgetProp.content = this.propValue.content;
       widgetProp.style = this.propValue.style;

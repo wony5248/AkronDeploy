@@ -56,9 +56,9 @@ const EditorComponent: React.FC = () => {
 
   const EditorWrapper = Fragment; // isEditMode ? EditorHotKeyWrapper : Fragment;
 
-  // const dialog = editorStore.getDialog();
+  const dialog = editorStore.getDialog();
   const handleDialogClose = () => {
-    // editorStore.setDialog(undefined, false);
+    editorStore.setDialog(undefined, false);
   };
 
   return (
@@ -120,17 +120,15 @@ const EditorComponent: React.FC = () => {
                 propsPlainContent={editorUIStore.getBusinessAlertContent()}
               />
             )} */}
-            {/* {dialog.dialogOpen && dialog.dialogType && (
+            {dialog.dialogOpen && dialog.dialogType && (
               <dialog.dialogType
                 open
                 handleClose={handleDialogClose}
-                commandPropName={''}
-                commandType={''}
                 onClick={() => {
                   handleDialogClose();
                 }}
               />
-            )} */}
+            )}
           </div>
           {/* {isRuntimePreviewMode(editorStore.getAppModeContainer()) && (
             <PageNavigationButtonComponent startPageModel={targetWidgetModel} />

@@ -36,7 +36,7 @@ export const contextMenuItemSmall = css`
 
   color: #222938;
 
-  &:not(:disabled) {
+  & {
     &:hover {
       cursor: pointer;
       background-color: #535d76;
@@ -77,7 +77,7 @@ export const contextMenuItemLarge = css`
 
   color: #222938;
 
-  &:not(:disabled) {
+  & {
     &:hover {
       cursor: pointer;
       background-color: #535d76;

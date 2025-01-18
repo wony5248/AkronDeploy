@@ -117,14 +117,14 @@ const ContextMenuSmallDialogItemComponent = ({
       </button>
       {open && (
         <DialogComponent
-        // open={open}
-        // handleClose={() => {
-        //     setOpen(false);
-        //     handleClose();
-        // }}
-        // commandPropName={commandPropName}
-        // commandType={commandType}
-        // onClick={onClick}
+          open={open}
+          handleClose={() => {
+            setOpen(false);
+            handleClose();
+          }}
+          // commandPropName={commandPropName}
+          // commandType={commandType}
+          onClick={onClick}
         />
       )}
     </>
@@ -197,14 +197,14 @@ const ContextMenuLargeDialogItemComponent = ({
       </button>
       {open && (
         <DialogComponent
-        // open={open}
-        // handleClose={() => {
-        //     setOpen(false);
-        //     handleClose();
-        // }}
-        // commandPropName={commandPropName}
-        // commandType={commandType}
-        // onClick={onClick}
+          open={open}
+          handleClose={() => {
+            setOpen(false);
+            handleClose();
+          }}
+          // commandPropName={commandPropName}
+          // commandType={commandType}
+          onClick={onClick}
         />
       )}
     </>

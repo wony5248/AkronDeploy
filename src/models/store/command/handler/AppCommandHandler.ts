@@ -13,6 +13,7 @@ import AkronContext from 'models/store/context/AkronContext';
 import { SaveState } from 'models/store/EditorStore';
 import { PageSection } from 'models/widget/WidgetPropTypes';
 import { AppType } from 'store/app/AppInfo';
+import { getPageList } from 'util/PageUtil';
 
 const unNamedSection = '이름 없는 구역';
 const defaultSection = '기본 구역';
@@ -97,6 +98,15 @@ export type RenameSectionCommandProps = WidgetCommandProps & {
 };
 
 /**
+ * 앱 디바이스 정보를 업데이트하기 위한 props
+ */
+export type UpdateDeviceInfoCommandProps = WidgetCommandProps & {
+  commandID: CommandEnum.UPDATE_DEVICE_INFO;
+  deviceName: string;
+  size: number[];
+};
+
+/**
  * 해당 page의 index를 반환하는 함수
  */
 export function getTargetPageIndex(appWidgetModel: WidgetModel, pageModel: WidgetModel): number {
@@ -122,7 +132,8 @@ type AppCommandProps =
   | AddSectionCommandProps
   | RenameSectionCommandProps
   | SaveCommandProps
-  | SaveAsCommandProps;
+  | SaveAsCommandProps
+  | UpdateDeviceInfoCommandProps;
 
 /**
  * 앱 전반적인 command를 수행할 때 필요한 commandhandler
@@ -160,6 +171,9 @@ class AppCommandHandler extends CommandHandler {
         break;
       case CommandEnum.RENAME_SECTION:
         this.renameSection(props, ctx);
+        break;
+      case CommandEnum.UPDATE_DEVICE_INFO:
+        this.updateDeviceInfo(props, ctx);
         break;
       default:
         return false;
@@ -490,6 +504,45 @@ class AppCommandHandler extends CommandHandler {
       ctx.setSaveState(SaveState.SAVE_COMPLETE);
     } catch {
       ctx.setSaveState(SaveState.SAVE_ERROR);
+    }
+  }
+
+  /**
+   * device size 변경
+   */
+  private updateDeviceInfo(props: UpdateDeviceInfoCommandProps, ctx: AkronContext) {
+    const { deviceName, size } = props;
+    const appModel = ctx.getNewAppModel();
+    const pageList = getPageList(appModel);
+
+    for (let i = 0; i < pageList.length; i++) {
+      const page = pageList[i];
+
+      const newPageContent = {
+        ...page.getProperties().content,
+        ['device']: {
+          ...page.getProperties().content['device'],
+          value: deviceName,
+        },
+      };
+      const newPageStyle = {
+        ...page.getProperties().style,
+        ['width']: {
+          ...page.getProperties().style['width'],
+          value: { ...page.getStyleProperties('width'), absolute: size[0] },
+        },
+        ['height']: {
+          ...page.getProperties().style['height'],
+          value: { ...page.getStyleProperties('height'), absolute: size[1] },
+        },
+      };
+
+      const updateWidgetCommand = new UpdateWidgetCommand(page, {
+        content: newPageContent,
+        style: newPageStyle,
+      });
+
+      ctx.getCommand()?.append(updateWidgetCommand);
     }
   }
 

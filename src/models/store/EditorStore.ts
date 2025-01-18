@@ -20,7 +20,6 @@ import CompositeComponentContainer from 'models/store/container/CompositeCompone
 import WidgetModel from 'models/node/WidgetModel';
 import CommandEnum from 'models/store/command/common/CommandEnum';
 import AppParser, { AppJson } from 'models/parser/AppParser';
-import { defaultDeviceInfo, DeviceInfo } from 'util/DeviceUtil';
 import {
   MouseEvent,
   KeyEvent,
@@ -40,6 +39,7 @@ import AkronEventMapper from 'models/store/event/AkronEventMapper';
 import AkronCommandMapper from 'models/store/command/akron/AkronCommandMapper';
 import PageModel from 'models/node/PageModel';
 import MetadataContainer from 'models/store/container/MetadataContainer';
+import { DialogContentType } from 'store/ribbon-menu/RibbonMenuComponentInfo';
 
 /**
  * Editor Store 생성자 파라미터 Interface 입니다.
@@ -58,7 +58,6 @@ export interface EditorStoreInitParams {
   selectAtFirst: boolean;
   startPageURL?: string;
   startPageID?: number;
-  deviceInfo?: DeviceInfo;
 }
 
 export enum SaveState {
@@ -86,8 +85,6 @@ class EditorStore {
 
   private saveState: SaveState;
 
-  private deviceInfo: DeviceInfo;
-
   protected editorUIStore: EditorUIStore;
 
   protected tooltipStore: TooltipStore;
@@ -108,7 +105,6 @@ class EditorStore {
     this.tooltipStore = new TooltipStore();
     this.widgetLayerContainer = new WidgetLayerContainer();
     let eventState = EventState.EDIT;
-    this.deviceInfo = params.deviceInfo ?? defaultDeviceInfo;
     (this.saveState = SaveState.SAVE_COMPLETE),
       (this.ctx = new AkronContext({
         appID: appModel.getID(),
@@ -284,13 +280,6 @@ class EditorStore {
   }
 
   /**
-   * deviceInfo 반환
-   */
-  public getDeviceInfo(): DeviceInfo {
-    return this.deviceInfo;
-  }
-
-  /**
    * 현재 EventState를 반환합니다.
    */
   public getEventState(): EventState {
@@ -310,6 +299,26 @@ class EditorStore {
   @boundMethod
   public getWidgetEditInfoContainer() {
     return this.getCtxAsAppContext().getWidgetEditInfoContainer();
+  }
+
+  /**
+   * ctx에 있는 Dialog getter
+   */
+  @boundMethod
+  public getDialog(): { dialogType: DialogContentType | undefined; dialogOpen: boolean } {
+    return {
+      dialogType: this.getCtxAsAppContext().getDialogType(),
+      dialogOpen: this.getCtxAsAppContext().getDialogOpen(),
+    };
+  }
+
+  /**
+   * ctx에 있는 Dialog setter
+   */
+  @action.bound
+  public setDialog(dialogType: DialogContentType | undefined, dialogOpen: boolean) {
+    this.getCtxAsAppContext().setDialogType(dialogType);
+    this.getCtxAsAppContext().setDialogOpen(dialogOpen);
   }
 
   /**
