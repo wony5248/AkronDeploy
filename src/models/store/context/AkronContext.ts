@@ -35,6 +35,7 @@ import { AppInfo, CSSInfo } from 'store/app/AppInfo';
 import EditorUIStore from 'store/app/EditorUIStore';
 import ContextMenuContainer from 'store/context-menu/ContextMenuContainer';
 import { ContextMenu } from 'store/context-menu/ContextMenuTypes';
+import { DialogContentType } from 'store/ribbon-menu/RibbonMenuComponentInfo';
 
 /**
  * Zoom 데이터 관리를 위한 상수
@@ -246,6 +247,38 @@ export default class AkronContext {
   public setPreviewZoomRatio(previewZoomRatio: number): void {
     const resultZoomRatio = Math.max(ZoomData.minimum, Math.min(previewZoomRatio, ZoomData.maximum));
     this.appEditableContext.setPreviewZoomRatio(resultZoomRatio);
+  }
+
+  /**
+   * DialogType를 반환합니다
+   */
+  @boundMethod
+  public getDialogType(): DialogContentType | undefined {
+    return this.appEditableContext.getDialogType();
+  }
+
+  /**
+   * DialogType를 설정합니다
+   */
+  @boundMethod
+  public setDialogType(dialogType: DialogContentType | undefined): void {
+    this.appEditableContext.setDialogType(dialogType);
+  }
+
+  /**
+   * DialogOpen를 반환합니다
+   */
+  @boundMethod
+  public getDialogOpen(): boolean {
+    return this.appEditableContext.getDialogOpen();
+  }
+
+  /**
+   * DialogOpen를 설정합니다
+   */
+  @boundMethod
+  public setDialogOpen(dialogOpen: boolean): void {
+    this.appEditableContext.setDialogOpen(dialogOpen);
   }
 
   /**

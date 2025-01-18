@@ -22,6 +22,7 @@ import EventState from 'models/store/event/EventState';
 import EditorUIStore from 'store/app/EditorUIStore';
 import ContextMenuContainer from 'store/context-menu/ContextMenuContainer';
 import { ContextMenu } from 'store/context-menu/ContextMenuTypes';
+import { DialogContentType } from 'store/ribbon-menu/RibbonMenuComponentInfo';
 
 /**
  * DOM으로부터 얻은 page의 좌표(browser 기준)
@@ -249,8 +250,8 @@ class EditableContext extends EditableContextBase {
   // 띄울 dialog type.
   // 현재 리본에서는 버튼이 dialog를 소유하고 open 여부를 결정하는데,
   // 추후 Editor에서처럼 아래 변수를 이용해 type 결정 및 open 여부를 context에서 해야 함
-  // @observable
-  // private dialogType: dialogContentType | undefined;
+  @observable
+  private dialogType: DialogContentType | undefined;
 
   // dialog open 여부.
   @observable
@@ -354,7 +355,7 @@ class EditableContext extends EditableContextBase {
     this.mouseMode = initProp.mouseMode;
     this.contextMenu = initProp.contextMenu;
     this.saved = initProp.saved;
-    // this.dialogType = initProp.dialogType;
+    this.dialogType = undefined;
     this.dialogOpen = initProp.dialogOpen;
     // this.undoStack = initProp.undoStack;
     // this.undoRedoProps = initProp.undoRedoProps;
@@ -716,21 +717,21 @@ class EditableContext extends EditableContextBase {
     this.saved = saved;
   }
 
-  // /**
-  //  * DialogType를 반환합니다
-  //  */
-  // @boundMethod
-  // public getDialogType(): dialogContentType | undefined {
-  //   return this.dialogType;
-  // }
+  /**
+   * DialogType를 반환합니다
+   */
+  @boundMethod
+  public getDialogType(): DialogContentType | undefined {
+    return this.dialogType;
+  }
 
-  // /**
-  //  * DialogType를 설정합니다
-  //  */
-  // @boundMethod
-  // public setDialogType(dialogType: dialogContentType | undefined): void {
-  //   this.dialogType = dialogType;
-  // }
+  /**
+   * DialogType를 설정합니다
+   */
+  @boundMethod
+  public setDialogType(dialogType: DialogContentType | undefined): void {
+    this.dialogType = dialogType;
+  }
 
   /**
    * DialogOpen를 반환합니다

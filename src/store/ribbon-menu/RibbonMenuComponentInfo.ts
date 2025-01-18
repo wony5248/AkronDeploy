@@ -73,6 +73,7 @@
 // import SelectTemplateLibraryDialogComponent from 'ux/component/workarea/SelectTemplateLibraryDialogComponent';
 
 import EditorStore from 'models/store/EditorStore';
+import UpdateDeviceDialogContentComponent from 'store/ribbon-menu/dialog-content/UpdateDeviceDialogContentComponent';
 
 /**
  * toolPaneTabMap 자료 구조 때문에 이관
@@ -174,25 +175,25 @@ export const ribbonDropdownMenuItemMap: { [key: string]: DropdownMenuItemType } 
 /**
  * dialog content를 위한 map
  */
-export type DialogContentType = string;
-// | typeof PublishGXComponentsDialogContentComponent
-// | typeof PublishUXComponentsDialogContentComponent
-// | typeof PublishUXTemplateDialogContentComponent
-// // | typeof InsertOnlineMediaDialogContentComponent
-// | typeof RenamePageDialogContentComponent
-// | typeof RenameSectionDialogContentComponent
-// | typeof SaveAsDialogContentComponent
-// | typeof RenameResourceDialogContentComponent
-// | typeof ZoomInOutDialogContentComponent
-// | typeof VariableDataStoreDialogContentComponent
-// | typeof CompositeComponentCustomPropsStatesDialogContentComponent
-// | typeof CloseBusinessDialogEditModeContentComponent
-// | typeof BusinessDialogListContentComponent
-// | typeof RegisterBusinessDialogComponentDialogContentComponent
-// | typeof SelectReactNodePropContentComponent
-// | typeof UpdatePageLevelDialogContentComponent
-// | typeof NudgeAmountControlDialogComponent
-// | typeof UpdateDeviceDialogContentComponent
+export type DialogContentType =
+  // | typeof PublishGXComponentsDialogContentComponent
+  // | typeof PublishUXComponentsDialogContentComponent
+  // | typeof PublishUXTemplateDialogContentComponent
+  // // | typeof InsertOnlineMediaDialogContentComponent
+  // | typeof RenamePageDialogContentComponent
+  // | typeof RenameSectionDialogContentComponent
+  // | typeof SaveAsDialogContentComponent
+  // | typeof RenameResourceDialogContentComponent
+  // | typeof ZoomInOutDialogContentComponent
+  // | typeof VariableDataStoreDialogContentComponent
+  // | typeof CompositeComponentCustomPropsStatesDialogContentComponent
+  // | typeof CloseBusinessDialogEditModeContentComponent
+  // | typeof BusinessDialogListContentComponent
+  // | typeof RegisterBusinessDialogComponentDialogContentComponent
+  // | typeof SelectReactNodePropContentComponent
+  // | typeof UpdatePageLevelDialogContentComponent
+  // | typeof NudgeAmountControlDialogComponent
+  typeof UpdateDeviceDialogContentComponent;
 // | typeof GXCustomComponentDialogComponent
 // | typeof SelectUXComponentLibraryDialogComponent
 // | typeof SelectTemplateLibraryDialogComponent;
@@ -221,7 +222,7 @@ export const ribbonDialogContentMap: { [key: string]: DialogContentType } = {
   // BuildApp: BuildAppDialogContentComponent,
   // UpdatePageLevel: UpdatePageLevelDialogContentComponent,
   // NudgeAmountDialog: NudgeAmountControlDialogComponent,
-  // UpdateDevice: UpdateDeviceDialogContentComponent,
+  UpdateDevice: UpdateDeviceDialogContentComponent,
   // CustomComponent: GXCustomComponentDialogComponent,
   // DxServiceInfoDialog: DxServiceInfoDialogComponent,
   // SelectUXComponent: SelectUXComponentLibraryDialogComponent,

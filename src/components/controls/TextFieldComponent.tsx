@@ -1,3 +1,4 @@
+import { Interpolation, Theme } from '@emotion/react';
 import {
   textField,
   textFieldError,
@@ -11,6 +12,7 @@ import {
  */
 interface IProps {
   className?: string;
+  css?: Interpolation<Theme>;
   value: string | undefined;
   inputType?: string;
   disabled?: boolean;
@@ -23,7 +25,7 @@ interface IProps {
   onChange: (value: string) => void;
   onKeyPress?: (key: string) => void;
   onBlur?: () => void;
-  componentInsertToolpane: boolean;
+  componentInsertToolpane?: boolean;
 }
 
 /**

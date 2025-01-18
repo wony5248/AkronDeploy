@@ -199,9 +199,12 @@ class PageCommandHandler extends CommandHandler {
       .getDefaultWidgetModels()
       .get(props.widgetType)
       ?.cloneNode(ctx.getIdContainerController());
+    newWidgetModel?.setID(pageId);
+
+    const currentPage = ctx.getSelectionContainer()?.getEditingPage();
 
     pageId += 1;
-    if (isUndefined(newWidgetModel) || isUndefined(ctx.getCommand())) {
+    if (isUndefined(newWidgetModel) || isUndefined(ctx.getCommand()) || isUndefined(currentPage)) {
       dError('widgetModel creation failed.');
       return;
     }
@@ -220,22 +223,22 @@ class PageCommandHandler extends CommandHandler {
 
     // Page 컴포넌트의 Property 별도 셋팅.
     newWidgetModel.setProperties({
-      ...newWidgetModel.getProperties(),
+      ...currentPage.getProperties(),
     });
 
-    const widgetProps = newWidgetModel.getProperties();
-    newWidgetModel.setProperties({
-      ...widgetProps,
-      style: {
-        ...widgetProps.style,
-        width: {
-          ...widgetProps.style.width,
-        },
-        height: {
-          ...widgetProps.style.height,
-        },
-      },
-    });
+    // const widgetProps = newWidgetModel.getProperties();
+    // newWidgetModel.setProperties({
+    //   ...widgetProps,
+    //   style: {
+    //     ...widgetProps.style,
+    //     width: {
+    //       ...widgetProps.style.width,
+    //     },
+    //     height: {
+    //       ...widgetProps.style.height,
+    //     },
+    //   },
+    // });
 
     const appendWidgetCommand = new AppendWidgetCommand(
       ctx,
