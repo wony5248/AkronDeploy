@@ -67,7 +67,7 @@ class ClipboardCommandHandler extends CommandHandler {
     const selectionContainer = ctx.getSelectionContainer();
     const clipboardContainer = ctx.getClipboardContainer();
     const appModeContainer = ctx.getAppModeContainer();
-    const appWidgetModel = ctx.getNewAppModel();
+    const appWidgetModel = ctx.getAppModel();
     if (isUndefined(selectionContainer)) {
       dLog('Clipboard: Selection 없음. Copy 불가!');
       return false;
@@ -329,7 +329,7 @@ class ClipboardCommandHandler extends CommandHandler {
     const selectionContainer = ctx.getSelectionContainer();
     const clipboardContainer = ctx.getClipboardContainer();
     const command = ctx.getCommand();
-    const appWidgetModel = ctx.getNewAppModel();
+    const appWidgetModel = ctx.getAppModel();
     const commandProps = ctx.getCommandProps();
     if (!selectionContainer || !command || !commandProps) {
       return;
@@ -449,7 +449,7 @@ class ClipboardCommandHandler extends CommandHandler {
         //     const innerPageID = widgetModel.getProperties().content.pageID?.value;
         //     if (isDefined(innerPageID) && innerPageID !== '') {
         //       // 붙여넣은 InnerPageLayout의 pageID가 null 값이 아닌 경우
-        //       const innerPageModel = findPageModelByID(ctx.getNewAppModel(), Number(innerPageID));
+        //       const innerPageModel = findPageModelByID(ctx.getAppModel(), Number(innerPageID));
         //       if (isDefined(innerPageModel)) {
         //         const innerPageLevel = innerPageModel.getProperties().pageLevel;
         //         const editingPageLevel = (editingPage.getComponentSpecificProperties() as IPageComponentProperties)
@@ -623,13 +623,13 @@ class ClipboardCommandHandler extends CommandHandler {
 
     // Page가 복사 된 경우, 현재 선택된 페이지들 맨 뒤 위치로 이동시킴
     if (isPageCopied) {
-      const pageList: WidgetModel<IWidgetCommonProperties>[] = getPageList(ctx.getNewAppModel());
+      const pageList: WidgetModel<IWidgetCommonProperties>[] = getPageList(ctx.getAppModel());
       const pageNameList: string[] = pageList.map(pageModel => pageModel.getName());
       const isSameElementID = (widgetModel: WidgetModel) => selectedPageID === widgetModel.getID();
       const copiedPageIndex = Array.prototype.findIndex.call(pageList, isSameElementID);
       const nextPageModel = copiedPageIndex + 1 >= pageList.length ? undefined : pageList[copiedPageIndex + 1];
 
-      const appProp = ctx.getNewAppModel().getProperties();
+      const appProp = ctx.getAppModel().getProperties();
       const sectionPageCountArr = appProp.content.sectionList?.value?.map((section: PageSection) => {
         return section.pageCount;
       });
@@ -656,8 +656,8 @@ class ClipboardCommandHandler extends CommandHandler {
           command.append(renameWidgetCommand);
           const moveWidgetCommand = new MoveWidgetCommand(
             newWidgetModels[copiedPageID.length - idx - 1].widgetModel,
-            ctx.getNewAppModel(),
-            ctx.getNewAppModel(),
+            ctx.getAppModel(),
+            ctx.getAppModel(),
             nextPageModel
           );
           command.append(moveWidgetCommand);
@@ -674,7 +674,7 @@ class ClipboardCommandHandler extends CommandHandler {
           sectionList: { ...appProp.content.newSectionList, value: newSectionList },
         },
       };
-      const updateWidgetCommand = new UpdateWidgetCommand(ctx.getNewAppModel(), newAppProp);
+      const updateWidgetCommand = new UpdateWidgetCommand(ctx.getAppModel(), newAppProp);
       command.append(updateWidgetCommand);
     }
   }
@@ -684,7 +684,7 @@ class ClipboardCommandHandler extends CommandHandler {
    * 복사/붙여넣기 할 경우 마지막 페이지가 있는 구역의 pageCount를 붙여넣는 페이지 수만큼 확장합니다.
    */
   private updateSectionWhenPagePasted(ctx: AkronContext) {
-    const { sectionList } = ctx.getNewAppModel().getProperties().content;
+    const { sectionList } = ctx.getAppModel().getProperties().content;
     if (isDefined(sectionList)) {
       const pastePageNum = ctx.getClipboardContainer().getLocalWidgetModels().length;
 
@@ -697,7 +697,7 @@ class ClipboardCommandHandler extends CommandHandler {
         }
         return section;
       });
-      const appProp = ctx.getNewAppModel().getProperties();
+      const appProp = ctx.getAppModel().getProperties();
       const newAppProp: IWidgetCommonProperties = {
         ...appProp,
         content: {
@@ -705,7 +705,7 @@ class ClipboardCommandHandler extends CommandHandler {
           sectionList: { ...appProp.content.sectionList, value: newSectionList },
         },
       };
-      const updateWidgetCommand = new UpdateWidgetCommand(ctx.getNewAppModel(), newAppProp);
+      const updateWidgetCommand = new UpdateWidgetCommand(ctx.getAppModel(), newAppProp);
       ctx.getCommand()?.append(updateWidgetCommand);
     }
   }
@@ -723,7 +723,7 @@ class ClipboardCommandHandler extends CommandHandler {
   //     const innerPageID = innerPageLayoutModel.getProperties().content.pageID?.value;
   //     if (isDefined(innerPageID) && innerPageID !== '') {
   //       // InnerPageID가 공백이 아닐 경우, 해당 Page가 존재하는지 찾음
-  //       const innerPage = findPageModelByID(ctx.getNewAppModel(), Number(innerPageID));
+  //       const innerPage = findPageModelByID(ctx.getAppModel(), Number(innerPageID));
   //       if (isUndefined(innerPage)) {
   //         // innerPage가 붙여넣기 전 삭제되어서 존재하지 않을 경우
   //         // innerPageLayout의 pageID props undefined로 update 해야함

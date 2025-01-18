@@ -33,7 +33,7 @@ class WidgetResizeEventHandler extends AkronEventHandler {
    * 마우스 버튼 누를 때
    */
   public override onMouseDown(event: MouseEvent<WidgetModel>, ctx: AkronContext): boolean {
-    const state = ctx.getState();
+    const state = ctx.getEventState();
     const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
     const selectionContainer = ctx.getSelectionContainer();
     const propContainer = ctx.getPropContainer();
@@ -60,7 +60,7 @@ class WidgetResizeEventHandler extends AkronEventHandler {
     }
 
     // change state
-    ctx.setState(EventState.WIDGET_RESIZE);
+    ctx.setEventState(EventState.WIDGET_RESIZE);
     widgetEditInfoContainer.setWidgetEditSubEventState(WidgetEditSubEventState.PRESSED);
 
     // set resize handle
@@ -79,7 +79,7 @@ class WidgetResizeEventHandler extends AkronEventHandler {
    * 마우스 주버튼(보통 Left)을 누른 채 끌고 있을 때
    */
   public override onMouseMove(event: MouseEvent<WidgetModel>, ctx: AkronContext): boolean {
-    const state = ctx.getState();
+    const state = ctx.getEventState();
     const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
     const selectionContainer = ctx.getSelectionContainer();
     const propContainer = ctx.getPropContainer();
@@ -263,7 +263,7 @@ class WidgetResizeEventHandler extends AkronEventHandler {
 
     event.stopPropagation();
 
-    const state = ctx.getState();
+    const state = ctx.getEventState();
     const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
     const selectionContainer = ctx.getSelectionContainer();
     const propContainer = ctx.getPropContainer();

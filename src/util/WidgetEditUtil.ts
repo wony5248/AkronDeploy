@@ -20,12 +20,12 @@ export function clearWidgetModelEditContext(ctx: AkronContext): void {
   const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
   const hitContainer = ctx.getHitContainer();
 
-  if (ctx.getState() === EventState.EDIT) {
+  if (ctx.getEventState() === EventState.EDIT) {
     return;
   }
 
   hitContainer.setStartHitItem(undefined);
-  ctx.setState(EventState.EDIT);
+  ctx.setEventState(EventState.EDIT);
 
   widgetEditInfoContainer.clear();
 

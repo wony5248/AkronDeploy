@@ -696,6 +696,8 @@ class WidgetEditCommandHandler extends CommandHandler {
     }
 
     const newWidgetModel = defaultWidgetModel.cloneNode(ctx.getIdContainerController());
+    newWidgetModel.setID(widgetId);
+    widgetId += 1;
     newWidgetModel.setName(`${widgetType.replace('Basic', '')} ${widgetId % 100}`);
     return newWidgetModel;
   }
@@ -922,7 +924,7 @@ class WidgetEditCommandHandler extends CommandHandler {
    */
   @boundMethod
   private deleteWidget(ctx: AkronContext, props: DeleteWidgetCommandProps) {
-    const appWidgetModel = ctx.getNewAppModel();
+    const appWidgetModel = ctx.getAppModel();
     const command = ctx.getCommand();
     const selectionContainer = ctx.getSelectionContainer();
     // 입력값 검증
@@ -949,7 +951,7 @@ class WidgetEditCommandHandler extends CommandHandler {
     });
 
     const appModeContainer = ctx.getAppModeContainer();
-    let editingTopWidgetModel = ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getNewAppModel();
+    let editingTopWidgetModel = ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getAppModel();
     // GX EDIT_APP 모드 및 Dialog 편집 모드에서는 편집 화면 상 최상단 model인 Composite Model or Dialog Model 설정
     if (isEditWidgetMode(appModeContainer)) {
       editingTopWidgetModel = ctx.getEditingWidgetModel();
@@ -975,7 +977,7 @@ class WidgetEditCommandHandler extends CommandHandler {
   private createWidgetSelectionProp(ctx: AkronContext, newWidgetModel: WidgetModel): void {
     // 셀렉트된 페이지. 없다면 첫번째 페이지
     const editingTopWidgetModel =
-      ctx.getSelectionContainer()?.getEditingPage() ?? (ctx.getNewAppModel().getFirstChild() as PageModel);
+      ctx.getSelectionContainer()?.getEditingPage() ?? (ctx.getAppModel().getFirstChild() as PageModel);
     const selectionProp: SelectionProp = {
       selectionType: SelectionEnum.WIDGET,
       widgetModels: [newWidgetModel],
@@ -1331,7 +1333,7 @@ class WidgetEditCommandHandler extends CommandHandler {
   //   const { targetModels: widgetModels, deltaX, deltaY, deltaWidth, deltaHeight } = props;
 
   //   const workAreaModel =
-  //     selectionContainer.getEditingNewWorkArea() ?? (ctx.getNewAppModel().getFirstChild() as WorkAreaModel);
+  //     selectionContainer.getEditingNewWorkArea() ?? (ctx.getAppModel().getFirstChild() as WorkAreaModel);
   //   const pagePosition = workAreaModel.getPagePosition();
 
   //   const isPage =

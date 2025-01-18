@@ -162,7 +162,7 @@ class PageCommandHandler extends CommandHandler {
           isUndefined(ctx.getSelectionContainer()) ||
           !isPagesDeletable(
             ctx.getSelectionContainer()?.getSelectedWidgets() ?? [],
-            ctx.getNewAppModel(),
+            ctx.getAppModel(),
             ctx.getAppModeContainer()
           )
         ) {
@@ -211,15 +211,15 @@ class PageCommandHandler extends CommandHandler {
 
     const pageNamePrefix = 'New Page';
 
-    let pageIndex = ctx.getNewAppModel().getChildCount() + 1; // page 개수 + 1
-    while (pageNameExist(ctx.getNewAppModel(), `${pageNamePrefix} ${pageIndex}`)) {
+    let pageIndex = ctx.getAppModel().getChildCount() + 1; // page 개수 + 1
+    while (pageNameExist(ctx.getAppModel(), `${pageNamePrefix} ${pageIndex}`)) {
       pageIndex += 1;
     }
     newWidgetModel.setName(`${pageNamePrefix} ${pageIndex}`);
 
     // SimpleCommand 생성
     // Page는 app(root)를 parent로 설정.
-    const parentWidgetModel = ctx.getNewAppModel();
+    const parentWidgetModel = ctx.getAppModel();
 
     // Page 컴포넌트의 Property 별도 셋팅.
     newWidgetModel.setProperties({
@@ -272,7 +272,7 @@ class PageCommandHandler extends CommandHandler {
    */
   @boundMethod
   private deletePage(ctx: AkronContext, props: DeletePageCommandProps) {
-    const appWidgetModel = ctx.getNewAppModel();
+    const appWidgetModel = ctx.getAppModel();
     const command = ctx.getCommand();
     const selectionContainer = ctx.getSelectionContainer();
     const appModeContainer = ctx.getAppModeContainer();
@@ -341,7 +341,7 @@ class PageCommandHandler extends CommandHandler {
    */
   @boundMethod
   private updateSectionWhenPageDelete(ctx: AkronContext) {
-    const appWidgetModel = ctx.getNewAppModel();
+    const appWidgetModel = ctx.getAppModel();
     const selectionContainer = ctx.getSelectionContainer();
     if (isUndefined(appWidgetModel)) {
       return;
@@ -355,9 +355,9 @@ class PageCommandHandler extends CommandHandler {
 
     const { sectionList } = parentWidgetModel.getProperties().content;
     if (isDefined(sectionList)) {
-      const pageArr: WidgetModel<IWidgetCommonProperties>[] = getPageList(ctx.getNewAppModel());
+      const pageArr: WidgetModel<IWidgetCommonProperties>[] = getPageList(ctx.getAppModel());
       const sectionPageCountArr = ctx
-        .getNewAppModel()
+        .getAppModel()
         .getProperties()
         .content.sectionList?.value?.map((section: PageSection) => {
           return section.pageCount;
@@ -376,7 +376,7 @@ class PageCommandHandler extends CommandHandler {
       });
 
       const newSectionList: PageSection[] = [];
-      const appProp = ctx.getNewAppModel().getProperties();
+      const appProp = ctx.getAppModel().getProperties();
       sectionList?.value.forEach((section: PageSection, idx: number) => {
         newSectionList.push({
           ...section,
@@ -391,7 +391,7 @@ class PageCommandHandler extends CommandHandler {
           sectionList: { ...appProp.content.sectionList, value: newSectionList },
         },
       };
-      const updateWidgetCommand = new UpdateWidgetCommand(ctx.getNewAppModel(), newAppProp);
+      const updateWidgetCommand = new UpdateWidgetCommand(ctx.getAppModel(), newAppProp);
       ctx.getCommand()?.append(updateWidgetCommand);
     }
   }
@@ -419,7 +419,7 @@ class PageCommandHandler extends CommandHandler {
   @boundMethod
   private selectPageByID(ctx: AkronContext, props: SelectPageByIDCommandProps) {
     // 지정된 ID에 해당하는 Page를 찾음.
-    const pageModel = findPageModelByID(ctx.getNewAppModel(), props.pageID);
+    const pageModel = findPageModelByID(ctx.getAppModel(), props.pageID);
 
     if (isUndefined(pageModel)) {
       dWarn('Page is not defined');

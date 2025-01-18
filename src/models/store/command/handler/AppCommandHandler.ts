@@ -448,7 +448,7 @@ class AppCommandHandler extends CommandHandler {
       },
     };
 
-    const updateWidgetCommand = new UpdateWidgetCommand(ctx.getNewAppModel(), newAppProp);
+    const updateWidgetCommand = new UpdateWidgetCommand(ctx.getAppModel(), newAppProp);
     ctx.getCommand()?.append(updateWidgetCommand);
     ctx.getCommand()?.setUndoable(false);
   }
@@ -457,7 +457,7 @@ class AppCommandHandler extends CommandHandler {
    * rename 구역
    */
   private renameSection(props: RenameSectionCommandProps, ctx: AkronContext): void {
-    const appProp = ctx.getNewAppModel().getProperties();
+    const appProp = ctx.getAppModel().getProperties();
 
     const sectionList: PageSection[] = [];
     if (isDefined(appProp.content.sectionList?.value)) {
@@ -482,7 +482,7 @@ class AppCommandHandler extends CommandHandler {
       },
     };
 
-    const updateWidgetCommand = new UpdateWidgetCommand(ctx.getNewAppModel(), newAppProp);
+    const updateWidgetCommand = new UpdateWidgetCommand(ctx.getAppModel(), newAppProp);
     ctx.getCommand()?.append(updateWidgetCommand);
   }
 
@@ -512,7 +512,7 @@ class AppCommandHandler extends CommandHandler {
    */
   private updateDeviceInfo(props: UpdateDeviceInfoCommandProps, ctx: AkronContext) {
     const { deviceName, size } = props;
-    const appModel = ctx.getNewAppModel();
+    const appModel = ctx.getAppModel();
     const pageList = getPageList(appModel);
 
     for (let i = 0; i < pageList.length; i++) {

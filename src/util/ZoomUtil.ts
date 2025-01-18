@@ -19,7 +19,7 @@ export function calcZoomRatio(ctx: AkronContext) {
   const currentWorArea = ctx.getSelectionContainer().getEditingNewWorkArea();
   const workAreaRef = document.getElementById(`SuperUX-${currentWorArea?.getWidgetType()}-${currentWorArea?.getID()}`);
   // const deviceInfoMetaDataMap = ctx.getNewMetaDataContainer().getDeviceInfoMetaDataMap();
-  const deviceSizeStyle = getDeviceSize(ctx.getNewAppModel().getDeviceInfo());
+  const deviceSizeStyle = getDeviceSize(ctx.getAppModel().getDeviceInfo());
   if (!isEditAppMode(appModeContainer)) {
     return 1;
   }
