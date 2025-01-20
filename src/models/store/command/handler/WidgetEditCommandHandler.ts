@@ -539,14 +539,14 @@ class WidgetEditCommandHandler extends CommandHandler {
       }
       // childable하지 않은 경우 페이지에 삽입
       if (isEditAppMode(ctx.getAppModeContainer())) {
-        return ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getEditingWidgetModel().getFirstChild()!;
+        return ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getAppModel().getFirstChild()!;
       }
-      return ctx.getEditingWidgetModel();
+      return ctx.getAppModel();
     }
     if (isEditAppMode(ctx.getAppModeContainer())) {
-      return ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getEditingWidgetModel().getFirstChild()!;
+      return ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getAppModel().getFirstChild()!;
     }
-    return ctx.getEditingWidgetModel();
+    return ctx.getAppModel();
   }
 
   /**
@@ -583,7 +583,7 @@ class WidgetEditCommandHandler extends CommandHandler {
     const appModeContainer = ctx.getAppModeContainer();
     let editingTopWidgetModel = ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getAppModel();
     if (isEditWidgetMode(appModeContainer)) {
-      editingTopWidgetModel = ctx.getEditingWidgetModel();
+      editingTopWidgetModel = ctx.getAppModel();
     }
     this.createWidgetSelectionProp(ctx, editingTopWidgetModel);
   }
@@ -627,14 +627,14 @@ class WidgetEditCommandHandler extends CommandHandler {
     const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
     const { targetModels } = props;
     const idContainerController = ctx.getIdContainerController();
-    const editingWidgetModel = ctx.getEditingWidgetModel();
+    const appModel = ctx.getAppModel();
     const selectionContainer = ctx.getSelectionContainer();
     const zoomRatio = ctx.getZoomRatio() / 100;
     if (isUndefined(selectionContainer)) {
       return;
     }
 
-    const editingPage = isEditAppMode(appModeContainer) ? selectionContainer.getEditingPage() : editingWidgetModel;
+    const editingPage = isEditAppMode(appModeContainer) ? selectionContainer.getEditingPage() : appModel;
 
     if (isUndefined(editingPage)) {
       return;
@@ -969,7 +969,7 @@ class WidgetEditCommandHandler extends CommandHandler {
     // const metaDataContainer = ctx.getM;
     // const dataStore;
     const idContainerController = ctx.getIdContainerController();
-    const editingWidgetModel = ctx.getEditingWidgetModel();
+    const appModel = ctx.getAppModel();
     const editingPageRefPosition = ctx.getEditingPageRefPosition();
     const zoomRatio = ctx.getZoomRatio();
     const { targetModels } = props;
@@ -978,7 +978,7 @@ class WidgetEditCommandHandler extends CommandHandler {
       return;
     }
 
-    const editingPage = isEditAppMode(appModeContainer) ? selectionContainer.getEditingPage() : editingWidgetModel;
+    const editingPage = isEditAppMode(appModeContainer) ? selectionContainer.getEditingPage() : appModel;
 
     if (isUndefined(editingPage)) {
       return;

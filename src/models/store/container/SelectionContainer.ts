@@ -31,7 +31,6 @@ export default class SelectionContainer {
 
   private editingPage?: WidgetModel;
 
-  // GX에서 만든 widget의 child widget 중 direct select될 수 있는 widget을 담는 배열
   private selectableWidgetModels: WidgetModel[];
 
   private hoverableWidgetModel: WidgetModel | undefined;

@@ -15,7 +15,7 @@ import { editor, editorArea } from 'styles/editor/EditorStyle';
 const EditorComponent: React.FC = () => {
   const editorStore = useEditorStore();
   const isEditMode = true;
-  const editingWidgetModel = editorStore.getEditingWidgetModel();
+  const appModel = editorStore.getAppModel();
 
   const {
     handleMouseDownCapture,
@@ -26,23 +26,22 @@ const EditorComponent: React.FC = () => {
     handleMouseUp,
     handleWheel,
     handleMouseLeave,
-  } = useEditor(editorStore.getAppModel() as WidgetModel);
+  } = useEditor(appModel as WidgetModel);
 
   // 현재 렌더할 대상 위젯
   let targetWidgetModel: WidgetModel | undefined;
 
   // EDIT_APP 모드인 경우 selected된 Page가 있으면 그걸 보여줌
-  // RUNTIME_PREVIEW 모드인 경우 AppWidget 부터 보여줌
   // FIXME: 다른 app mode 고려해서 조건문 수정
   if (isEditMode) {
-    targetWidgetModel = editorStore.getEditingPageModel() ?? editingWidgetModel.getFirstChild(); // FIX ME : Composite widget 편집 모드에서 들어갔다 나왔을 경우 첫번째 페이지 가져오도록 임시처리.
+    targetWidgetModel = editorStore.getEditingPageModel() ?? appModel?.getFirstChild(); // FIX ME : Composite widget 편집 모드에서 들어갔다 나왔을 경우 첫번째 페이지 가져오도록 임시처리.
   }
   const CenterStyleWrapper =
-    isDefined(targetWidgetModel) && ['Page', 'BusinessDialog'].includes(targetWidgetModel?.getWidgetType())
+    isDefined(targetWidgetModel) && ['Page'].includes(targetWidgetModel?.getWidgetType())
       ? CenterStyleWrapperComponent
       : Fragment;
 
-  const EditorWrapper = Fragment; // isEditMode ? EditorHotKeyWrapper : Fragment;
+  const EditorWrapper = Fragment; // hotKey 사용 시 hotKeyWrapper로 변경해야함
 
   const dialog = editorStore.getDialog();
   const handleDialogClose = () => {

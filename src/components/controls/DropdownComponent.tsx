@@ -35,6 +35,7 @@ interface IProps {
 }
 
 /**
+ * legacy dropdown. 디자인이 해당 컴포넌트가 더 알맞는 것 같아 복구
  * 툴페인 등에서 공통적으로 사용할 text spinner 컨트롤입니다.
  */
 const DropdownComponent: React.FC<IProps> = ({

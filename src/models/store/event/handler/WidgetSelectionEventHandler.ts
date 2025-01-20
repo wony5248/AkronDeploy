@@ -146,7 +146,7 @@ class WidgetSelectionEventHandler extends AkronEventHandler {
     const state = ctx.getEventState();
     const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
     const appModeContainer = ctx.getAppModeContainer();
-    const editingWidgetModel = ctx.getEditingWidgetModel();
+    const appModel = ctx.getAppModel();
     const widgetEditSubEventState = widgetEditInfoContainer.getWidgetEditSubEventState();
     const hitModel = ctx.getHitContainer().getStartHitItem()?.getModel();
 
@@ -157,7 +157,7 @@ class WidgetSelectionEventHandler extends AkronEventHandler {
     // 다이얼로그 편집 모드에서 최상위 모델(Top Widget)일 경우 이동되지 않아야 함
     if (
       isEditWidgetMode(appModeContainer) &&
-      hitModel?.getID() === editingWidgetModel.getID() &&
+      hitModel?.getID() === appModel.getID() &&
       ctx.getMouseMode() === 'Normal'
     ) {
       return false;

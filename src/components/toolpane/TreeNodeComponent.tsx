@@ -122,9 +122,6 @@ const TreeNodeComponent: React.FC<IProps> = observer(({ widgetModel, isTop = tru
    */
   const handleDragStart = (e: React.MouseEvent) => {
     handleClickName(e);
-    // if (!isWidgetsDeletable([widgetModel])) {
-    //     return;
-    // }
     if (widgetModel.getWidgetType() === 'BasicIcon') {
       widgetLayerConatiner.setTargetModel(widgetModel);
       widgetLayerConatiner.setDepModel(widgetModel.getParent());
@@ -198,17 +195,6 @@ const TreeNodeComponent: React.FC<IProps> = observer(({ widgetModel, isTop = tru
   };
 
   const renderChildWidgetModels = () => {
-    // if (checkConditionalLayout(widgetModel)) {
-    //     const renderedChildIndex = widgetModel.getProperties().content.flag.value ? 0 : 1;
-    //     return (
-    //         <TreeNodeComponent
-    //             key={childWidgetModels[renderedChildIndex].getID()}
-    //             widgetModel={childWidgetModels[renderedChildIndex]}
-    //             isTop={false}
-    //             isPageLocked={isPageLocked}
-    //         />
-    //     );
-    // }
     return childWidgetModels.map(childWidgetModel => (
       <TreeNodeComponent
         key={childWidgetModel.getID()}

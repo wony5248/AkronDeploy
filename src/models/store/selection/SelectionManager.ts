@@ -277,10 +277,10 @@ export default class SelectionManager {
    */
   private udpateSelectionContainerByEditingWidgetModel(ctx: AkronContext): void {
     const selectionContainer = ctx.getSelectionContainer();
-    const editingWidgetModel = ctx.getEditingWidgetModel();
+    const appModel = ctx.getAppModel();
     if (selectionContainer) {
-      selectionContainer.setWidgetSelection(editingWidgetModel);
-      selectionContainer.setSelectedPage(editingWidgetModel);
+      selectionContainer.setWidgetSelection(appModel);
+      selectionContainer.setSelectedPage(appModel.getFirstChild());
     }
   }
 }

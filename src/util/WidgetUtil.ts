@@ -184,9 +184,9 @@ export function findInsertPosition(
   const { style: widgetStyle } = widgetModel.getProperties();
   let page;
   if (isEditAppMode(ctx.getAppModeContainer())) {
-    page = ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getEditingWidgetModel().getFirstChild()!;
+    page = ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getAppModel().getFirstChild()!;
   } else {
-    page = ctx.getEditingWidgetModel();
+    page = ctx.getAppModel().getFirstChild()!;
   }
   const pageStyle = page.getProperties().style;
 
@@ -352,7 +352,7 @@ export function findNestedContainer(
     }
     parent = parent.getParent();
   }
-  return ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getEditingWidgetModel();
+  return ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getAppModel();
 }
 
 /**

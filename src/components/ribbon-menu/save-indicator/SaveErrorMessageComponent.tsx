@@ -1,6 +1,7 @@
 import PortalComponent from 'components/common/PortalComponent';
 import useEditorStore from 'hooks/useEditorStore';
-import { useLayoutEffect, useState } from 'react';
+import { SaveState } from 'models/store/EditorStore';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import {
   lastSavedTime,
   popover,
@@ -16,7 +17,7 @@ import {
  */
 const SaveErrorMessageComponent: React.FC = () => {
   const editorStore = useEditorStore();
-  // const saveState = editorStore.getSaveState();
+  const saveState = editorStore.getSaveState();
   const [lastSaveTime, setLastSaveTime] = useState<string>('');
   const [messageOpen, setMessageOpen] = useState<boolean>(true);
 
@@ -32,16 +33,18 @@ const SaveErrorMessageComponent: React.FC = () => {
    */
   const closeMessage = () => {
     setMessageOpen(false);
-    // editorStore.setSaveState(SaveState.RESAVING);
+    editorStore.setSaveState(SaveState.RESAVING);
   };
 
   useLayoutEffect(() => {
     getLastSavedTime();
   });
 
-  // useEffect(() => {
-  //     if (saveState === SaveState.RESAVE_ERROR || saveState === SaveState.RESAVING) setMessageOpen(false);
-  // }, [saveState]);
+  useEffect(() => {
+    if (saveState === SaveState.RESAVE_ERROR || saveState === SaveState.RESAVING) {
+      setMessageOpen(false);
+    }
+  }, [saveState]);
 
   return (
     <>
@@ -49,10 +52,10 @@ const SaveErrorMessageComponent: React.FC = () => {
         <div
           css={popover}
           onWheel={() => {
-            // editorStore.setSaveState(SaveState.RESAVING);
+            editorStore.setSaveState(SaveState.RESAVING);
           }}
           onClick={() => {
-            // editorStore.setSaveState(SaveState.RESAVING);
+            editorStore.setSaveState(SaveState.RESAVING);
           }}
         >
           <div css={[saveMessageContainer, 'forError']} style={{ visibility: messageOpen ? 'visible' : 'hidden' }}>

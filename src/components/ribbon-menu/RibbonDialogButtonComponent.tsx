@@ -46,13 +46,13 @@ const RibbonDialogButtonComponent: React.FC<IProps> = (props: IProps) => {
       </div>
       {open && DialogContent && (
         <DialogContent
-        // open={open}
-        // handleClose={() => {
-        //     handleDialogClose();
-        // }}
-        // commandPropName={commandPropName}
-        // commandType={commandType}
-        // onClick={onClick}
+          open={open}
+          handleClose={() => {
+            handleDialogClose();
+          }}
+          // commandPropName={commandPropName}
+          // commandType={commandType}
+          onClick={onClick}
         />
       )}
     </div>

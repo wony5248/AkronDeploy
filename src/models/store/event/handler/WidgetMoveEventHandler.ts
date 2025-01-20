@@ -84,7 +84,7 @@ class WidgetMoveEventHandler extends AkronEventHandler {
 
       const editingPage = isEditAppMode(ctx.getAppModeContainer())
         ? selectionContainer.getEditingPage()
-        : ctx.getEditingWidgetModel();
+        : ctx.getAppModel()?.getFirstChild();
 
       const canMove = editingPage
         ? movedWidgetModels.every(widgetModel => {
@@ -334,15 +334,15 @@ class WidgetMoveEventHandler extends AkronEventHandler {
     let nestedContainer =
       movedWidgetModels.length >= 1
         ? findNestedContainer(ctx, movedWidgetModels[0], targetModel)
-        : (ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getEditingWidgetModel());
+        : (ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getAppModel());
     nestedContainer =
       !checkPageModel(nestedContainer) &&
       movedWidgetModels.every(widget => nestedContainer === findNestedContainer(ctx, widget, targetModel))
         ? nestedContainer
-        : (ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getEditingWidgetModel());
+        : (ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getAppModel());
     // 부모-자식 역전이 일어나는 경우 child로 삽입하지 않음
     if (widgetModels?.some(widget => isAncestor(widget, nestedContainer))) {
-      nestedContainer = ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getEditingWidgetModel();
+      nestedContainer = ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getAppModel();
     }
 
     const deltaClientXY = calculateDeltaClientXY(event, ctx);

@@ -23,11 +23,6 @@ const LeftToolpaneComponent: React.FC = () => {
   const topToolPaneHeight = topToolPane.current?.clientHeight ?? 0;
   const bottomToolPaneHeight = bottomToolPane.current?.clientHeight ?? 0;
 
-  //   const onClickAddLibrary = async (id: string /*, libraryType: LibraryType*/) => {
-  //      const idValue = Number(id);
-  //      await appStore.addLibraryToUsed(idValue, libraryType);
-  //   };
-
   const onMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!isResizing) {
       return;
@@ -73,14 +68,6 @@ const LeftToolpaneComponent: React.FC = () => {
         </div>
       </div>
       <ComponentInsertToolPane setAddLibraryDialogOpen={SetAddLibraryDialogOpen} />
-      {/* <AddLibraryDialogComponent
-                open={addLibraryDialogOpen}
-                onClick={onClickAddLibrary}
-                handleClose={() => {
-                    SetAddLibraryDialogOpen(false);
-                }}
-                dialogType={LibraryDialogType.ALL}
-            /> */}
     </div>
   );
 };

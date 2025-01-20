@@ -198,6 +198,7 @@ class AppParser {
 
     switch (item.componentType) {
       case 'App': {
+        item.name = 'Akron';
         node = this.createComponent(item);
         break;
       }

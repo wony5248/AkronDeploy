@@ -9,7 +9,7 @@ interface Props {
 }
 
 const WidgetSelectionOverlayComponent: React.FC<Props> = ({ model }: Props) => (
-  <div>
+  <div id={'widgetSelectionOverlay'}>
     <WidgetSelectionViewComponent model={model} />
   </div>
 );

@@ -85,11 +85,11 @@ const PageThumbnailComponent: React.FC<IProps> = (props: IProps) => {
         contextMenuContainer.openContextMenu(e, ContextMenuData);
       }}
       onMouseUp={e => {
-        // if (!arrowClicked && editorStore.getSelectionContainer()?.isMoveMode() === false && isMouseDown) {
-        //     handleSelectPageThumbnail(e, false);
-        // } else {
-        //     setIsMouseDown(false);
-        // }
+        if (!arrowClicked && editorStore.getSelectionContainer()?.isMoveMode() === false && isMouseDown) {
+          handleSelectPageThumbnail(e, false);
+        } else {
+          setIsMouseDown(false);
+        }
       }}
       onMouseDown={e => handleSelectPageThumbnail(e, true)}
       onMouseEnter={() => setIsHover(true)}
@@ -132,7 +132,6 @@ const PageThumbnailComponent: React.FC<IProps> = (props: IProps) => {
           <button style={{ width: '12px', height: '12px' }} />
         </div>
       </div>
-      {/* <PageThumbnailImgComponent pageModel={pageModel} sectionSelected={sectionSelected} open={open} /> */}
     </div>
   );
 };

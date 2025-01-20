@@ -67,12 +67,6 @@ export default class AkronContext {
    * Context menu에 필요한 내용을 관리합니다..
    */
   private contextMenuContainer: ContextMenuContainer;
-  /**
-   * 현재 수정중인 widget의 model입니다.
-   * (ex. App or Composite)
-   */
-  @observable
-  private editingNewWidgetModel: WidgetModel;
 
   /**
    * 현재 event 의 command id 와 handling 에 필요한 요소들을 나타냅니다. 휘발적이며 event 마다 초기화 됩니다.
@@ -301,7 +295,6 @@ export default class AkronContext {
     this.appModel = initProp.newAppModel;
     this.appID = initProp.appID;
     this.appInfo = initProp.appInfo;
-    this.editingNewWidgetModel = initProp.newAppModel;
     this.eventState = initProp.eventState;
     this.appName = initProp.appName;
     this.appModeContainer = initProp.appModeContainer;
@@ -976,22 +969,6 @@ export default class AkronContext {
   @boundMethod
   public setPrevSelectionContainer(prevSelectionContainer: SelectionContainer | undefined): void {
     this.prevSelectionContainer = prevSelectionContainer;
-  }
-
-  /**
-   * EditingWidgetModel을 반환합니다
-   */
-  @boundMethod
-  public getEditingWidgetModel(): WidgetModel {
-    return this.editingNewWidgetModel;
-  }
-
-  /**
-   * EditingWidgetModel을 설정합니다
-   */
-  @boundMethod
-  public setEditingWidgetModel(editingWidgetModel: WidgetModel): void {
-    this.editingNewWidgetModel = editingWidgetModel;
   }
 
   /**
