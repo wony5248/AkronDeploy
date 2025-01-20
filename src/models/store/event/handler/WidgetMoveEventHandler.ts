@@ -39,7 +39,7 @@ class WidgetMoveEventHandler extends AkronEventHandler {
 
     event.preventDefault();
     event.stopPropagation();
-    const state = ctx.getState();
+    const state = ctx.getEventState();
     const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
     const selectionContainer = ctx.getSelectionContainer();
     const propContainer = ctx.getPropContainer();
@@ -77,7 +77,7 @@ class WidgetMoveEventHandler extends AkronEventHandler {
 
     // 첫 drag 시점
     if (widgetEditSubEventState === WidgetEditSubEventState.PRESSED) {
-      ctx.setState(EventState.WIDGET_MOVE);
+      ctx.setEventState(EventState.WIDGET_MOVE);
       widgetEditInfoContainer.setWidgetEditSubEventState(WidgetEditSubEventState.DRAG);
 
       hitModel = overrideHitWidgetModel(ctx, hitModel);
@@ -261,7 +261,7 @@ class WidgetMoveEventHandler extends AkronEventHandler {
 
     event.stopPropagation();
 
-    const state = ctx.getState();
+    const state = ctx.getEventState();
     const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
     const selectionContainer = ctx.getSelectionContainer();
     const propContainer = ctx.getPropContainer();

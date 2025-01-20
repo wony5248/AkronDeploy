@@ -14,12 +14,8 @@ import { editor, editorArea } from 'styles/editor/EditorStyle';
  */
 const EditorComponent: React.FC = () => {
   const editorStore = useEditorStore();
-  const isEditMode = true; // isEditAppMode(appModeContainer);
-  // ex. App 편집 상황 -> App widget.
-  // ex. Composite widget 편집 상황 -> Top widget.
+  const isEditMode = true;
   const editingWidgetModel = editorStore.getEditingWidgetModel();
-  const editorUIStore = editorStore.getEditorUIStore();
-  // const uiStore = editorStore.getUIStore();
 
   const {
     handleMouseDownCapture,
@@ -40,15 +36,7 @@ const EditorComponent: React.FC = () => {
   // FIXME: 다른 app mode 고려해서 조건문 수정
   if (isEditMode) {
     targetWidgetModel = editorStore.getEditingPageModel() ?? editingWidgetModel.getFirstChild(); // FIX ME : Composite widget 편집 모드에서 들어갔다 나왔을 경우 첫번째 페이지 가져오도록 임시처리.
-  } else {
-    // targetWidgetModel = editingWidgetModel;
-    // // PageComponent를 저장하는 Map 생성
-    // const pageComponentMap = new Map<number, JSX.Element>();
-    // targetWidgetModel.forEachChild(pageModel => {
-    //   pageComponentMap.set(pageModel.getID(), <WidgetCreatorComponent widgetModel={pageModel} />);
-    // });
-    // uiStore.setPageComponentMap(pageComponentMap);
-  } // targetWidget applyPageWrapperComponents에 있는 type 일때만 PageWrapperComponent를 씌움.
+  }
   const CenterStyleWrapper =
     isDefined(targetWidgetModel) && ['Page', 'BusinessDialog'].includes(targetWidgetModel?.getWidgetType())
       ? CenterStyleWrapperComponent
@@ -83,24 +71,7 @@ const EditorComponent: React.FC = () => {
             <UndoRedoMiniBarComponent />
             <CenterStyleWrapper>
               {isEditMode === true ? (
-                <div className="Device" style={{ /*...deviceSizeStyle,*/ position: 'relative' }}>
-                  {/* <div
-                    id="smartGuideLineArea"
-                    style={{
-                      zIndex: 30,
-                      position: 'absolute',
-                      width: '100%',
-                      height: '100%',
-                      overflow: 'hidden',
-                      pointerEvents: 'none',
-                      scale: `${ctx.zoomRatio / 100}`,
-                      transformOrigin: `50% 0%`,
-                    }}
-                  >
-                    <svg style={{ width: '100%', height: '100%' }}>
-                      {widgetPropContainer.getIsSmartGuide() ? getTotalSmartGuideJSXElements(x, y, w, h, '') : null}
-                    </svg>
-                  </div> */}
+                <div className="Device" style={{ position: 'relative' }}>
                   <WidgetCreatorComponent widgetModel={targetWidgetModel} />
                   <WidgetSelectionOverlayComponent model={targetWidgetModel} />
                 </div>
@@ -108,18 +79,6 @@ const EditorComponent: React.FC = () => {
                 <WidgetCreatorComponent widgetModel={targetWidgetModel} />
               )}
             </CenterStyleWrapper>
-            {/* {isEditMode && <div id="superux-toast" className={toastMessageStyles.closeToast} />}
-            {isEditMode && businessDialogModel && <BusinessDialogComponent widgetModel={businessDialogModel} />}
-            {isEditMode && (
-              <NotificationDialogContentComponent
-                open={editorUIStore.getBusinessAlertOpenProperty()}
-                handleClose={() => {
-                  editorUIStore.setBusinessAlertOpenProperty(false);
-                }}
-                propsTitleID={editorUIStore.getBusinessAlertTitle()}
-                propsPlainContent={editorUIStore.getBusinessAlertContent()}
-              />
-            )} */}
             {dialog.dialogOpen && dialog.dialogType && (
               <dialog.dialogType
                 open
@@ -130,12 +89,8 @@ const EditorComponent: React.FC = () => {
               />
             )}
           </div>
-          {/* {isRuntimePreviewMode(editorStore.getAppModeContainer()) && (
-            <PageNavigationButtonComponent startPageModel={targetWidgetModel} />
-          )} */}
         </div>
       )}
-      {/* <ContainerGuideline /> */}
     </EditorWrapper>
   );
 };

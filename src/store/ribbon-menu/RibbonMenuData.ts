@@ -9,8 +9,8 @@ import { IRibbonButton } from 'store/ribbon-menu/RibbonMenuComponentInfo';
  */
 const RibbonButtonDataList: IRibbonButton[] = [
   ProjectMenuData,
-  PageMenuData,
-  BusinessDialogMenuData,
+  // PageMenuData,
+  // BusinessDialogMenuData,
   ...RibbonButtonData,
 ];
 

@@ -94,7 +94,7 @@ class WidgetSelectCommandHandler extends CommandHandler {
   @boundMethod
   private selectWidget(ctx: AkronContext, props: WidgetSelectCommandProps) {
     // 입력값 검증
-    if (isUndefined(ctx.getNewAppModel())) {
+    if (isUndefined(ctx.getAppModel())) {
       dError('dom is not exist');
       return;
     }
@@ -114,7 +114,7 @@ class WidgetSelectCommandHandler extends CommandHandler {
   private dragSelectWidget(ctx: AkronContext, props: WidgetDragSelectCommandProps) {
     const commandProps = ctx.getCommandProps();
     // 입력값 검증
-    if (isUndefined(ctx.getNewAppModel())) {
+    if (isUndefined(ctx.getAppModel())) {
       dError('dom is not exist');
       return;
     }
@@ -235,7 +235,7 @@ class WidgetSelectCommandHandler extends CommandHandler {
         } else {
           // 이미 선택한게 있고 target이 그중 없을 경우, 최초 선택 부터 target 까지 주르륵 선택
           // XXX: 이미 다중선택 상황인 경우 동일한 페이지가 중복으로 들어감
-          //   const pageList = getPageList(ctx.getNewAppModel());
+          //   const pageList = getPageList(ctx.getAppModel());
           const firstPage = selectedPageModels[0];
           // const targetPage = props.targetModel;
           // let isTargetSearched = false;

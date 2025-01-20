@@ -84,8 +84,8 @@ class PageListSortCommandHandler extends CommandHandler {
       pageList.forEach(pageModel => {
         const moveWidgetCommand = new MoveWidgetCommand(
           pageModel,
-          ctx.getNewAppModel(),
-          ctx.getNewAppModel(),
+          ctx.getAppModel(),
+          ctx.getAppModel(),
           props.afterPage
         );
         ctx.getCommand()?.append(moveWidgetCommand);
@@ -105,10 +105,10 @@ class PageListSortCommandHandler extends CommandHandler {
 
     if (isDefined(props.targetSectionIdx)) {
       // section update
-      const pageArr: WidgetModel<IWidgetCommonProperties>[] = getPageList(ctx.getNewAppModel());
+      const pageArr: WidgetModel<IWidgetCommonProperties>[] = getPageList(ctx.getAppModel());
       const selectedPageArr = ctx.getSelectionContainer()?.getSelectedPages();
       const sectionPageCountArr = ctx
-        .getNewAppModel()
+        .getAppModel()
         .getProperties()
         .content.sectionList?.value?.map((section: PageSection) => {
           return section.pageCount;
@@ -130,7 +130,7 @@ class PageListSortCommandHandler extends CommandHandler {
         sectionCounter[props.targetSectionIdx] -= selectedPageArr?.length;
       }
 
-      const appProp = ctx.getNewAppModel().getProperties();
+      const appProp = ctx.getAppModel().getProperties();
       let sectionList: PageSection[];
       if (isDefined(appProp.content.sectionList)) {
         sectionList = [];
@@ -148,7 +148,7 @@ class PageListSortCommandHandler extends CommandHandler {
             sectionList: { ...appProp.content.sectionList, value: sectionList },
           },
         };
-        const updateWidgetCommand = new UpdateWidgetCommand(ctx.getNewAppModel(), newAppProp);
+        const updateWidgetCommand = new UpdateWidgetCommand(ctx.getAppModel(), newAppProp);
         ctx.getCommand()?.append(updateWidgetCommand);
       }
     }
@@ -158,8 +158,8 @@ class PageListSortCommandHandler extends CommandHandler {
    * 구역을 이동시키는 기능입니다.
    */
   private moveSection(ctx: AkronContext, props: SectionMoveCommandProps) {
-    const pageList = getPageList(ctx.getNewAppModel());
-    const appProp = ctx.getNewAppModel().getProperties();
+    const pageList = getPageList(ctx.getAppModel());
+    const appProp = ctx.getAppModel().getProperties();
 
     const selectedSection = ctx.getSelectionContainer()?.getSelectedSection();
     const selectedSectionId = selectedSection?.getSectionInfo().id;
@@ -192,8 +192,8 @@ class PageListSortCommandHandler extends CommandHandler {
       movePageList.forEach(pageModel => {
         const moveWidgetCommand = new MoveWidgetCommand(
           pageModel,
-          ctx.getNewAppModel(),
-          ctx.getNewAppModel(),
+          ctx.getAppModel(),
+          ctx.getAppModel(),
           finalPageModel
         );
         ctx.getCommand()?.append(moveWidgetCommand);
@@ -223,7 +223,7 @@ class PageListSortCommandHandler extends CommandHandler {
           sectionList: { ...appProp.content.sectionList, value: newSectionList },
         },
       };
-      const updateWidgetCommand = new UpdateWidgetCommand(ctx.getNewAppModel(), newAppProp);
+      const updateWidgetCommand = new UpdateWidgetCommand(ctx.getAppModel(), newAppProp);
       ctx.getCommand()?.append(updateWidgetCommand);
     }
   }

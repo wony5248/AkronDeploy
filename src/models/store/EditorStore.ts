@@ -148,7 +148,7 @@ class EditorStore {
    * 현재 appModel 반환.
    */
   public getAppModel(): AppModel | undefined {
-    return this.ctx.getNewAppModel();
+    return this.ctx.getAppModel();
   }
 
   /**
@@ -170,7 +170,7 @@ class EditorStore {
    */
   @boundMethod
   public initHitContainer(): void {
-    this.getCtxAsAppContext().getHitContainer().initHitContainer();
+    this.ctx.getHitContainer().initHitContainer();
   }
 
   /**
@@ -178,7 +178,7 @@ class EditorStore {
    */
   @boundMethod
   getSelectedWidgets() {
-    return this.getCtxAsAppContext().getSelectionContainer()?.getSelectedWidgets() ?? [];
+    return this.ctx.getSelectionContainer()?.getSelectedWidgets() ?? [];
   }
 
   /**
@@ -187,7 +187,7 @@ class EditorStore {
    * @returns 현재 모드에 따라 수정중인 widget model 반환 (EDIT_APP 모드에서는 AppWidgetModel 반환)
    */
   public getEditingWidgetModel() {
-    return this.getCtxAsAppContext().getEditingWidgetModel();
+    return this.ctx.getEditingWidgetModel();
   }
 
   /**
@@ -195,7 +195,7 @@ class EditorStore {
    * (선택된 페이지들 중 마지막 페이지와 동일합니다.)
    */
   public getEditingPageModel(): Nullable<WidgetModel /*<IComponentCommonProperties, IPageWidgetProperties>*/> {
-    return this.getCtxAsAppContext().getSelectionContainer()?.getEditingPage();
+    return this.ctx.getSelectionContainer()?.getEditingPage();
   }
 
   /**
@@ -211,21 +211,21 @@ class EditorStore {
    */
   @action
   public setEditingPageRefPosition(x: number, y: number, width: number, height: number) {
-    this.getCtxAsAppContext().setEditingPageRefPosition({ x, y, width, height });
+    this.ctx.setEditingPageRefPosition({ x, y, width, height });
   }
 
   /**
    * editingPageRefPosition 값을 가져옴.
    */
   public getEditingPageRefPosition() {
-    return this.getCtxAsAppContext().getEditingPageRefPosition();
+    return this.ctx.getEditingPageRefPosition();
   }
 
   /**
    * 파라미터로 받은 Page Widget이 선택된 Page인지 확인하여 반환하는 함수
    */
   public isSelectedThumbnail(pageModel: PageModel) {
-    const selectionContainer = this.getCtxAsAppContext().getSelectionContainer();
+    const selectionContainer = this.ctx.getSelectionContainer();
     if (selectionContainer === undefined) {
       return false;
     }
@@ -242,7 +242,7 @@ class EditorStore {
    * @returns context의 zoom ratio.
    */
   public getZoomRatio(): number {
-    return this.getCtxAsAppContext().getZoomRatio();
+    return this.ctx.getZoomRatio();
   }
 
   /**
@@ -250,7 +250,7 @@ class EditorStore {
    */
   @action
   public setZoomRatio(zoomRatio: number) {
-    this.getCtxAsAppContext().setZoomRatio(zoomRatio);
+    this.ctx.setZoomRatio(zoomRatio);
   }
 
   /**
@@ -267,7 +267,7 @@ class EditorStore {
   @boundMethod
   public setNeedSaveState(state: boolean): void {
     runInAction(() => {
-      this.getCtxAsAppContext().setNeedSaveState(state);
+      this.ctx.setNeedSaveState(state);
     });
   }
 
@@ -283,14 +283,14 @@ class EditorStore {
    * 현재 EventState를 반환합니다.
    */
   public getEventState(): EventState {
-    return this.getCtxAsAppContext().getState();
+    return this.ctx.getEventState();
   }
 
   /**
    * EventState를 변경합니다.
    */
   public setEventState(state: EventState): void {
-    this.getCtxAsAppContext().setState(state);
+    this.ctx.setEventState(state);
   }
 
   /**
@@ -298,7 +298,7 @@ class EditorStore {
    */
   @boundMethod
   public getWidgetEditInfoContainer() {
-    return this.getCtxAsAppContext().getWidgetEditInfoContainer();
+    return this.ctx.getWidgetEditInfoContainer();
   }
 
   /**
@@ -307,8 +307,8 @@ class EditorStore {
   @boundMethod
   public getDialog(): { dialogType: DialogContentType | undefined; dialogOpen: boolean } {
     return {
-      dialogType: this.getCtxAsAppContext().getDialogType(),
-      dialogOpen: this.getCtxAsAppContext().getDialogOpen(),
+      dialogType: this.ctx.getDialogType(),
+      dialogOpen: this.ctx.getDialogOpen(),
     };
   }
 
@@ -317,8 +317,8 @@ class EditorStore {
    */
   @action.bound
   public setDialog(dialogType: DialogContentType | undefined, dialogOpen: boolean) {
-    this.getCtxAsAppContext().setDialogType(dialogType);
-    this.getCtxAsAppContext().setDialogOpen(dialogOpen);
+    this.ctx.setDialogType(dialogType);
+    this.ctx.setDialogOpen(dialogOpen);
   }
 
   /**
@@ -326,11 +326,11 @@ class EditorStore {
    */
   @action.bound
   public handleCommandEvent(commandProps: WidgetCommandProps): void {
-    const ctx = this.getCtxAsAppContext();
+    const ctx = this.ctx;
     this.initContext(commandProps);
     this.commandManager.execute(this.ctx);
-    this.selectionManager.updateSelection(this.getCtxAsAppContext());
-    // this.updateProperties(this.getCtxAsAppContext());
+    this.selectionManager.updateSelection(this.ctx);
+    // this.updateProperties(this.ctx);
     this.saveApp();
   }
 
@@ -340,10 +340,10 @@ class EditorStore {
   @boundMethod
   public handleClick(event: MouseEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onClick(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
-    this.selectionManager.updateSelection(this.getCtxAsAppContext());
-    // this.updateProperties(this.getCtxAsAppContext());
+    this.eventManager.onClick(event, this.ctx);
+    this.commandManager.execute(this.ctx);
+    this.selectionManager.updateSelection(this.ctx);
+    // this.updateProperties(this.ctx);
     this.saveApp();
   }
 
@@ -353,9 +353,9 @@ class EditorStore {
   @boundMethod
   public handleDoubleClick(event: MouseEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onDoubleClick(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
-    this.selectionManager.updateSelection(this.getCtxAsAppContext());
+    this.eventManager.onDoubleClick(event, this.ctx);
+    this.commandManager.execute(this.ctx);
+    this.selectionManager.updateSelection(this.ctx);
     this.saveApp();
   }
 
@@ -365,10 +365,10 @@ class EditorStore {
   @boundMethod
   public handleMouseDown(event: MouseEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onMouseDown(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
-    this.selectionManager.updateSelection(this.getCtxAsAppContext());
-    // this.updateProperties(this.getCtxAsAppContext());
+    this.eventManager.onMouseDown(event, this.ctx);
+    this.commandManager.execute(this.ctx);
+    this.selectionManager.updateSelection(this.ctx);
+    // this.updateProperties(this.ctx);
     this.saveApp();
   }
 
@@ -378,8 +378,8 @@ class EditorStore {
   @boundMethod
   public handleMouseMove(event: MouseEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onMouseMove(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onMouseMove(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -388,8 +388,8 @@ class EditorStore {
   @boundMethod
   public handleMouseOut(event: MouseEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onMouseOut(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onMouseOut(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -398,8 +398,8 @@ class EditorStore {
   @boundMethod
   public handleMouseOver(event: MouseEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onMouseOver(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onMouseOver(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -408,10 +408,10 @@ class EditorStore {
   @boundMethod
   public handleMouseUp(event: MouseEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onMouseUp(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
-    this.selectionManager.updateSelection(this.getCtxAsAppContext());
-    // this.updateProperties(this.getCtxAsAppContext());
+    this.eventManager.onMouseUp(event, this.ctx);
+    this.commandManager.execute(this.ctx);
+    this.selectionManager.updateSelection(this.ctx);
+    // this.updateProperties(this.ctx);
     this.saveApp();
   }
 
@@ -421,8 +421,8 @@ class EditorStore {
   @boundMethod
   public handleMouseEnter(event: MouseEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onMouseEnter(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onMouseEnter(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -431,8 +431,8 @@ class EditorStore {
   @boundMethod
   public handleMouseLeave(event: MouseEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onMouseLeave(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onMouseLeave(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -441,8 +441,8 @@ class EditorStore {
   @boundMethod
   public handleDrag(event: DragEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onDrag(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onDrag(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -451,8 +451,8 @@ class EditorStore {
   @boundMethod
   public handleDragStart(event: DragEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onDragStart(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onDragStart(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -461,8 +461,8 @@ class EditorStore {
   @boundMethod
   public handleDragEnd(event: DragEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onDragEnd(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onDragEnd(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -471,8 +471,8 @@ class EditorStore {
   @boundMethod
   public handleDragEnter(event: DragEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onDragEnter(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onDragEnter(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -481,8 +481,8 @@ class EditorStore {
   @boundMethod
   public handleDragLeave(event: DragEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onDragLeave(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onDragLeave(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -491,8 +491,8 @@ class EditorStore {
   @boundMethod
   public handleDragOver(event: DragEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onDragOver(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onDragOver(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -501,8 +501,8 @@ class EditorStore {
   @boundMethod
   public handleScroll(event: UIEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onScroll(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onScroll(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -511,8 +511,8 @@ class EditorStore {
   @boundMethod
   public handleDrop(event: DragEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onDrop(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onDrop(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -521,8 +521,8 @@ class EditorStore {
   @boundMethod
   public handleWheel(event: WheelEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onWheel(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onWheel(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -531,8 +531,8 @@ class EditorStore {
   @boundMethod
   public handleOnChange(event: FormEvent<WidgetModel>, eventParams: any[]): void {
     this.initContext();
-    this.eventManager.onChange(event, this.getCtxAsAppContext(), eventParams);
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onChange(event, this.ctx, eventParams);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -541,8 +541,8 @@ class EditorStore {
   @boundMethod
   public handleOnContextMenu(event: MouseEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onFormContextMenu(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onFormContextMenu(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -551,8 +551,8 @@ class EditorStore {
   @boundMethod
   public handleInvalid(event: FormEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onInvalid(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onInvalid(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -561,8 +561,8 @@ class EditorStore {
   @boundMethod
   public handleReset(event: FormEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onReset(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onReset(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -571,8 +571,8 @@ class EditorStore {
   @boundMethod
   public handleSearch(event: FormEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onSearch(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onSearch(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -581,8 +581,8 @@ class EditorStore {
   @boundMethod
   public handleSelect(event: FormEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onSelect(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onSelect(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -591,8 +591,8 @@ class EditorStore {
   @boundMethod
   public handleSubmit(event: FormEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onSubmit(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onSubmit(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -601,9 +601,9 @@ class EditorStore {
   @boundMethod
   public handleContextMenu(event: MouseEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onContextMenu(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
-    this.selectionManager.updateSelection(this.getCtxAsAppContext());
+    this.eventManager.onContextMenu(event, this.ctx);
+    this.commandManager.execute(this.ctx);
+    this.selectionManager.updateSelection(this.ctx);
     this.saveApp();
   }
 
@@ -616,10 +616,10 @@ class EditorStore {
       return; // temporary, 여기에서 분기 처리해도 되나..? -- sj
     }
     this.initContext();
-    this.eventManager.onKeyDown(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
-    this.selectionManager.updateSelection(this.getCtxAsAppContext());
-    // this.updateProperties(this.getCtxAsAppContext());
+    this.eventManager.onKeyDown(event, this.ctx);
+    this.commandManager.execute(this.ctx);
+    this.selectionManager.updateSelection(this.ctx);
+    // this.updateProperties(this.ctx);
     this.saveApp();
   }
 
@@ -629,10 +629,10 @@ class EditorStore {
   @boundMethod
   public handleKeyPressed(event: KeyEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onKeyPressed(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
-    this.selectionManager.updateSelection(this.getCtxAsAppContext());
-    // this.updateProperties(this.getCtxAsAppContext());
+    this.eventManager.onKeyPressed(event, this.ctx);
+    this.commandManager.execute(this.ctx);
+    this.selectionManager.updateSelection(this.ctx);
+    // this.updateProperties(this.ctx);
   }
 
   /**
@@ -641,8 +641,8 @@ class EditorStore {
   @boundMethod
   public handleKeyUp(event: KeyEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onKeyUp(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onKeyUp(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -651,8 +651,8 @@ class EditorStore {
   @boundMethod
   public handleCompositionUpdate(event: CompositionEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onCompositionUpdate(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onCompositionUpdate(event, this.ctx);
+    this.commandManager.execute(this.ctx);
     this.saveApp();
   }
 
@@ -662,8 +662,8 @@ class EditorStore {
   @boundMethod
   public handleBeforeInput(event: FormEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onBeforeInput(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onBeforeInput(event, this.ctx);
+    this.commandManager.execute(this.ctx);
     this.saveApp();
   }
 
@@ -673,8 +673,8 @@ class EditorStore {
   @boundMethod
   public handleInput(event: FormEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onInput(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onInput(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -683,9 +683,9 @@ class EditorStore {
   @boundMethod
   public handleChange(event: FormEvent<WidgetModel>, eventParams: any[]): void {
     this.initContext();
-    this.eventManager.onChange(event, this.getCtxAsAppContext(), eventParams);
-    this.commandManager.execute(this.getCtxAsAppContext());
-    this.selectionManager.updateSelection(this.getCtxAsAppContext());
+    this.eventManager.onChange(event, this.ctx, eventParams);
+    this.commandManager.execute(this.ctx);
+    this.selectionManager.updateSelection(this.ctx);
   }
 
   /**
@@ -694,8 +694,8 @@ class EditorStore {
   @boundMethod
   public handleFocus(event: FocusEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onFocus(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onFocus(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -704,8 +704,8 @@ class EditorStore {
   @boundMethod
   public handleBlur(event: FocusEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onBlur(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onBlur(event, this.ctx);
+    this.commandManager.execute(this.ctx);
     this.saveApp();
   }
 
@@ -715,8 +715,8 @@ class EditorStore {
   @boundMethod
   public handleCopy(event: ClipboardEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onCopy(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onCopy(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -725,8 +725,8 @@ class EditorStore {
   @boundMethod
   public handleCut(event: ClipboardEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onCut(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onCut(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -735,8 +735,8 @@ class EditorStore {
   @boundMethod
   public handlePaste(event: ClipboardEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onPaste(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onPaste(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -745,8 +745,8 @@ class EditorStore {
   @boundMethod
   public handleTouchStart(event: TouchEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onTouchStart(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onTouchStart(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -755,8 +755,8 @@ class EditorStore {
   @boundMethod
   public handleTouchEnd(event: TouchEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onTouchEnd(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onTouchEnd(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -765,8 +765,8 @@ class EditorStore {
   @boundMethod
   public handleTouchMove(event: TouchEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onTouchMove(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onTouchMove(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -775,8 +775,8 @@ class EditorStore {
   @boundMethod
   public handlePointerDown(event: PointerEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onPointerDown(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onPointerDown(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -785,8 +785,8 @@ class EditorStore {
   @boundMethod
   public handlePointerMove(event: PointerEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onPointerMove(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onPointerMove(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -795,8 +795,8 @@ class EditorStore {
   @boundMethod
   public handlePointerUp(event: PointerEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onPointerUp(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onPointerUp(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -805,8 +805,8 @@ class EditorStore {
   @boundMethod
   public handlePointerCancel(event: PointerEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onPointerCancel(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onPointerCancel(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -815,8 +815,8 @@ class EditorStore {
   @boundMethod
   public handlePointerEnter(event: PointerEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onPointerEnter(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onPointerEnter(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -825,8 +825,8 @@ class EditorStore {
   @boundMethod
   public handlePointerLeave(event: PointerEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onPointerLeave(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onPointerLeave(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -835,8 +835,8 @@ class EditorStore {
   @boundMethod
   public handlePointerOver(event: PointerEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onPointerOver(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onPointerOver(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -845,8 +845,8 @@ class EditorStore {
   @boundMethod
   public handleGotPointerCapture(event: PointerEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onGotPointerCapture(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onGotPointerCapture(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -855,8 +855,8 @@ class EditorStore {
   @boundMethod
   public handleLostPointerCapture(event: PointerEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onLostPointerCapture(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onLostPointerCapture(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -865,8 +865,8 @@ class EditorStore {
   @boundMethod
   public handleAnimationStart(event: AnimationEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onAnimationStart(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onAnimationStart(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -875,8 +875,8 @@ class EditorStore {
   @boundMethod
   public handleAnimationEnd(event: AnimationEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onAnimationEnd(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onAnimationEnd(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -885,8 +885,8 @@ class EditorStore {
   @boundMethod
   public handleAnimationIteration(event: AnimationEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onAnimationIteration(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onAnimationIteration(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -895,7 +895,7 @@ class EditorStore {
   @boundMethod
   public handleSave(commandProps: WidgetCommandProps): void {
     this.initContext(commandProps);
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.commandManager.execute(this.ctx);
     this.saveTimerId = undefined;
   }
 
@@ -905,8 +905,8 @@ class EditorStore {
   @boundMethod
   public handleMouseDownCapture(event: MouseEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onMouseDownCapture(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onMouseDownCapture(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -915,8 +915,8 @@ class EditorStore {
   @boundMethod
   public handleMouseUpCapture(event: MouseEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onMouseUpCapture(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onMouseUpCapture(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -925,8 +925,8 @@ class EditorStore {
   @boundMethod
   public handleMouseMoveCapture(event: MouseEvent<WidgetModel>): void {
     this.initContext();
-    this.eventManager.onMouseMoveCapture(event, this.getCtxAsAppContext());
-    this.commandManager.execute(this.getCtxAsAppContext());
+    this.eventManager.onMouseMoveCapture(event, this.ctx);
+    this.commandManager.execute(this.ctx);
   }
 
   /**
@@ -980,7 +980,7 @@ class EditorStore {
         updateMessages = command.makeApplyUpdateMessages();
         break;
     }
-    this.appendServerMessage(this.getCtxAsAppContext());
+    this.appendServerMessage(this.ctx);
     if (updateMessages.length === 0) {
       return;
     }
@@ -1028,20 +1028,11 @@ class EditorStore {
   }
 
   /**
-   * this.ctx가 RuntimeStore를 상속받기 때문에 AppContextBase이다.
-   * 하지만 AppStore에서는 constructor에서 this.ctx를 AppContext로 정의하고 있기 때문에
-   * 타입 단언(as)를 통해 AppContext로 정의해야 AppContext의 기능을 사용할 수 있다.
-   */
-  private getCtxAsAppContext() {
-    return this.ctx as AkronContext;
-  }
-
-  /**
    * Event 시작 전 휘발성이 있는 context 를 초기화 합니다.
    */
   private initContext(commandProps?: CommandProps): void {
-    this.getCtxAsAppContext().setCommandProps(commandProps);
-    this.getCtxAsAppContext().setCommand(undefined);
+    this.ctx.setCommandProps(commandProps);
+    this.ctx.setCommand(undefined);
   }
 }
 

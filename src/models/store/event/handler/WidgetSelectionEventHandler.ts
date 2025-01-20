@@ -94,7 +94,7 @@ class WidgetSelectionEventHandler extends AkronEventHandler {
     event.stopPropagation();
     const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
     const propContainer = ctx.getPropContainer();
-    const state = ctx.getState();
+    const state = ctx.getEventState();
     propContainer.getWidgetPropContainer().setIsSmartGuide(false);
     if (this.onMouseUpValidCheck(state, widgetEditInfoContainer)) {
       // WidgetMoveEventHandler에서 처리
@@ -143,7 +143,7 @@ class WidgetSelectionEventHandler extends AkronEventHandler {
    * @returns true: **valid**, false: **Invalid** -> should abort
    */
   private onMouseDownValidCheck(ctx: AkronContext): boolean {
-    const state = ctx.getState();
+    const state = ctx.getEventState();
     const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
     const appModeContainer = ctx.getAppModeContainer();
     const editingWidgetModel = ctx.getEditingWidgetModel();
