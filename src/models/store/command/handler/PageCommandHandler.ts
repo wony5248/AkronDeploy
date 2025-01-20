@@ -15,18 +15,10 @@ import CommandHandler from 'models/store/command/common/CommandHandler';
 import AppendWidgetCommand from 'models/store/command/widget/AppendWidgetCommand';
 import RemoveWidgetCommand from 'models/store/command/widget/RemoveWidgetCommand';
 import RenameWidgetCommand from 'models/store/command/widget/RenameWidgetCommand';
-import UpdateWidgetCommand from 'models/store/command/widget/UpdateWidgetCommand';
 import WidgetCommandProps, { SelectionProp } from 'models/store/command/widget/WidgetCommandProps';
 import AkronContext from 'models/store/context/AkronContext';
 import SelectionEnum from 'models/store/selection/SelectionEnum';
-import { PageSection } from 'models/widget/WidgetPropTypes';
-import {
-  isPagesDeletable,
-  pageNameExist,
-  getPageList,
-  getSectionIdxByPageIdx,
-  getDeletablePageModels,
-} from 'util/PageUtil';
+import { isPagesDeletable, pageNameExist, getDeletablePageModels } from 'util/PageUtil';
 import { checkPageModel, appendDeleteWidgetCommandsRecursive } from 'util/WidgetUtil';
 
 let pageId = 3;
@@ -226,20 +218,6 @@ class PageCommandHandler extends CommandHandler {
       ...currentPage.getProperties(),
     });
 
-    // const widgetProps = newWidgetModel.getProperties();
-    // newWidgetModel.setProperties({
-    //   ...widgetProps,
-    //   style: {
-    //     ...widgetProps.style,
-    //     width: {
-    //       ...widgetProps.style.width,
-    //     },
-    //     height: {
-    //       ...widgetProps.style.height,
-    //     },
-    //   },
-    // });
-
     const appendWidgetCommand = new AppendWidgetCommand(
       ctx,
       newWidgetModel,
@@ -334,66 +312,6 @@ class PageCommandHandler extends CommandHandler {
       const removeWidgetCommand = new RemoveWidgetCommand(targetModel, appWidgetModel);
       command.append(removeWidgetCommand);
     });
-  }
-
-  /**
-   * page 삭제 시, appWidgetModel prop 갱신
-   */
-  @boundMethod
-  private updateSectionWhenPageDelete(ctx: AkronContext) {
-    const appWidgetModel = ctx.getAppModel();
-    const selectionContainer = ctx.getSelectionContainer();
-    if (isUndefined(appWidgetModel)) {
-      return;
-    }
-    if (isUndefined(selectionContainer)) {
-      return;
-    }
-
-    const targetModels = selectionContainer.getSelectedPages();
-    const parentWidgetModel = appWidgetModel;
-
-    const { sectionList } = parentWidgetModel.getProperties().content;
-    if (isDefined(sectionList)) {
-      const pageArr: WidgetModel<IWidgetCommonProperties>[] = getPageList(ctx.getAppModel());
-      const sectionPageCountArr = ctx
-        .getAppModel()
-        .getProperties()
-        .content.sectionList?.value?.map((section: PageSection) => {
-          return section.pageCount;
-        });
-
-      const sectionCounter = Array(sectionPageCountArr?.length).fill(0);
-      pageArr.forEach((pageModel, idx) => {
-        if (
-          targetModels?.some(selectModel => {
-            return pageModel.getID() === selectModel.getID();
-          })
-        ) {
-          const sectionIdx = getSectionIdxByPageIdx(sectionPageCountArr, idx);
-          sectionCounter[sectionIdx] += 1;
-        }
-      });
-
-      const newSectionList: PageSection[] = [];
-      const appProp = ctx.getAppModel().getProperties();
-      sectionList?.value.forEach((section: PageSection, idx: number) => {
-        newSectionList.push({
-          ...section,
-          pageCount: section.pageCount - sectionCounter[idx],
-        });
-      });
-
-      const newAppProp: IWidgetCommonProperties = {
-        ...appProp,
-        content: {
-          ...appProp.content,
-          sectionList: { ...appProp.content.sectionList, value: newSectionList },
-        },
-      };
-      const updateWidgetCommand = new UpdateWidgetCommand(ctx.getAppModel(), newAppProp);
-      ctx.getCommand()?.append(updateWidgetCommand);
-    }
   }
 
   /**

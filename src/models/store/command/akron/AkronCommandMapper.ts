@@ -86,7 +86,6 @@ class AkronCommandMapper extends CommandMapper {
     // Widget
     this.commandMap.set(CommandEnum.INSERT_WIDGET, [widgetEditCommandHandler]);
     this.commandMap.set(CommandEnum.INSERT_WIDGET_AT, [widgetEditCommandHandler]);
-    this.commandMap.set(CommandEnum.INSERT_WIDGET_CLONE, [widgetEditCommandHandler]);
     this.commandMap.set(CommandEnum.DELETE_WIDGET, [widgetEditCommandHandler]);
     this.commandMap.set(CommandEnum.RENAME_WIDGET, [widgetEditCommandHandler]);
     this.commandMap.set(CommandEnum.WIDGET_MOVE_START, [widgetEditCommandHandler]);
@@ -97,10 +96,6 @@ class AkronCommandMapper extends CommandMapper {
     this.commandMap.set(CommandEnum.WIDGET_RESIZE_END, [widgetEditCommandHandler]);
     this.commandMap.set(CommandEnum.HIDE_WIDGET, [widgetEditCommandHandler]);
     this.commandMap.set(CommandEnum.LOCK_WIDGET, [widgetEditCommandHandler]);
-    this.commandMap.set(CommandEnum.UPDATE_REPEATABLE_PROPS_DTO_MAP, [widgetEditCommandHandler]);
-    this.commandMap.set(CommandEnum.DELETE_REPEATABLE_PROPS_DTO_MAP, [widgetEditCommandHandler]);
-    this.commandMap.set(CommandEnum.UPDATE_CUSTOM_PROPS_VARIABLE_MAP, [widgetEditCommandHandler]);
-    this.commandMap.set(CommandEnum.DELETE_CUSTOM_PROPS_VARIABLE_MAP, [widgetEditCommandHandler]);
     this.commandMap.set(CommandEnum.RESET_WIDGET_CONTENT, [widgetEditCommandHandler]);
   }
 
