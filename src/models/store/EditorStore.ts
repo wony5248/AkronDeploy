@@ -58,6 +58,7 @@ export interface EditorStoreInitParams {
   selectAtFirst: boolean;
   startPageURL?: string;
   startPageID?: number;
+  startElementId: number;
 }
 
 export enum SaveState {
@@ -120,6 +121,7 @@ class EditorStore {
         appModeContainer,
         compositeComponentContainer: new CompositeComponentContainer(),
         editorUIStore: this.editorUIStore,
+        startElementId: appParser.getStartElementId(),
       }));
   }
 

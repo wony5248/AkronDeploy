@@ -26,6 +26,7 @@ export interface ContextInitializeProp {
   metadataContainer: MetadataContainer;
   activeLeftToolPaneType?: LeftToolPaneType;
   editorUIStore: EditorUIStore;
+  startElementId: number;
 }
 
 /**
