@@ -169,81 +169,6 @@ class WidgetMoveEventHandler extends AkronEventHandler {
       });
     });
 
-    // FIXME: 가독성을 위한 코드 정리
-    // let nestedContainer =
-    //   movedWidgetModels.length >= 1
-    //     ? findNestedContainer(ctx, movedWidgetModels[0], targetModel)
-    //     : (ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getEditingWidgetModel());
-    // nestedContainer =
-    //   !checkPageModel(nestedContainer) &&
-    //   movedWidgetModels.every(widget => nestedContainer === findNestedContainer(ctx, widget, targetModel))
-    //     ? nestedContainer
-    //     : (ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getEditingWidgetModel());
-
-    // // 부모-자식 역전이 일어나는 경우 child로 삽입하지 않음
-    // if (movedWidgetModels.some(widget => isAncestor(widget, nestedContainer))) {
-    //   nestedContainer = ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getEditingWidgetModel();
-    // }
-
-    // smart guide(dragHovered) 셋팅
-    // if (
-    //   ctx.getSmartGuideContainer().getDragHoveredWidget() !== nestedContainer &&
-    //   nestedContainer.getProperties().editingState !== WidgetEditingState.MOVE &&
-    //   movedWidgetModels.length > 0
-    // ) {
-    //   // 기존 dragHovered 초기화
-    //   ctx.getSmartGuideContainer().setDragHovered(false);
-    //   // 새로운 widget, dragHovered 셋팅
-    //   ctx.getSmartGuideContainer().setDragHoveredWidget(nestedContainer);
-    //   ctx.getSmartGuideContainer().setDragHovered(true);
-    // }
-
-    // 드래그 도중 속성으로 삽입되는 경우 하이라이트 기능을 위해 셋팅
-    // if (
-    //   ctx.metaDataContainer.getReactNodeTypePropMap().get(targetModel.getWidgetType()) &&
-    //   targetModel !== movedWidgetModels[0]
-    // ) {
-    //   ctx.getSmartGuideContainer().setDragHovered(false);
-    //   ctx.getSmartGuideContainer().setDragHoveredWidget(targetModel);
-    //   ctx.getSmartGuideContainer().setDragHovered(true);
-    // }
-
-    // smart guide(container order) 셋팅
-    // if (nestedContainer.getWidgetCategory() === 'Layout') {
-    //   const nextSibling = findNextSiblingDragInContainer(
-    //     nestedContainer,
-    //     { x: event.getClientX(), y: event.getClientY() },
-    //     movedWidgetModels.includes(hitModel) ? movedWidgetModels : movedWidgetModels.concat(hitModel)
-    //   );
-    //   let refX = 0;
-    //   let refY = 0;
-    //   if (isDefined(nextSibling)) {
-    //     refX = nextSibling.getRefX() ?? 0;
-    //     refY = nextSibling.getRefY() ?? 0;
-    //   } else {
-    //     const lastWidget = targetModel.getLastChild();
-    //     if (isUndefined(lastWidget)) {
-    //       refX = 0;
-    //       refY = 0;
-    //     } else if (targetModel.getWidgetType() === 'LayoutVerticalFrame') {
-    //       refX = lastWidget.getRefX() ?? 0;
-    //       refY = (lastWidget.getRefY() ?? 0) + (lastWidget.getRefHeight() ?? 0);
-    //     } else if (targetModel.getWidgetType() === 'LayoutHorizontalFrame') {
-    //       refX = (lastWidget.getRefX() ?? 0) + (lastWidget.getRefWidth() ?? 0);
-    //       refY = lastWidget.getRefY() ?? 0;
-    //     }
-    //   }
-    //   ctx.getSmartGuideContainer().setContainerGuidelineStartPosition({
-    //     x: refX / (ctx.zoomRatio / 100),
-    //     y: refY / (ctx.zoomRatio / 100),
-    //   });
-    // } else {
-    //   ctx.getSmartGuideContainer().setContainerGuidelineStartPosition({
-    //     x: 0,
-    //     y: 0,
-    //   });
-    // }
-
     return true;
   }
 
@@ -266,7 +191,6 @@ class WidgetMoveEventHandler extends AkronEventHandler {
     const selectionContainer = ctx.getSelectionContainer();
     const propContainer = ctx.getPropContainer();
     propContainer.getWidgetPropContainer().setIsSmartGuide(false);
-    // clearSmartGuideStructure();
     const selectedWidgets = selectionContainer?.getSelectedWidgets();
 
     // 입력 값 검증
@@ -296,39 +220,10 @@ class WidgetMoveEventHandler extends AkronEventHandler {
       widgetModels = [hitModel];
     }
 
-    // if (targetModel.getComponentSpecificProperties().locked) {
-    //   // 삽입하려고 하는 컴포넌트가 잠금일 경우 이동 하기 전 위치로 이동
-    //   const props: WidgetMoveCommandProps = {
-    //     commandID: CommandEnum.WIDGET_MOVE_END,
-    //     targetModels: widgetModels,
-    //     deltaX: 0,
-    //     deltaY: 0,
-    //   };
-    //   ctx.commandProps = props;
-
-    //   const selectionPropObj: SelectionProp = {
-    //     selectionType: SelectionEnum.WIDGET,
-    //     widgetModels,
-    //   };
-    //   ctx.commandProps.selectionProp = selectionPropObj;
-    //   ctx.hitContainer.setStartHitItem(undefined);
-    //   ctx.getSmartGuideContainer().setDragHovered(false);
-
-    //   ctx.getSmartGuideContainer().setDragHoveredWidget(undefined);
-    //   ctx.getSmartGuideContainer().setContainerGuidelineStartPosition({
-    //     x: 0,
-    //     y: 0,
-    //   });
-    //   ctx.getEditorUIStore().setEditorSnackBarMsg('컴포넌트 잠금을 해지 후 시도해보세요.');
-    //   return true;
-    // }
-
     const movedWidgetModels: WidgetModel[] = [];
     widgetModels.forEach(widgetModel => {
       // move 불가능한 widget은 값 변경하지 않음
-      // if (widgetModel.getComponentSpecificProperties().locked === false) {
       movedWidgetModels.push(widgetModel);
-      // }
     });
 
     let nestedContainer =
@@ -361,7 +256,6 @@ class WidgetMoveEventHandler extends AkronEventHandler {
       isMovedToPage:
         !checkPageModel(movedWidgetModels[0].getParent()) && nestedContainer === selectionContainer?.getEditingPage(),
       mousePosition: undefined,
-      // nestedContainer.getWidgetCategory() === 'Layout' ? { x: event.getClientX(), y: event.getClientY() } : undefined,
       desModel: targetModel.getEditingState() !== WidgetEditingState.FLOATING ? targetModel : undefined,
     };
     ctx.setCommandProps(props);
@@ -373,13 +267,6 @@ class WidgetMoveEventHandler extends AkronEventHandler {
     if (commandProps) {
       commandProps.selectionProp = selectionPropObj;
     }
-
-    // ctx.getSmartGuideContainer().setDragHovered(false);
-    // ctx.getSmartGuideContainer().setDragHoveredWidget(undefined);
-    // ctx.getSmartGuideContainer().setContainerGuidelineStartPosition({
-    //   x: 0,
-    //   y: 0,
-    // });
     return true;
   }
 
@@ -478,7 +365,6 @@ class WidgetMoveEventHandler extends AkronEventHandler {
     const selectionContainer = ctx.getSelectionContainer();
 
     if (isUndefined(selectionContainer)) {
-      //   ctx.getSmartGuideContainer().setDragHovered(false);
       return;
     }
 
@@ -508,7 +394,6 @@ class WidgetMoveEventHandler extends AkronEventHandler {
     }
 
     clearWidgetModelEditContext(ctx);
-    // ctx.getSmartGuideContainer().setDragHovered(false);
   }
 }
 

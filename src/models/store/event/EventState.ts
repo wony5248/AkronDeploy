@@ -8,7 +8,6 @@ enum EventState {
   IDLE,
   DEFAULT,
   EDIT,
-  RUN,
 
   // Edit widget state
   WIDGET_MOVE,
@@ -17,7 +16,6 @@ enum EventState {
 
   // INVALID
   INVALID,
-  TOOLPANE_MOVE,
 }
 
 export default EventState;

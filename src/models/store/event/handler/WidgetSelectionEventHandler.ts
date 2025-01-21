@@ -17,7 +17,6 @@ class WidgetSelectionEventHandler extends AkronEventHandler {
    * 마우스 버튼 누를 때
    */
   public override onMouseDown(event: MouseEvent<WidgetModel>, ctx: AkronContext): boolean {
-    // event.preventDefault();
     event.stopPropagation();
     const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
     const HitContainer = ctx.getHitContainer();
@@ -37,7 +36,6 @@ class WidgetSelectionEventHandler extends AkronEventHandler {
 
     // Validation check
     if (!this.onMouseDownValidCheck(ctx)) {
-      // this.finishMoveOnInterrupted(ctx);
       return true;
     }
 
@@ -50,12 +48,6 @@ class WidgetSelectionEventHandler extends AkronEventHandler {
     // windowSelection 초기화
     const windowSelection = window.getSelection();
     windowSelection?.removeAllRanges();
-
-    // editor focus
-    // 현재 widget에 focus가 되지 않아 editor로 focus
-    // -> widget을 선택한 상태에서 단축키를 사용하기 위해서는 textViewComponent가 아닌 editor 영역에 focus가 되어야함.
-    // -> 또, text 편집 중 다른 widget 선택 시 onBlur를 통해 update하기 위함
-    // setEditorFocus();
 
     // 순수 widget영역 선택 -> textEditing 동작 X
     hitModel.setProperties({
