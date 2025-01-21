@@ -1,6 +1,18 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
-import { appPrimaryColor100, appPrimaryColor200 } from 'styles/Color';
+import {
+  appPrimaryColor100,
+  appPrimaryColor200,
+  globalGray100,
+  globalGray200,
+  globalGray300,
+  globalGray400,
+  globalGray800,
+  globalWhite,
+  primary100,
+  primary500,
+} from 'styles/Color';
+import { spacing50 } from 'styles/Spacing';
 
 export const deviceTabContainer = css`
   width: 272px;
@@ -9,7 +21,7 @@ export const deviceTabContainer = css`
 `;
 
 export const tabView = css`
-  background-color: colors.$globalGray100;
+  background-color: ${globalGray100};
   display: flex;
   align-items: center;
   padding: 2px;
@@ -25,12 +37,12 @@ export const tab = css`
   height: 32px;
   font-size: 13px;
   font-weight: 700;
-  color: colors.$globalGray300;
+  color: ${globalGray300};
 `;
 
 export const activeTab = css`
-  color: colors.$primary500;
-  background-color: colors.$globalWhite;
+  color: ${primary500};
+  background-color: ${globalWhite};
   border-radius: 6px;
 `;
 
@@ -43,16 +55,16 @@ export const deviceButton = (isSelected: boolean) => css`
   border-radius: 6px;
 
   &:hover {
-    background-color: colors.$primary100;
+    background-color: ${primary100};
   }
 
   &:active {
-    background-color: colors.$primary150;
+    background-color: ${primary100};
   }
 
   ${isSelected &&
   css`
-    background-color: colors.$primary100;
+    background-color: ${primary100};
   `}
 `;
 
@@ -64,7 +76,7 @@ export const deviceNameLabel = css`
 
 export const deviceSizeLabel = css`
   font-size: 12px;
-  color: colors.$globalGray400;
+  color: ${globalGray400};
   margin-right: 16px;
 `;
 
@@ -86,7 +98,7 @@ export const deviceTextField = css`
 
 export const multiplyText = css`
   vertical-align: super;
-  color: colors.$globalGray400;
+  color: ${globalGray400};
 `;
 
 export const deviceCommonOption = css`
@@ -101,11 +113,11 @@ export const deviceCommonTitle = css`
   flex: 1;
   font-size: 12px;
   font-weight: 400;
-  color: colors.$globalGray800;
+  color: ${globalGray800};
 `;
 
 export const orientationSwitchTrack = css`
-  background-color: colors.$globalGray100;
+  background-color: ${globalGray100};
   display: flex;
   width: 78px;
   height: 24px;
@@ -115,14 +127,14 @@ export const orientationSwitchTrack = css`
 `;
 
 export const disableTab = css`
-  opacity: opacities.$opacity30;
+  opacity: 0.3;
 `;
 
 export const rectangle = (horizontal: boolean, selected: boolean) => css`
   width: 10px;
   height: 16px;
-  background-color: colors.$globalGray300;
-  border-radius: spacings.$spacing50;
+  background-color: ${globalGray300};
+  border-radius: ${spacing50};
 
   ${horizontal &&
   css`
@@ -131,7 +143,7 @@ export const rectangle = (horizontal: boolean, selected: boolean) => css`
 
   ${selected &&
   css`
-    background-color: colors.$uxPrimary500;
+    background-color: ${primary500};
   `}
 `;
 
@@ -144,7 +156,7 @@ export const orientationSwitchTab = css`
 `;
 
 export const orientationSwitchChecked = css`
-  background-color: colors.$globalWhite;
+  background-color: ${globalWhite};
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   border-radius: 5px;
 `;
@@ -181,7 +193,7 @@ export const center = css`
 export const line = css`
   width: 100%;
   height: 1px;
-  background-color: colors.$globalGray200;
+  background-color: ${globalGray200};
   margin-top: 4px;
   margin-bottom: 8px;
 `;
@@ -194,6 +206,7 @@ export const listItem = (selected: boolean) => css`
   background-color: ${selected ? appPrimaryColor200 : 'transparent'};
   font-size: 14px;
   padding: 1px 0;
+  cursor: context-menu;
 
   &:hover {
     background-color: ${appPrimaryColor100};

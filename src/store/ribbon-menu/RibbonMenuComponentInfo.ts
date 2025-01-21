@@ -73,6 +73,7 @@
 // import SelectTemplateLibraryDialogComponent from 'ux/component/workarea/SelectTemplateLibraryDialogComponent';
 
 import EditorStore from 'models/store/EditorStore';
+import BuildAppDialogContentComponent from 'store/ribbon-menu/dialog-content/BuildAppDialogContentComponent';
 import UpdateDeviceDialogContentComponent from 'store/ribbon-menu/dialog-content/UpdateDeviceDialogContentComponent';
 
 /**
@@ -193,7 +194,7 @@ export type DialogContentType =
   // | typeof SelectReactNodePropContentComponent
   // | typeof UpdatePageLevelDialogContentComponent
   // | typeof NudgeAmountControlDialogComponent
-  typeof UpdateDeviceDialogContentComponent;
+  typeof BuildAppDialogContentComponent | typeof UpdateDeviceDialogContentComponent;
 // | typeof GXCustomComponentDialogComponent
 // | typeof SelectUXComponentLibraryDialogComponent
 // | typeof SelectTemplateLibraryDialogComponent;
@@ -219,7 +220,7 @@ export const ribbonDialogContentMap: { [key: string]: DialogContentType } = {
   // SelectReactNodeProp: SelectReactNodePropContentComponent,
   // fileImportDialog: FileImportDialogContentComponent,
   // fileListDialog: FileListDialogContentComponent,
-  // BuildApp: BuildAppDialogContentComponent,
+  BuildApp: BuildAppDialogContentComponent,
   // UpdatePageLevel: UpdatePageLevelDialogContentComponent,
   // NudgeAmountDialog: NudgeAmountControlDialogComponent,
   UpdateDevice: UpdateDeviceDialogContentComponent,

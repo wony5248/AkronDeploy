@@ -55,6 +55,9 @@ const UpdateDeviceDialogContentComponent: React.FC<IProps> = (props: IProps) => 
   };
 
   const setDeviceSize = () => {
+    if (selectedDeviceName === '') {
+      return;
+    }
     const commandProps: UpdateDeviceInfoCommandProps = {
       commandID: CommandEnum.UPDATE_DEVICE_INFO,
       deviceName: selectedDeviceName,
