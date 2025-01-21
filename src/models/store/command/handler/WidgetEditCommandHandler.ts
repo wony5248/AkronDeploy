@@ -48,8 +48,6 @@ import { applyStyleByEditingState } from 'util/WidgetEditUtil';
  */
 // type InitializeProperties = Array<WidgetProp>;
 
-let widgetId = 1000;
-
 /**
  * Widget 삽입 시 필요한 Props
  */
@@ -397,9 +395,7 @@ class WidgetEditCommandHandler extends CommandHandler {
     }
 
     const newWidgetModel = defaultWidgetModel.cloneNode(ctx.getIdContainerController());
-    newWidgetModel.setID(widgetId);
-    widgetId += 1;
-    newWidgetModel.setName(`${widgetType.replace('Basic', '')} ${widgetId % 100}`);
+    newWidgetModel.setName(`${widgetType.replace('Basic', '')} ${newWidgetModel.getID() % 100}`);
     return newWidgetModel;
   }
 

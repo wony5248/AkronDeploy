@@ -80,6 +80,11 @@ class AppParser {
   private metadataContainer: MetadataContainer;
 
   /**
+   * idContainer를 생성할 때 set될 startElementId
+   */
+  private startElementId: number;
+
+  /**
    * 생성자
    * appJson을 토대로 app을 파싱합니다.
    */
@@ -87,6 +92,7 @@ class AppParser {
     this.node = undefined;
     this.rootNode = undefined;
     this.widgetIDSet = new Set();
+    this.startElementId = 0;
     this.ctx = this.createCtx(appJson.components);
     this.metadataContainer = metadataContainer;
     this.parse();
@@ -100,11 +106,23 @@ class AppParser {
   }
 
   /**
+   * 생성된 AppModel을 반환합니다.
+   */
+  public getStartElementId() {
+    return this.startElementId;
+  }
+
+  /**
    * 서버에서 받아온 데이터를 파싱하기 위한 구조로 변환합니다.
    */
   private createCtx(items: NodeJson[]) {
     const contents = new Map<number, NodeJson>();
-    items.forEach(item => contents.set(item.componentID, item));
+    items.forEach(item => {
+      if (this.startElementId < item.componentID) {
+        this.startElementId = item.componentID;
+      }
+      contents.set(item.componentID, item);
+    });
 
     return {
       contents: contents,

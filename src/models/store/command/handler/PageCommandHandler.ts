@@ -21,8 +21,6 @@ import SelectionEnum from 'models/store/selection/SelectionEnum';
 import { isPagesDeletable, pageNameExist, getDeletablePageModels } from 'util/PageUtil';
 import { checkPageModel, appendDeleteWidgetCommandsRecursive } from 'util/WidgetUtil';
 
-let pageId = 3;
-
 /**
  * Page 추가 시 필요한 Props
  */
@@ -191,11 +189,9 @@ class PageCommandHandler extends CommandHandler {
       .getDefaultWidgetModels()
       .get(props.widgetType)
       ?.cloneNode(ctx.getIdContainerController());
-    newWidgetModel?.setID(pageId);
 
     const currentPage = ctx.getSelectionContainer()?.getEditingPage();
 
-    pageId += 1;
     if (isUndefined(newWidgetModel) || isUndefined(ctx.getCommand()) || isUndefined(currentPage)) {
       dError('widgetModel creation failed.');
       return;

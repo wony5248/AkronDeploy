@@ -326,7 +326,7 @@ export default class AkronContext {
     this.editorUIStore = initProp.editorUIStore;
     this.contextMenuContainer = initProp.contextMenuContainer;
     this.metadataContainer = initProp.metadataContainer;
-    this.idContainerController = this.createIdContainerController({ componentId: 1 }, 0, 0, 0);
+    this.idContainerController = this.createIdContainerController({ componentId: initProp.startElementId }, 1, 1, 1);
     this.pageRefPosition = { x: 0, y: 0, width: 0, height: 0 };
   }
 
