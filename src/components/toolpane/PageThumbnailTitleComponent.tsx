@@ -2,6 +2,8 @@ import { isNotNull } from '@akron/runner';
 import useEditorStore from 'hooks/useEditorStore';
 import { observer } from 'mobx-react-lite';
 import WidgetModel from 'models/node/WidgetModel';
+import CommandEnum from 'models/store/command/common/CommandEnum';
+import { RenamePageCommandProps } from 'models/store/command/handler/PageCommandHandler';
 import * as React from 'react';
 import { pageThumbnailIndex, pageThumbnailName, pageThumbnailTitle } from 'styles/toolpane/PageList';
 
@@ -34,12 +36,12 @@ const PageThumbnailTitleComponent = React.forwardRef<HTMLLabelElement, IProps>(
 
         const newTitle = (titleRef.current as HTMLLabelElement).textContent;
         if (isNotNull(newTitle) && newTitle !== '') {
-          // const commandProps: RenamePageCommandProps = {
-          //     commandID: CommandEnum.RENAME_PAGE,
-          //     targetModel: pageModel,
-          //     pageName: newTitle,
-          // };
-          // editorStore.handleCommandEvent(commandProps);
+          const commandProps: RenamePageCommandProps = {
+            commandID: CommandEnum.RENAME_PAGE,
+            targetModel: pageModel,
+            pageName: newTitle,
+          };
+          editorStore.handleCommandEvent(commandProps);
         } else {
           (titleRef.current as HTMLLabelElement).textContent = pageModel.getName();
         }
@@ -65,23 +67,8 @@ const PageThumbnailTitleComponent = React.forwardRef<HTMLLabelElement, IProps>(
 
     return (
       <div css={pageThumbnailTitle}>
-        <label
-          // className={classNames(styles.pageThumbnailIndex, {
-          //     [styles.hidden]: pageProps.hidden,
-          // })}
-          css={pageThumbnailIndex(false)}
-        >
-          {idx + 1}
-        </label>
-        <label
-          // className={classNames(styles.pageThumbnailName, {
-          //     [styles.hidden]: pageProps.hidden,
-          // })}
-          css={pageThumbnailName(false)}
-          onKeyDown={handleKeyDown}
-          onBlur={handleBlur}
-          ref={ref}
-        >
+        <label css={pageThumbnailIndex(false)}>{idx + 1}</label>
+        <label css={pageThumbnailName(false)} onKeyDown={handleKeyDown} onBlur={handleBlur} ref={ref}>
           {pageModel.getName()}
         </label>
       </div>

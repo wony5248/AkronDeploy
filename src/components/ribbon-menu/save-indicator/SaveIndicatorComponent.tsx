@@ -5,7 +5,9 @@ import SaveErrorPageComponent from 'components/ribbon-menu/save-indicator/SaveEr
 import SaveLoading from 'components/ribbon-menu/save-indicator/SaveLoading';
 import useEditorStore from 'hooks/useEditorStore';
 import { observer } from 'mobx-react-lite';
-import { useRef, useState } from 'react';
+import CommandEnum from 'models/store/command/common/CommandEnum';
+import { SaveState } from 'models/store/EditorStore';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { saveIcon } from 'styles/ribbon-menu/SaveIndicator';
 
 /**
@@ -18,8 +20,8 @@ type IndicatorType = 'SaveComplete' | 'SaveError';
  */
 const SaveIndicatorComponent: React.FC = () => {
   const editorStore = useEditorStore();
-  // const saveState = editorStore.getSaveState();
-  const loadingTimer = useRef</*NodeJS.Timeout | */ number | null>();
+  const saveState = editorStore.getSaveState();
+  const loadingTimer = useRef<NodeJS.Timeout | number | null>();
 
   const [indicatorState, setIndicatorState] = useState<IndicatorType>('SaveComplete');
   const [showLoadingPage, setShowLoadingPage] = useState<boolean>(false);
@@ -38,7 +40,7 @@ const SaveIndicatorComponent: React.FC = () => {
     clearTimeout(loadingTimer.current as number);
     loadingTimer.current = null;
     setShowLoadingPage(true);
-    // editorStore.handleSave({ commandID: CommandEnum.SAVE });
+    editorStore.handleSave({ commandID: CommandEnum.SAVE });
   };
 
   /**
@@ -46,7 +48,7 @@ const SaveIndicatorComponent: React.FC = () => {
    */
   const setLoadingTimer = () => {
     loadingTimer.current = setTimeout(() => {
-      // editorStore.setSaveState(SaveState.RESAVING);
+      editorStore.setSaveState(SaveState.RESAVING);
     }, 7000);
   };
 
@@ -59,24 +61,31 @@ const SaveIndicatorComponent: React.FC = () => {
     }, 4700);
   };
 
-  // useLayoutEffect(() => {
-  //     if (saveState === SaveState.SAVE_ERROR) {
-  //         setIndicatorState('SaveError');
-  //         setLoadingTimer();
-  //     } else if (saveState === SaveState.SAVE_COMPLETE) {
-  //         if (showLoadingPage) setShowLoadingPage(false);
-  //         if (showErrorPage) setShowErrorPage(false);
-  //         setIndicatorState('SaveComplete');
-  //         if (completeGif === null) setCompleteGif(false);
-  //         else setCompleteGif(true);
-  //     } else if (saveState === SaveState.RESAVING) {
-  //         reSaving();
-  //     } else if (saveState === SaveState.RESAVE_ERROR) {
-  //         setShowLoadingPage(false);
-  //         setShowErrorPage(true);
-  //     }
-  //     // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [saveState]);
+  useLayoutEffect(() => {
+    if (saveState === SaveState.SAVE_ERROR) {
+      setIndicatorState('SaveError');
+      setLoadingTimer();
+    } else if (saveState === SaveState.SAVE_COMPLETE) {
+      if (showLoadingPage) {
+        setShowLoadingPage(false);
+      }
+      if (showErrorPage) {
+        setShowErrorPage(false);
+      }
+      setIndicatorState('SaveComplete');
+      if (completeGif === null) {
+        setCompleteGif(false);
+      } else {
+        setCompleteGif(true);
+      }
+    } else if (saveState === SaveState.RESAVING) {
+      reSaving();
+    } else if (saveState === SaveState.RESAVE_ERROR) {
+      setShowLoadingPage(false);
+      setShowErrorPage(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [saveState]);
 
   return (
     <div>

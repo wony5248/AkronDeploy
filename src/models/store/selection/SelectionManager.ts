@@ -71,7 +71,6 @@ export default class SelectionManager {
     // Update selection
     const commandID = ctx.getCommandProps()?.commandID;
     let newSelectionContainer: SelectionContainer;
-    const editModeLastSelection = ctx.getEditModeLastSelectionContainer();
     if (commandID !== undefined) {
       switch (commandID) {
         case CommandEnum.UNDO:
@@ -108,41 +107,8 @@ export default class SelectionManager {
 
           break;
         }
-        case CommandEnum.CHANGE_APP_MODE:
-          switch (ctx.getAppModeContainer().getAppMode()) {
-            case 'EDIT_APP':
-              // EDIT_APP 모드로 변경될 때, editModeLastSelectionContainer 있으면, 현재 selection으로 변경.
-              if (ctx.getEditModeLastSelectionContainer() !== undefined) {
-                ctx.setSelectionContainer(editModeLastSelection);
-                ctx.setPrevSelectionContainer(undefined); // 이전 selection은 사용자 정의 컴포넌트 수정 시 남아있던 것임. 모드 변경으로 사라짐에 따라 undefined 처리
-                ctx.setEditModeLastSelectionContainer(undefined);
-              }
-              break;
-            default:
-              break;
-          }
-          break;
-        case CommandEnum.SELECT_SECTION:
-          if (ctx.getCommandProps()?.sectionSelectionProp !== undefined) {
-            // 구역 선택 시 선택중인 page는 바뀌지 않음
-            const editingPage = ctx.getSelectionContainer()?.getEditingPage();
-            const selectedPages: WidgetModel[] = editingPage !== undefined ? [editingPage] : [];
-            // const pageSection = ctx.commandProps?.sectionSelectionProp.pageSection;
-
-            newSelectionContainer = new SelectionContainer();
-            // if (pageSection) {
-            //     newSelectionContainer.setSelectedSection(ctx.appWidgetModel, pageSection, selectedPages);
-            // }
-            if (selectedPages !== undefined && selectedPages.length > 0) {
-              newSelectionContainer.setSelectedPage(selectedPages[0]);
-              newSelectionContainer.setWidgetSelection(selectedPages[0]);
-            }
-            ctx?.setSelectionContainer(newSelectionContainer);
-            ctx.setPrevSelectionContainer(ctx.getSelectionContainer());
-            ctx.setSelectionContainer(newSelectionContainer);
-          }
-          break;
         default: {
+          // 일반 셀렉션
           const widgetModels = ctx.getCommandProps()?.selectionProp?.widgetModels;
           if (isDefined(widgetModels)) {
             newSelectionContainer = new SelectionContainer();
@@ -268,19 +234,5 @@ export default class SelectionManager {
   private updateNewFloatingObject(ctx: AkronContext): void {
     const selectionContainer = ctx.getSelectionContainer();
     selectionContainer?.setSelected(true);
-  }
-
-  /**
-   * GX Edit app 모드인 경우, EditingWidgetModel에 대한 추가 selsection 정보를 설정합니다.
-   *
-   * @param ctx 앱의 상태.
-   */
-  private udpateSelectionContainerByEditingWidgetModel(ctx: AkronContext): void {
-    const selectionContainer = ctx.getSelectionContainer();
-    const editingWidgetModel = ctx.getEditingWidgetModel();
-    if (selectionContainer) {
-      selectionContainer.setWidgetSelection(editingWidgetModel);
-      selectionContainer.setSelectedPage(editingWidgetModel);
-    }
   }
 }

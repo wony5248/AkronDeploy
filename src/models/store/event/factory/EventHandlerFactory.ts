@@ -1,7 +1,6 @@
 import AkronEventHandler from 'models/store/event/AkronEventHandler';
 import DefaultEventHandler from 'models/store/event/handler/DefaultEventHandler';
 import HitEventHandler from 'models/store/event/handler/HitEventHandler';
-import WidgetAltkeyEventHandler from 'models/store/event/handler/WidgetAltKeyEventHandler';
 import WidgetEventHandler from 'models/store/event/handler/WidgetEventHandler';
 import WidgetMoveEventHandler from 'models/store/event/handler/WidgetMoveEventHandler';
 import WidgetResizeEventHandler from 'models/store/event/handler/WidgetResizeEventHandler';
@@ -33,20 +32,6 @@ class EventHandlerFactory {
   }
 
   /**
-   * preViewEventHandler를 생성합니다.
-   */
-  // public createRuntimeEventHandler(): AkronEventHandler {
-  //   return new RuntimeEventHandler();
-  // }
-
-  /**
-   * WidgetAltkeyEventHandler를 생성합니다.
-   */
-  public createWidgetAltkeyEventHandler(): AkronEventHandler {
-    return new WidgetAltkeyEventHandler();
-  }
-
-  /**
    * WidgetSelectionEventHandler를 생성합니다.
    */
   public createWidgetSelectionEventHandler(): AkronEventHandler {
@@ -66,27 +51,6 @@ class EventHandlerFactory {
   public createWidgetResizeEventHandler(): AkronEventHandler {
     return new WidgetResizeEventHandler();
   }
-
-  /**
-   * SubToolpaneEventHandler를 생성합니다.
-   */
-  // public createSubToolpaneEventHandler(): AkronEventHandler {
-  //   return new SubToolpaneEventHandler();
-  // }
-
-  /**
-   * Runtime DrawingToolEventHandler 생성합니다.
-   */
-  // public createDrawingToolEventHandler(): AkronEventHandler {
-  //   return new DrawingToolEventHandler();
-  // }
-
-  /**
-   * HandToolEventHandler 생성합니다.
-   */
-  // public createHandToolEventHandler(): AkronEventHandler {
-  //   return new HandToolEventHandler();
-  // }
 }
 
 export default EventHandlerFactory;

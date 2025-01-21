@@ -1,13 +1,14 @@
+import useEditorStore from 'hooks/useEditorStore';
 import { observer } from 'mobx-react-lite';
 
 /**
  * 제목 표시줄 등에 현재 편집 중인 앱의 정보를 표시하기 위한 component.
  */
 const AppNameComponent: React.FC = () => {
-  // const ediStore = useEditorStore();
-  // const appName = appStore.getAppWidgetModel().getName();
+  const editorStore = useEditorStore();
+  const appName = editorStore.getAppModel()?.getName() ?? 'Akron';
 
-  return <>Akron</>;
+  return <>{appName}</>;
 };
 
 export default observer(AppNameComponent);

@@ -1,4 +1,5 @@
 // import { WidgetCreatorComponent } from '@akron/runner';
+import Snackbar from 'components/common/SnackBarComponent';
 import LeftToolpaneComponent from 'components/toolpane/LeftToolpaneComponent';
 import ToolPaneAreaComponent from 'components/toolpane/ToolPaneAreaComponent';
 import ContentComponent from 'components/workarea/ContentComponent';
@@ -40,25 +41,17 @@ const WorkAreaComponent = () => {
           <DataContentComponent />
         </>
       )}
-      {UIStore.getWorkAreaTabIndex() === WorkAreaTabIndex.OSOBJECT && (
-        <>
-          {/* <OSobjectLeftToolPaneComponent />
-                    <OSobjectContentComponent /> */}
-        </>
-      )}
       {snackBarMsg !== '' && (
-        <></>
-        // <Snackbar
-        //     open={snackBarMsg !== ''}
-        //     message={snackBarMsg}
-        //     anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        //     autoHideDuration={1000}
-        //     onClose={() => {
-        //         if (snackBarMsg !== '') {
-        //             appStore.getEditorUIStore().setEditorSnackBarMsg('');
-        //         }
-        //     }}
-        // />
+        <Snackbar
+          open={snackBarMsg !== ''}
+          message={snackBarMsg}
+          autoHideDuration={1000}
+          onClose={() => {
+            if (snackBarMsg !== '') {
+              editorStore.getEditorUIStore().setEditorSnackBarMsg('');
+            }
+          }}
+        />
       )}
     </div>
   );

@@ -106,24 +106,6 @@ class WidgetEventHandler extends AkronEventHandler {
   }
 
   /**
-   * blur(focus out)
-   */
-  /*
-    public override onBlur(event: FocusEvent<WidgetModel>, ctx: AkronContext): boolean {
-        const bluredWidget = event.getTargetModel();
-        const newText: string = bluredWidget.getProperties().editingText ?? bluredWidget.getProperties().content.text;
-
-        const props: UpdateTextCommandProps = {
-            commandID: CommandEnum.UPDATE_TEXT,
-            targetModel: bluredWidget,
-            newText,
-        };
-        ctx.commandProps = props;
-
-        return true;
-    }
-*/
-  /**
    * 마우스 Wheel 스크롤 시
    */
   public override onWheel(event: WheelEvent<WidgetModel>, ctx: AkronContext): boolean {

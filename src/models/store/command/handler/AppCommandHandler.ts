@@ -422,7 +422,7 @@ class AppCommandHandler extends CommandHandler {
    * collapse command
    */
   private collapseSection(props: CollapseSectionCommandProps, ctx: AkronContext): void {
-    const appProp = ctx.getEditingWidgetModel().getProperties();
+    const appProp = ctx.getAppModel().getProperties();
     const { isExpand } = props;
     const targetSection = props.pageSection;
 

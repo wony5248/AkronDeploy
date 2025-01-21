@@ -78,15 +78,6 @@ export type InsertWidgetAtCommandProps = WidgetCommandProps & {
 };
 
 /**
- * Widget 템플릿의 복사본을 삽입 시 필요한 Props
- */
-export type InsertWidgetCloneCommandProps = WidgetCommandProps & {
-  commandID: CommandEnum.INSERT_WIDGET_CLONE;
-  widgetModel: WidgetModel;
-  widgetID: WidgetID;
-};
-
-/**
  * Widget 삭제 시 필요한 Props
  */
 export type DeleteWidgetCommandProps = WidgetCommandProps & {
@@ -173,17 +164,6 @@ export type WidgetUpdateCommandProps = WidgetCommandProps & {
   newWidgetProps: IWidgetCommonProperties;
 };
 
-// /**
-//  * Widget의 Sub Component Count update 시 필요한 Props
-//  */
-// export type NewUpdateWidgetSubComponentCountCommandProps = WidgetCommandProps & {
-//   commandID: CommandEnum.WIDGET_UPDATE_SUB_COMPONENT_COUNT;
-//   targetModel: WidgetModel[];
-//   newWidgetProps: IWidgetPropValueData[];
-//   prevWidgetProps?: IWidgetPropValueData[];
-//   controlSubComponentCounts?: ControlSubComponentCount[];
-// };
-
 /**
  * widget property binding 해제 및 value 초기화
  */
@@ -215,59 +195,12 @@ export type WidgetResizeEndCommandProps = WidgetCommandProps & {
 
 export type WidgetResizeCommandProps = WidgetResizeStartCommandProps | WidgetResizeEndCommandProps;
 
-// /**
-//  * widgetModel의 repeatablePropsDTOMap을 업데이트할 때 필요한 Props
-//  */
-// export type UpdateRepeatablePropsDTOMapCommandProps = WidgetCommandProps & {
-//   commandID: CommandEnum.UPDATE_REPEATABLE_PROPS_DTO_MAP;
-//   dataBindingContainer: DataBindingContainer;
-//   widgetModel: WidgetModel;
-//   DTOID: number;
-//   customPropName: string;
-//   DTODataValueName: string;
-// };
-
-// /**
-//  * widgetModel의 repeatablePropsDTOMap에서 데이터를 제거할 때 필요한 Props
-//  */
-// export type DeleteRepeatablePropsDTOMapCommandProps = WidgetCommandProps & {
-//   commandID: CommandEnum.DELETE_REPEATABLE_PROPS_DTO_MAP;
-//   dataBindingContainer: DataBindingContainer;
-//   widgetModel: WidgetModel;
-//   DTOID: number;
-//   customPropName: string;
-// };
-
-// /**
-//  * widgetModel의 customPropsVariableMap을 업데이트할 때 필요한 Props
-//  */
-// export type UpdateCustomPropsVariableMapCommandProps = WidgetCommandProps & {
-//   commandID: CommandEnum.UPDATE_CUSTOM_PROPS_VARIABLE_MAP;
-//   dataBindingContainer: DataBindingContainer;
-//   widgetModel: WidgetModel;
-//   variableID: number;
-//   customPropID: DataID;
-//   variableMemberName: string;
-// };
-
-// /**
-//  * widgetModel의 customPropsVariableMap 삭제시 필요한 Props
-//  */
-// export type DeleteCustomPropsVariableMapCommandProps = WidgetCommandProps & {
-//   commandID: CommandEnum.DELETE_CUSTOM_PROPS_VARIABLE_MAP;
-//   dataBindingContainer: DataBindingContainer;
-//   widgetModel: WidgetModel;
-//   variableID?: number;
-//   customPropID?: DataID;
-// };
-
 /**
  * WidgetCommandProp의 집합입니다.
  */
 type WidgetEditCommandProps =
   | InsertWidgetCommandProps
   | InsertWidgetAtCommandProps
-  | InsertWidgetCloneCommandProps
   | DeleteWidgetCommandProps
   | RenameWidgetCommandProps
   | HideWidgetCommandProps
@@ -275,74 +208,23 @@ type WidgetEditCommandProps =
   | WidgetMoveCommandProps
   | WidgetUpdateCommandProps
   | WidgetResizeCommandProps
-  //   | UpdateRepeatablePropsDTOMapCommandProps
-  //   | DeleteRepeatablePropsDTOMapCommandProps
-  //   | UpdateCustomPropsVariableMapCommandProps
-  //   | DeleteCustomPropsVariableMapCommandProps
   | ResetWidgetContentCommandProps;
-
-// /**
-//  * Conditional Layout에 프레임(Fragment Layout) 추가 시 필요한 Props
-//  */
-// export type InsertConditionalLayoutFrameCommandProps = WidgetCommandProps & {
-//   commandID: CommandEnum.INSERT_CONDITIONAL_LAYOUT_FRAME;
-//   conditionalModel: WidgetModel;
-//   newFrameName: string;
-//   newWidgetID: WidgetID;
-// };
-
-// /**
-//  * Conditional Layout에서 프레임(Fragment Layout) 삭제 시 필요한 Props
-//  */
-// export type DeleteConditionalLayoutFrameCommandProps = WidgetCommandProps & {
-//   commandID: CommandEnum.DELETE_CONDITIONAL_LAYOUT_FRAME;
-//   conditionalModel: WidgetModel;
-//   frameName: string;
-// };
-
-// /**
-//  * Conditional Layout에서 프레임(Fragment Layout) 수정 시 필요한 Props
-//  */
-// export type UpdateConditionalLayoutFrameCommandProps = WidgetCommandProps & {
-//   commandID: CommandEnum.UPDATE_CONDITIONAL_LAYOUT_FRAME;
-//   conditionalModel: WidgetModel;
-//   frameName: string;
-//   newFrameName: string;
-// };
-
-// /**
-//  * Widget Size 업데이트시 필요한 Props
-//  */
-// export type UpdateWidgetSizeProps = {
-//   commandID: CommandEnum.UPDATE_SIZE;
-//   newSize: { width: WidgetSize; height: WidgetSize };
-//   newWidgetModel: WidgetModel;
-// };
-
-// /**
-//  * Widget Position 업데이트시 필요한 Props
-//  */
-// export type UpdateWidgetPositionProps = {
-//   commandID: CommandEnum.UPDATE_POSITION;
-//   newPosition: UpdatePosition;
-//   newWidgetModel: WidgetModel;
-// };
 
 /**
  * WidgetModel의 잠금 상태를 반영하는 함수
  */
 export function applyLockCommand(ctx: AkronContext, widgetModel: WidgetModel, locked: boolean): void {
-  const lockCommand = new UpdateWidgetCommand(widgetModel, { content: {}, style: {} });
-  ctx.getCommand()?.append(lockCommand);
+  // const lockCommand = new UpdateWidgetCommand(widgetModel, { content: {}, style: {} });
+  // ctx.getCommand()?.append(lockCommand);
 }
 
-// /**
-//  * WidgetModel의 숨김 상태를 반영하는 함수
-//  */
-// export function applyHiddenCommand(ctx: AkronContext, widgetModel: WidgetModel, hidden: boolean): void {
-//   const hiddenCommand = new UpdateHiddenCommand(widgetModel, hidden);
-//   ctx.getCommand()?.append(hiddenCommand);
-// }
+/**
+ * WidgetModel의 숨김 상태를 반영하는 함수
+ */
+export function applyHiddenCommand(ctx: AkronContext, widgetModel: WidgetModel, hidden: boolean): void {
+  // const hiddenCommand = new UpdateHiddenCommand(widgetModel, hidden);
+  // ctx.getCommand()?.append(hiddenCommand);
+}
 
 /**
  * Widget 편집 동작을 처리하는 CommandHandler
@@ -358,9 +240,6 @@ class WidgetEditCommandHandler extends CommandHandler {
         break;
       case CommandEnum.INSERT_WIDGET_AT:
         this.insertWidgetAt(ctx, props);
-        break;
-      case CommandEnum.INSERT_WIDGET_CLONE:
-        // this.insertWidgetClone(ctx, props);
         break;
       case CommandEnum.DELETE_WIDGET:
         this.deleteWidget(ctx, props);
@@ -386,9 +265,6 @@ class WidgetEditCommandHandler extends CommandHandler {
       case CommandEnum.WIDGET_RESIZE_START:
         this.resizeWidgetStart(ctx, props);
         break;
-      //   case CommandEnum.WIDGET_RESIZING:
-      //     this.resizingWidget(ctx, props);
-      //     break;
       case CommandEnum.WIDGET_RESIZE_END:
         this.resizeWidgetEnd(ctx, props);
         break;
@@ -404,75 +280,6 @@ class WidgetEditCommandHandler extends CommandHandler {
       case CommandEnum.WIDGET_UPDATE_PROPERTIES:
         this.updateWidgetProps(ctx, props);
         break;
-      //   case CommandEnum.WIDGET_UPDATE_SUB_COMPONENT_COUNT:
-      //     this.updateWidgetSubComponentCount(ctx, props);
-      //     break;
-      //     break;
-      //   case CommandEnum.UPDATE_REPEATABLE_PROPS_DTO_MAP:
-      //     // ctx.getCommand()?.append(
-      //     //     new UpdateRepeatablePropsDTOMapCommand(
-      //     //         props.widgetModel,
-      //     //         props.dataBindingContainer,
-      //     //         props.DTOID,
-      //     //         props.customPropName,
-      //     //         props.DTODataValueName
-      //     //     )
-      //     // );
-      //     break;
-      //   case CommandEnum.DELETE_REPEATABLE_PROPS_DTO_MAP:
-      //     // ctx.getCommand()?.append(
-      //     //     new DeleteRepeatablePropsDTOMapCommand(
-      //     //         props.widgetModel,
-      //     //         props.dataBindingContainer,
-      //     //         props.DTOID,
-      //     //         props.customPropName
-      //     //     )
-      //     // );
-      //     break;
-      //   case CommandEnum.UPDATE_CUSTOM_PROPS_VARIABLE_MAP:
-      //     ctx
-      //       .getCommand()
-      //       ?.append(
-      //         new UpdateCustomPropsVariableMapCommand(
-      //           props.widgetModel.getID(),
-      //           props.dataBindingContainer,
-      //           props.variableID,
-      //           Number(props.customPropID),
-      //           props.variableMemberName
-      //         )
-      //       );
-      //     break;
-      //   case CommandEnum.DELETE_CUSTOM_PROPS_VARIABLE_MAP:
-      //     // ctx.getCommand()?.append(
-      //     //     new DeleteCustomPropsVariableMapCommand(
-      //     //         props.widgetModel,
-      //     //         props.dataBindingContainer,
-      //     //         props.variableID,
-      //     //         Number(props.customPropID)
-      //     //     )
-      //     // );
-      //     break;
-      //   case CommandEnum.RESET_WIDGET_CONTENT:
-      //     this.resetWidgetContent(ctx, props);
-      //     break;
-      //   case CommandEnum.INSERT_CONDITIONAL_LAYOUT_FRAME:
-      //     this.insertConditionalLayoutFrame(ctx, props);
-      //     break;
-      //   case CommandEnum.DELETE_CONDITIONAL_LAYOUT_FRAME:
-      //     this.deleteConditionalLayoutFrame(ctx, props);
-      //     break;
-      //   case CommandEnum.UPDATE_CONDITIONAL_LAYOUT_FRAME:
-      //     this.updateConditionalLayoutFrame(ctx, props);
-      //     break;
-      //   case CommandEnum.SET_INFO_FOR_INSERT_DRAG_WIDGET:
-      //     this.setInfoForInsertDragWidget(ctx, props);
-      //     break;
-      // case CommandEnum.UPDATE_SIZE:
-      //   this.updateWidgetSize(ctx, props);
-      //   break;
-      // case CommandEnum.UPDATE_POSITION:
-      //   this.updateWidgetPosition(ctx, props);
-      //   break;
       default:
         return false;
     }
@@ -576,113 +383,7 @@ class WidgetEditCommandHandler extends CommandHandler {
       parentWidgetModel:
         ctx.getMouseMode() === 'InsertContainer' ? ctx.getSelectionContainer()?.getEditingPage() : undefined,
     });
-
-    // if (checkConditionalLayout(newWidgetModel)) {
-    //   const MAX_CHILD_FRAGMENT_LAYOUT = 2;
-    //   for (let i = 0; i < MAX_CHILD_FRAGMENT_LAYOUT; i++) {
-    //     const fragmentLayoutWidgetModel = this.createNewWidgetModel(
-    //       ctx,
-    //       'FragmentLayout',
-    //       WidgetRepository.generateWidgetID()
-    //     );
-    //     if (isDefined(fragmentLayoutWidgetModel)) {
-    //       const appendFragmentLayoutWidgetCommand = new AppendWidgetCommand(
-    //         ctx,
-    //         fragmentLayoutWidgetModel,
-    //         newWidgetModel
-    //       );
-    //       ctx.getCommand()?.append(appendFragmentLayoutWidgetCommand);
-    //     }
-    //   }
-    // }
   }
-
-  // /**
-  //  * 주어진 widget model을 복사하여 app에 삽입.
-  //  */
-  // @boundMethod
-  // private insertWidgetClone(ctx: AkronContext, props: InsertWidgetCloneCommandProps) {
-  //   const newWidgetModel = props.widgetModel.cloneNode(ctx.getIdContainerController()) as NewWidgetModel;
-  //   const appID = ctx.getAppID();
-
-  //   const { libraryDependencyData, insertedPuxLibraryInfoMap, libraryID } = props;
-  //   if (isUndefined(libraryID)) {
-  //     // 오류 case
-  //     return;
-  //   }
-  //   if (isDefined(libraryDependencyData) && isDefined(insertedPuxLibraryInfoMap)) {
-  //     appendDependencyTemplateData(ctx, libraryID, libraryDependencyData, insertedPuxLibraryInfoMap);
-
-  //     const libraryInfoMap = ctx.getInsertedPuxLibraryInfoMap().get(libraryID);
-
-  //     if (isDefined(libraryInfoMap)) {
-  //       updatePropsOldIdToNewId(ctx.getDataStore(), newWidgetModel, libraryInfoMap);
-  //     }
-  //   }
-
-  //   if (props.widgetType === ComponentTypeEnum.PUX) {
-  //     // 파일-컴포넌트 매핑 정보 복사
-  //     const widgetArray = props.widgetModel.changeTreeToArray();
-  //     const copiedWidgetArray = newWidgetModel.changeTreeToArray();
-  //     copyLibraryFileRelationsAndApply({
-  //       ctx,
-  //       libraryId: props.libraryID,
-  //       widgetArray,
-  //       copiedWidgetArray,
-  //     });
-
-  //     // eventModel 새로 생성
-  //     const eventHandlerMap = new Map<number, EventHandlerModel>(); // <originHandlerId, model>
-  //     const eventHandlers = ctx.getNewBusinessContainer().getPUXEventHandlerMap(libraryID);
-  //     const eventChains = ctx.getNewBusinessContainer().getPUXEventChainMap(libraryID);
-  //     eventHandlers?.forEach(eventHandler => {
-  //       const chain: number[] = [];
-  //       const newHandlerId = ctx.getIdContainerController().generatePropsEventHandlerId();
-
-  //       eventHandler.chain.forEach(chainId => {
-  //         const puxChainModel = eventChains?.get(chainId);
-  //         if (puxChainModel) {
-  //           const newChainId = ctx.getIdContainerController().generatePropsEventChainId();
-  //           chain.push(newChainId);
-
-  //           const newChainModel: NewEventChainModel = new NewEventChainModel({
-  //             appID,
-  //             chainID: newChainId,
-  //             businessLogicTypeID: puxChainModel.businessLogicTypeID,
-  //             args: puxChainModel.args,
-  //           });
-
-  //           const command = new InsertNewEventChainCommand(ctx.getNewBusinessContainer(), newChainModel);
-  //           ctx.getCommand()?.append(command);
-  //         }
-  //       });
-
-  //       const newHandlerModel: NewEventHandlerModel = new NewEventHandlerModel({
-  //         appID,
-  //         handlerID: newHandlerId,
-  //         condition: eventHandler.condition,
-  //         chain,
-  //       });
-
-  //       const command = new InsertNewEventHandlerCommand(ctx.getNewBusinessContainer(), newHandlerModel);
-  //       ctx.getCommand()?.append(command);
-
-  //       eventHandlerMap.set(eventHandler.handlerID, newHandlerModel);
-  //     });
-
-  //     newWidgetModel.getProps().forEach(prop => {
-  //       const handlerModel = eventHandlerMap.get(prop.eventHandler[0]);
-  //       if (handlerModel) {
-  //         prop.eventHandler = [handlerModel.handlerID];
-  //       }
-  //     });
-  //   }
-
-  //   this.insertGivenWidgetModel(ctx, {
-  //     newWidgetModel,
-  //     isClone: true,
-  //   });
-  // }
 
   /**
    * 주어진 type에 해당하는 새 widget을 생성.
@@ -729,16 +430,6 @@ class WidgetEditCommandHandler extends CommandHandler {
 
     let parentWidgetModel = args.parentWidgetModel ?? this.getParentToInsert(ctx, newWidgetModel);
 
-    // if (isDefined(parentWidgetModel)) {
-    //   const fragmentLayoutModels = parentWidgetModel.mapChild((childWidgetModel: WidgetModel) => childWidgetModel);
-    //   const renderedChildIndex = parentWidgetModel.getProperties().content.flag.value ? 0 : 1;
-    //   parentWidgetModel = fragmentLayoutModels[renderedChildIndex];
-    // }
-
-    // // layout type의 repeatable component 하위에는 하나의 gx library component만 삽입 가능
-    // if (!isInsertableRepeatableLayout(parentWidgetModel, newWidgetModel, editorUIStore)) {
-    //   return;
-    // }
     const selectionContainer = ctx.getSelectionContainer();
     if (selectionContainer === undefined) {
       return;
@@ -748,10 +439,7 @@ class WidgetEditCommandHandler extends CommandHandler {
     const properties = newWidgetModel.getProperties();
     const isParentChildable = selectedWidgets?.length === 1 && checkInsertableItem(selectedWidgets[0], newWidgetModel);
 
-    const parentStyle =
-      // parentWidgetModel.getWidgetType() === 'FragmentLayout'
-      //   ? parentWidgetModel.getParent()!.getProperties().style
-      parentWidgetModel.getProperties().style;
+    const parentStyle = parentWidgetModel.getProperties().style;
 
     if (isParentChildable) {
       // 단일 선택일 때, 부모가 Layout이거나 Childable한 경우에는 부모 컴포넌트가 알아서 위치를 잡아주므로, x,y값 설정 필요 X.
@@ -814,9 +502,6 @@ class WidgetEditCommandHandler extends CommandHandler {
       throw new Error('ctx.command가 undefined입니다!');
     }
 
-    // creatSampleAppforStudio(newWidgetModel);
-    // setCreateProjectButtonProperties(ctx, newWidgetModel);
-
     const appendWidgetCommand = new (isClone ? AppendWidgetRecursiveCommand : AppendWidgetCommand)(
       ctx,
       newWidgetModel,
@@ -835,15 +520,8 @@ class WidgetEditCommandHandler extends CommandHandler {
 
     ctx.getCommand()?.append(appendWidgetCommand);
 
-    // pasteBusinessLogicRecursive(ctx, newWidgetModel);
-
     // Selection 진행.
     this.createWidgetSelectionProp(ctx, newWidgetModel);
-
-    // DataStore의 reference 동기화 작업.
-    // if (isClone) {
-    //   syncAddDataStoreReference(newWidgetModel, ctx.dataStore, ctx.command);
-    // }
   }
 
   /**
@@ -861,63 +539,15 @@ class WidgetEditCommandHandler extends CommandHandler {
       }
       // childable하지 않은 경우 페이지에 삽입
       if (isEditAppMode(ctx.getAppModeContainer())) {
-        return ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getEditingWidgetModel().getFirstChild()!;
+        return ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getAppModel().getFirstChild()!;
       }
-      return ctx.getEditingWidgetModel();
+      return ctx.getAppModel();
     }
     if (isEditAppMode(ctx.getAppModeContainer())) {
-      return ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getEditingWidgetModel().getFirstChild()!;
+      return ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getAppModel().getFirstChild()!;
     }
-    return ctx.getEditingWidgetModel();
+    return ctx.getAppModel();
   }
-
-  /**
-   * 컴포넌트가 위치 설정을 지원할 때, 위치 설정을 해줍니다.
-   */
-  // private setPositionSafely(model: BaseWidgetModel, position: Partial<UpdatePosition>) {
-  //   const typedModel = model as BaseWidgetModel & Pick<WidgetModel, 'getPosition' | 'setPosition'>;
-
-  //   if (typeof typedModel.getPosition === 'function' || typeof typedModel.setPosition === 'function') {
-  //     typedModel.setPosition({ ...typedModel.getPosition(), ...position });
-  //   }
-  // }
-
-  // /**
-  //  * targetModels에 업로드된 파일-컴포넌트 관계 정보 삭제
-  //  */
-  // private deleteFileRelation(ctx: AkronContext, targetModels: (BaseWidgetModel | NewWidgetModel)[]) {
-  //   const fileContainer = ctx.getFileContainer();
-  //   targetModels.forEach(model => {
-  //     const fileComponentRelations = fileContainer.fileComponentRelationMap.get(model.getID());
-
-  //     fileComponentRelations?.forEach(fileComponentRelation => {
-  //       const commandProps = new DeleteFileComponentRelationCommand(fileContainer, fileComponentRelation);
-  //       ctx.getCommand()?.append(commandProps);
-  //     });
-  //   });
-  // }
-
-  // /**
-  //  * targetModels에 대해 제거하는 커맨드 수행
-  //  */
-  // private deleteTargetModels(
-  //   targetModels: (BaseWidgetModel | WidgetModel)[],
-  //   ctx: AkronContext,
-  //   props: DeleteWidgetCommandProps
-  // ) {
-  //   targetModels.forEach(widgetModel => {
-  //     // composite model 삭제
-  //     removeCompositeComponent(ctx, widgetModel as WidgetModel);
-  //     if (checkPageModel(widgetModel)) {
-  //       // 페이지 선택 후 DELETE 키 누를 시 페이지 하위에 있는 컴포넌트 삭제되는 기능
-  //       (widgetModel as PageModel).forEachChild(pageChild => {
-  //         newAppendDeleteWidgetCommandsRecursive(pageChild, ctx, props.commandID);
-  //       });
-  //       return;
-  //     }
-  //     newAppendDeleteWidgetCommandsRecursive(widgetModel as BaseWidgetModel, ctx, props.commandID);
-  //   });
-  // }
 
   /**
    * Widget 삭제
@@ -952,9 +582,8 @@ class WidgetEditCommandHandler extends CommandHandler {
 
     const appModeContainer = ctx.getAppModeContainer();
     let editingTopWidgetModel = ctx.getSelectionContainer()?.getEditingPage() ?? ctx.getAppModel();
-    // GX EDIT_APP 모드 및 Dialog 편집 모드에서는 편집 화면 상 최상단 model인 Composite Model or Dialog Model 설정
     if (isEditWidgetMode(appModeContainer)) {
-      editingTopWidgetModel = ctx.getEditingWidgetModel();
+      editingTopWidgetModel = ctx.getAppModel();
     }
     this.createWidgetSelectionProp(ctx, editingTopWidgetModel);
   }
@@ -998,14 +627,14 @@ class WidgetEditCommandHandler extends CommandHandler {
     const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
     const { targetModels } = props;
     const idContainerController = ctx.getIdContainerController();
-    const editingWidgetModel = ctx.getEditingWidgetModel();
+    const appModel = ctx.getAppModel();
     const selectionContainer = ctx.getSelectionContainer();
     const zoomRatio = ctx.getZoomRatio() / 100;
     if (isUndefined(selectionContainer)) {
       return;
     }
 
-    const editingPage = isEditAppMode(appModeContainer) ? selectionContainer.getEditingPage() : editingWidgetModel;
+    const editingPage = isEditAppMode(appModeContainer) ? selectionContainer.getEditingPage() : appModel;
 
     if (isUndefined(editingPage)) {
       return;
@@ -1321,171 +950,6 @@ class WidgetEditCommandHandler extends CommandHandler {
     this.clearWidgetModelEditContext(ctx);
   }
 
-  // /**
-  //  * Widget 끌어서 Resize 종료
-  //  */
-  // @boundMethod
-  // private resizingWidget(ctx: AkronContext, props: WidgetR): void {
-  //   const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
-  //   const command = ctx.getCommand();
-  //   const selectionContainer = ctx.getSelectionContainer();
-
-  //   const { targetModels: widgetModels, deltaX, deltaY, deltaWidth, deltaHeight } = props;
-
-  //   const workAreaModel =
-  //     selectionContainer.getEditingNewWorkArea() ?? (ctx.getAppModel().getFirstChild() as WorkAreaModel);
-  //   const pagePosition = workAreaModel.getPagePosition();
-
-  //   const isPage =
-  //     widgetModels.find(widgetModel => checkPageModel(widgetModel) || checkWorkAreaModel(widgetModel)) !== undefined;
-  //   if (isPage) {
-  //     return;
-  //   }
-
-  //   if (isUndefined(command)) {
-  //     dError('command is not exist');
-  //     return;
-  //   }
-
-  //   widgetModels.forEach(widgetModel => {
-  //     // style 변경용 Command 생성
-  //     // const widgetProps = widgetModel.getProps();
-  //     // const widgetStyle = widgetProps.getStyle();
-  //     const refPositionMap = widgetEditInfoContainer.getRefPositionMap(widgetModel);
-  //     // parent의 absolute 값으로 relative 계산
-  //     const parentWidget = widgetModel.getParent();
-  //     if (!parentWidget) {
-  //       return;
-  //     }
-
-  //     const updatedStyle = this.calculateNewStyle(refPositionMap, deltaWidth, deltaHeight, deltaX, deltaY);
-
-  //     if (isUndefined(updatedStyle)) {
-  //       return;
-  //     }
-
-  //     // app 별 parent rect style 가져오기
-  //     const {
-  //       parentRefX,
-  //       parentRefY,
-  //       parentRefWidth: parentWidth,
-  //       parentRefHeight: parentHeight,
-  //     } = getTargetParentRectStyle(ctx, widgetModel.getParent());
-
-  //     // 임시 포지션
-  //     const position = widgetModel.getPosition();
-  //     let newLeft;
-  //     let leftUnit = 'px';
-  //     let newTop;
-  //     let topUnit = 'px';
-
-  //     if (deltaX !== 0) {
-  //       // left의 변화
-  //       if (typeof position.left === 'string') {
-  //         // px로 변환
-  //         newLeft = updatedStyle.style.left - pagePosition.x;
-  //       } else {
-  //         // numberUnit
-  //         const { unit } = position.left;
-  //         if (unit === 'px') {
-  //           newLeft = updatedStyle.style.left - pagePosition.x;
-  //         } else {
-  //           // '%'
-  //           newLeft = ((updatedStyle.style.left - pagePosition.x) / parentWidth) * 100;
-  //           leftUnit = '%';
-  //         }
-  //       }
-  //     }
-
-  //     if (deltaY !== 0) {
-  //       // top의 변화
-  //       if (typeof position.top === 'string') {
-  //         newTop = updatedStyle.style.top - pagePosition.y;
-  //       } else {
-  //         // numberUnit
-  //         const { unit } = position.top;
-  //         if (unit === 'px') {
-  //           newTop = updatedStyle.style.top - pagePosition.y;
-  //         } else {
-  //           // '%'
-  //           newTop = ((updatedStyle.style.top - pagePosition.y) / parentHeight) * 100;
-  //           topUnit = '%';
-  //         }
-  //       }
-  //     }
-
-  //     const newPosition = {
-  //       left: newLeft !== undefined ? { value: newLeft, unit: leftUnit } : position.left,
-  //       top: newTop !== undefined ? { value: newTop, unit: topUnit } : position.top,
-  //     };
-  //     const updatePositionCommand = new UpdatePositionCommand(widgetModel, newPosition);
-  //     ctx.getCommand()?.append(updatePositionCommand);
-
-  //     // width,height setting
-  //     const width = widgetModel.getWidth();
-  //     const height = widgetModel.getHeight();
-  //     const newWidth = { value: width?.value, unit: width?.unit };
-  //     const newHeight = { value: height?.value, unit: height?.unit };
-  //     switch (width?.unit) {
-  //       case 'px':
-  //         newWidth.value = updatedStyle.style.width;
-  //         break;
-  //       case '%':
-  //         newWidth.value = (updatedStyle.style.width / parentWidth) * 100;
-  //         break;
-  //       case 'auto':
-  //         newWidth.value = updatedStyle.style.width;
-  //         newWidth.unit = 'px';
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //     switch (height?.unit) {
-  //       case 'px':
-  //         newHeight.value = updatedStyle.style.height;
-  //         break;
-  //       case '%':
-  //         newHeight.value = (updatedStyle.style.height / parentHeight) * 100;
-  //         break;
-  //       case 'auto':
-  //         newHeight.value = updatedStyle.style.height;
-  //         newHeight.unit = 'px';
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //     const updateSizeCommand = new UpdateSizeCommand(widgetModel, {
-  //       width: newWidth as WidgetSize,
-  //       height: newHeight as WidgetSize,
-  //     });
-  //     ctx.getCommand()?.append(updateSizeCommand);
-  //     // widgetProps.forEach((prop, propId) => {
-  //     //     const { name } = prop.propMeta;
-  //     //     if (name === 'width') {
-  //     //         const newProp = { ...prop };
-  //     //         newProp.value = updatedStyle.style.width;
-  //     //         const updatePropsCommand = new UpdatePropsCommand(
-  //     //             widgetModel,
-  //     //             Number(propId),
-  //     //             updatedStyle.style.width
-  //     //         );
-  //     //         ctx.getCommand()?.append(updatePropsCommand);
-  //     //         ctx.getCommand()?.setUndoable(false);
-  //     //     } else if (name === 'height') {
-  //     //         const newProp = { ...prop };
-  //     //         newProp.value = updatedStyle.style.height;
-  //     //         const updatePropsCommand = new UpdatePropsCommand(
-  //     //             widgetModel,
-  //     //             Number(propId),
-  //     //             updatedStyle.style.height
-  //     //         );
-  //     //         ctx.getCommand()?.append(updatePropsCommand);
-  //     //         ctx.getCommand()?.setUndoable(false);
-  //     //     }
-  //     // });
-  //   });
-  // }
-
   /**
    * 편집 관련 정보를 초기화합니다.
    */
@@ -1505,7 +969,7 @@ class WidgetEditCommandHandler extends CommandHandler {
     // const metaDataContainer = ctx.getM;
     // const dataStore;
     const idContainerController = ctx.getIdContainerController();
-    const editingWidgetModel = ctx.getEditingWidgetModel();
+    const appModel = ctx.getAppModel();
     const editingPageRefPosition = ctx.getEditingPageRefPosition();
     const zoomRatio = ctx.getZoomRatio();
     const { targetModels } = props;
@@ -1514,7 +978,7 @@ class WidgetEditCommandHandler extends CommandHandler {
       return;
     }
 
-    const editingPage = isEditAppMode(appModeContainer) ? selectionContainer.getEditingPage() : editingWidgetModel;
+    const editingPage = isEditAppMode(appModeContainer) ? selectionContainer.getEditingPage() : appModel;
 
     if (isUndefined(editingPage)) {
       return;
@@ -1793,69 +1257,6 @@ class WidgetEditCommandHandler extends CommandHandler {
     });
   }
 
-  // /**
-  //  * Widget의 Props 변경 및 Sub component 삽입/삭제
-  //  */
-  // @boundMethod
-  // private updateWidgetSubComponentCount(ctx: AkronContext, props: NewUpdateWidgetSubComponentCountCommandProps): void {
-  //   if (isUndefined(ctx.getCommand())) {
-  //     dError('command is not exist');
-
-  //     return;
-  //   }
-
-  //   const { newWidgetProps, targetModel: widgetModels, controlSubComponentCounts, prevWidgetProps } = props;
-
-  //   widgetModels.forEach((widgetModel: WidgetModel) => {
-  //     for (let idx = 0; idx < newWidgetProps.length; idx++) {
-  //       const { propId, value } = newWidgetProps[idx];
-  //       const updatePropsCommand = new UpdatePropsCommand(widgetModel, Number(propId), value);
-  //       ctx.getCommand()?.append(updatePropsCommand);
-
-  //       if (prevWidgetProps && controlSubComponentCounts) {
-  //         const { value: prevValue } = prevWidgetProps[idx];
-
-  //         if (value > prevValue) {
-  //           // 값이 증가했을 때 sub component 삽입
-  //           for (let itr = 0; itr < value - prevValue; itr++) {
-  //             const controlSubComponentCount = controlSubComponentCounts[idx];
-  //             controlSubComponentCount.forEach(([subComponentTypeId, subComponentType]) => {
-  //               this.appendSubComponentCommand(ctx, subComponentTypeId, subComponentType, widgetModel);
-  //             });
-  //           }
-  //         } else if (value < prevValue) {
-  //           // 값이 감소했을 때 sub component 제거
-  //           const deleteModels: (BaseWidgetModel | NewWidgetModel)[] = [];
-  //           for (let itr = 0; itr < prevValue - value; itr++) {
-  //             const controlSubComponentCount = controlSubComponentCounts[idx];
-  //             controlSubComponentCount
-  //               .slice()
-  //               .reverse()
-  //               .forEach(([subComponentTypeId]) => {
-  //                 let curWidget = widgetModel.getLastChild();
-
-  //                 while (
-  //                   curWidget &&
-  //                   (curWidget.getWidgetTypeId() !== subComponentTypeId || deleteModels.includes(curWidget))
-  //                 ) {
-  //                   curWidget = curWidget.getPrevSibling();
-  //                 }
-
-  //                 if (curWidget && curWidget.getWidgetTypeId() === subComponentTypeId) {
-  //                   deleteModels.push(curWidget);
-  //                 }
-  //               });
-  //           }
-  //           this.deleteFileRelation(ctx, deleteModels);
-  //           this.deleteTargetModels(deleteModels, ctx, {
-  //             commandID: CommandEnum.DELETE_WIDGET,
-  //           });
-  //         }
-  //       }
-  //     }
-  //   });
-  // }
-
   /**
    * pinned 방향에 따라 position을 유지할지 결정하는 함수
    */
@@ -1895,29 +1296,25 @@ class WidgetEditCommandHandler extends CommandHandler {
     return model;
   }
 
-  // /**
-  //  * Widget 보이기/숨기기 여부 변경 (hidden properties 변경)
-  //  */
-  // @boundMethod
-  // private hideWidget(ctx: AkronContext, props: HideWidgetCommandProps): void {
-  //   if (isUndefined(ctx.getCommand())) {
-  //     dError('command is not exist');
-  //     return;
-  //   }
-  //   const { targetModel, hidden, compositeModel } = props;
-  //   // 에셋 보이기/숨기기 여부 변경
-  //   if (compositeModel) {
-  //     const hiddenCommand = new UpdateHiddenAssetCommand(compositeModel, targetModel.getID(), hidden);
-  //     ctx.getCommand()?.append(hiddenCommand);
-  //   }
+  /**
+   * Widget 보이기/숨기기 여부 변경 (hidden properties 변경)
+   */
+  @boundMethod
+  private hideWidget(ctx: AkronContext, props: HideWidgetCommandProps): void {
+    if (isUndefined(ctx.getCommand())) {
+      dError('command is not exist');
+      return;
+    }
+    const { targetModel, hidden, compositeModel } = props;
+    // 에셋 보이기/숨기기 여부 변경
 
-  //   const hiddenComponent = (component: WidgetModel) => {
-  //     applyHiddenCommand(ctx, component, hidden);
-  //     component.forEachChild(hiddenComponent);
-  //   };
+    const hiddenComponent = (component: WidgetModel) => {
+      applyHiddenCommand(ctx, component, hidden);
+      component.forEachChild(hiddenComponent);
+    };
 
-  //   hiddenComponent(targetModel);
-  // }
+    hiddenComponent(targetModel);
+  }
 
   /**
    * Widget 잠금 여부 변경 (locked properties 변경)
@@ -1955,24 +1352,6 @@ class WidgetEditCommandHandler extends CommandHandler {
   //     // dataTransfer의 item은 dragOver시 확인할 수 없은 정보이므로 따로 id를 저장
   //     ctx.getWidgetEditInfoContainer().setDragInsertWidgetInfo(dragInsertWidgetInfo);
   //   }
-  // }
-
-  // /**
-  //  * widget의 사이즈 업데이트 함수
-  //  */
-  // @boundMethod
-  // private updateWidgetSize(ctx: AkronContext, props: UpdateWidgetSizeProps) {
-  //   const updateComand = new UpdateSizeCommand(props.newWidgetModel, props.newSize);
-  //   ctx.getCommand()?.append(updateComand);
-  // }
-
-  // /**
-  //  * widget의 포지션 업데이트 함수
-  //  */
-  // @boundMethod
-  // private updateWidgetPosition(ctx: AkronContext, props: UpdateWidgetPositionProps) {
-  //   const updateComand = new UpdatePositionCommand(props.newWidgetModel, props.newPosition);
-  //   ctx.getCommand()?.append(updateComand);
   // }
 }
 

@@ -1,7 +1,10 @@
 import { action, makeObservable, observable } from 'mobx';
 import WidgetModel from 'models/node/WidgetModel';
+import CommandEnum from 'models/store/command/common/CommandEnum';
+import { WidgetLayerCommandProps } from 'models/store/command/handler/WidgetLayerCommandHandler';
 import EditorStore from 'models/store/EditorStore';
 import { createContext } from 'react';
+import { checkPageModel } from 'util/WidgetUtil';
 
 /**
  * Widget Layer 이동시 필요한 정보를 관리하는 Container 입니다.
@@ -138,45 +141,36 @@ class WidgetLayerContainer {
    * grabbing 상태의 컴포넌트가 widgetModel에게, widgetModel의 부모에게, 페이지에 단독으로 들어갈 수 있는 컴포넌트인지 판별합니다.
    */
   public isInsertableModel(widgetModel: WidgetModel) {
-    // const parentModel = widgetModel.getParent() as WidgetModel;
+    const parentModel = widgetModel.getParent() as WidgetModel;
 
-    // if (
-    //     !this.targetModel ||
-    //     this.targetModel === parentModel ||
-    //     this.usedComponentIDs.has(widgetModel.getID()) ||
-    //     parentModel.isRepeatableLayoutWidgetType()
-    // )
-    //     return false;
+    if (
+      !this.targetModel ||
+      this.targetModel === parentModel ||
+      this.usedComponentIDs.has(widgetModel.getID()) ||
+      parentModel.isRepeatableLayoutWidgetType()
+    ) {
+      return false;
+    }
 
-    // return (
-    //     checkInsertableItem(widgetModel.getParent(), this.targetModel) ||
-    //     checkInsertableItem(widgetModel, this.targetModel) ||
-    //     (checkBusinessOrPageDialogModel(parentModel) &&
-    //         !basicChildWidgetTypeNamesSet.has(this.targetModel.getWidgetType()))
-    // );
-    return true; // 임시
+    return checkPageModel(parentModel);
   }
 
   /**
    * 현재 WidgetLayerContainer에 저장된 model들이 레이어 이동이 가능한 상황인지를 판단합니다.
    */
   public isInsertableSituation(isInsertable: boolean) {
-    // if (
-    //     this.targetModel &&
-    //     this.depModel &&
-    //     this.destModel &&
-    //     this.destModel !== this.targetModel &&
-    //     this.destNextModel !== this.targetModel &&
-    //     isInsertable &&
-    //     isInsertableRepeatableLayout(this.destModel, this.targetModel) &&
-    //     !checkConditionalLayout(this.destModel) &&
-    //     (checkInsertableItem(this.destModel, this.targetModel) ||
-    //         (checkBusinessOrPageDialogModel(this.destModel) &&
-    //             !basicChildWidgetTypeNamesSet.has(this.targetModel.getWidgetType())))
-    // )
-    //     return true;
-    // return false;
-    return true; // 임시
+    if (
+      this.targetModel &&
+      this.depModel &&
+      this.destModel &&
+      this.destModel !== this.targetModel &&
+      this.destNextModel !== this.targetModel &&
+      isInsertable &&
+      checkPageModel(this.destModel)
+    ) {
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -186,14 +180,14 @@ class WidgetLayerContainer {
     if (!this.targetModel || !this.depModel || !this.destModel) {
       return;
     }
-    // const commandProps: WidgetLayerCommandProps = {
-    //     commandID: CommandEnum.LAYER_MOVE,
-    //     targetModel: this.targetModel,
-    //     depParentModel: this.depModel,
-    //     destParentModel: this.destModel,
-    //     destNextSiblingModel: this.destNextModel,
-    // };
-    // editorStore.handleCommandEvent(commandProps);
+    const commandProps: WidgetLayerCommandProps = {
+      commandID: CommandEnum.LAYER_MOVE,
+      targetModel: this.targetModel,
+      depParentModel: this.depModel,
+      destParentModel: this.destModel,
+      destNextSiblingModel: this.destNextModel,
+    };
+    editorStore.handleCommandEvent(commandProps);
   }
 
   /**

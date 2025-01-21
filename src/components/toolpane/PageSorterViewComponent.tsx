@@ -3,7 +3,6 @@ import ToolPaneTitleComponent from 'components/toolpane/ToolPaneTitleComponent';
 import useEditorStore from 'hooks/useEditorStore';
 import { observer } from 'mobx-react-lite';
 import PageModel from 'models/node/PageModel';
-import WidgetModel from 'models/node/WidgetModel';
 import * as React from 'react';
 import { ForwardedRef } from 'react';
 import { pageSorterViewComponent } from 'styles/toolpane/LeftToolpane';
@@ -14,47 +13,7 @@ import { pageSorterViewComponent } from 'styles/toolpane/LeftToolpane';
 const PageSorterViewComponent = React.forwardRef((_, ref: ForwardedRef<HTMLDivElement>) => {
   const editorStore = useEditorStore();
   const appModel = editorStore.getAppModel();
-  // const widgetModel = editorStore.getEditingWidgetModel();
-  // const prop = widgetModel.getProperties().content;
 
-  // let sectionList: PageSection[] | undefined;
-  // if (isDefined(prop.sectionList?.value)) {
-  //     sectionList = [];
-  //     prop.sectionList?.value.forEach((val: PageSection) => (sectionList as PageSection[]).push({ ...val }));
-  // }
-
-  // const pageArray = getPageList(widgetModel);
-  // let sorterViewRender;
-  // if (isDefined(sectionList) && sectionList.length > 0) {
-  //     const sectionItemList: SectionItem[] = [];
-  //     let sectionIdx = 0;
-  //     sectionList.forEach((section, index) => {
-  //         sectionItemList.push({
-  //             id: index + 1,
-  //             content: section,
-  //             type: 'section',
-  //             children: [],
-  //         });
-  //         for (let i = 0; i < section.pageCount; i += 1) {
-  //             sectionItemList[index].children.push({
-  //                 id: sectionIdx + i,
-  //                 content: pageArray[sectionIdx + i],
-  //                 type: 'page',
-  //             });
-  //         }
-  //         sectionIdx += section.pageCount;
-  //     });
-  //     sorterViewRender = <SectionListComponent sectionList={sectionItemList} />;
-  // } else {
-  //     const pageItemList: PageItem[] = widgetModel.mapChild((page, index) => {
-  //         return {
-  //             id: index,
-  //             content: page as WidgetModel<IPageComponentProperties>,
-  //             type: 'page',
-  //         };
-  //     });
-  //     sorterViewRender = <PageListComponent pageList={pageItemList} />;
-  // }
   const pageItemList: PageItem[] = [];
   appModel?.mapChild(child => {
     const pageItem: PageItem = {
@@ -78,7 +37,6 @@ const PageSorterViewComponent = React.forwardRef((_, ref: ForwardedRef<HTMLDivEl
         plusButtonLogicType="AddPage"
       />
       {sorterViewRender}
-      {/* <PageSorterViewHotKeyWrapper>{sorterViewRender}</PageSorterViewHotKeyWrapper> */}
     </div>
   );
 });

@@ -29,7 +29,6 @@ interface IProps {
   showCloseButton: boolean;
   showPlusButton: boolean;
   plusButtonLogicType?: string;
-  onClickPopupButton?: () => void;
   onClickCloseButton?: () => void;
   onClickBackButton?: () => void;
 }
@@ -46,7 +45,6 @@ const ToolPaneTitleComponent: React.FC<IProps> = ({
   showCloseButton,
   showPlusButton,
   plusButtonLogicType,
-  onClickPopupButton,
   onClickCloseButton,
   onClickBackButton,
 }: IProps) => {
@@ -88,12 +86,6 @@ const ToolPaneTitleComponent: React.FC<IProps> = ({
       </div>
       {'title'}
       <div css={toolPaneTitleButtonGroup}>
-        {showPopupButton && (
-          <button css={toolPanePopupButton} type={'button'} aria-label={'Popup'} onClick={onClickPopupButton}>
-            {/* <ImageResourceComponent id={'IC_L_TOOLPANE_SEPARATION'} w={'16px'} h={'16px'} /> */}
-            <div style={{ width: '16px', height: '16px' }} />
-          </button>
-        )}
         {showCloseButton && (
           <button css={toolPaneCloseButton} type={'button'} aria-label={'Close'} onClick={onClickCloseButton}>
             {/* <ImageResourceComponent id={'IC_L_TOOLPANE_CLOSE'} w={'16px'} h={'16px'} /> */}

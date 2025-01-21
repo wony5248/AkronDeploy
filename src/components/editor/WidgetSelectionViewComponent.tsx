@@ -13,7 +13,7 @@ import {
   isTopSide,
   WidgetResizeHandle,
 } from 'models/store/container/WidgetEditInfoContainer';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   pageWidgetSelection,
   widgetSelectionView,
@@ -51,7 +51,6 @@ const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props
   const selectionRef = useRef<HTMLDivElement>(null);
   // re-render가 필요한 시점에 state값을 바꿔줌으로써 re-render를 시키기 위한 switch 역할
   const [reRenderSwitch, setReRenderSwitch] = useState(true);
-  const [refDefined, setRefDefined] = useState(false);
   let refX = model.getRefX() ?? 0;
   let refY = model.getRefY() ?? 0;
   let refWidth = model.getRefWidth() ?? 0;
@@ -64,10 +63,10 @@ const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props
   const isLowestLvlWidget = model.getFirstChild() === undefined && model.getSelectable();
 
   // 디바이스 정보가 변경되면 리랜더링
-  // useEffect(() => {
-  //   setReRenderSwitch(!reRenderSwitch);
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [editorStore.getDeviceInfo()]);
+  useLayoutEffect(() => {
+    setReRenderSwitch(!reRenderSwitch);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editorStore.getEditingPageModel()?.getProperties().content['device']]);
 
   // 위젯삽입 툴페인의 트랜지션 시간 이후 re-render하여 selectionView 맞춤
   useEffect(() => {
@@ -146,14 +145,7 @@ const WidgetSelectionViewBaseComponent: React.FC<Props> = observer((props: Props
     }
   }
 
-  // 자식 컴포넌트로 삽입 가능하거나 속성으로 추가가 가능할 때 하이라이트
-  // const isReactNodeProp = editorStore.getMetaDataContainer().getReactNodeTypePropMap().get(model.getWidgetType());
-
-  if (
-    /*isReactNodeProp && */
-    model.getDragHovered() === true &&
-    model.getSelected() === false
-  ) {
+  if (model.getDragHovered() === true && model.getSelected() === false) {
     outline = 'solid 2px #0043f2';
   }
 
@@ -405,13 +397,11 @@ const WidgetSelectionViewComponent: React.FC<Props> = ({ model }: Props) => {
   // WidgetSelectionViewBaseComponent 내부에서 hook들을 사용하기 때문에 static widget인 경우에 미리 return null을 할 수가 없습니다.
   // 따라서 이러한 wrapper component를 만들고 여기서 return null을 합니다.
   const modelType = model.getWidgetType();
-  const editorStore = useEditorStore();
-  const isTopWidget = editorStore.getEditingWidgetModel()?.getID() === model.getID();
 
   if (model.getID() === 0 /* appModel */ || model.getEditingState() === WidgetEditingState.FLOATING) {
     return null;
   }
-  if (modelType === WidgetTypeEnum.Page || isTopWidget) {
+  if (modelType === WidgetTypeEnum.Page) {
     return <PageWidgetSelectionViewComponent key={model.getID()} model={model} />;
   }
   return <WidgetSelectionViewBaseComponent key={model.getID()} model={model} />;

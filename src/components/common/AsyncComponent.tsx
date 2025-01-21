@@ -22,7 +22,7 @@ const AsyncComponent = <T,>({ fallback, render, func }: AsyncComponentProps<T>) 
       if (isLoading) {
         const result = await func();
         setData(result);
-        setIsLoading(true);
+        setIsLoading(false);
       }
     })();
   }, [func, isLoading]);

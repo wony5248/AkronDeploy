@@ -1,9 +1,7 @@
 import { dError, KeyEvent, Nullable, MouseEvent, isUndefined, WidgetEditingState } from '@akron/runner';
 import WidgetModel from 'models/node/WidgetModel';
-import WidgetRepository from 'models/repository/WidgetRepository';
 import CommandEnum from 'models/store/command/common/CommandEnum';
 import {
-  InsertWidgetAtCommandProps,
   WidgetResizeCommandProps,
   WidgetResizeEndCommandProps,
 } from 'models/store/command/handler/WidgetEditCommandHandler';
@@ -36,7 +34,6 @@ class WidgetResizeEventHandler extends AkronEventHandler {
     const state = ctx.getEventState();
     const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
     const selectionContainer = ctx.getSelectionContainer();
-    const propContainer = ctx.getPropContainer();
     if (event.isLButton() === false || selectionContainer === undefined) {
       this.finishResizeOnInterrupted(ctx);
       return true;
@@ -267,7 +264,6 @@ class WidgetResizeEventHandler extends AkronEventHandler {
     const widgetEditInfoContainer = ctx.getWidgetEditInfoContainer();
     const selectionContainer = ctx.getSelectionContainer();
     const propContainer = ctx.getPropContainer();
-    // clearSmartGuideStructure();
     propContainer.getWidgetPropContainer().setIsSmartGuide(false);
     const selectedWidgets = selectionContainer?.getSelectedWidgets();
 

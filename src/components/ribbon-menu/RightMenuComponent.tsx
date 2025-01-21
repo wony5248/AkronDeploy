@@ -15,10 +15,6 @@ const RightMenuComponent: React.FC = () => {
   const editorStore = useEditorStore();
   const UIStore = editorStore.getEditorUIStore();
 
-  // const appModeContainer = editorStore.getAppModeContainer();
-
-  const isDialogWidgetMode = false; // isEditDialogWidgetMode(appModeContainer);
-
   const [open, setOpen] = useState<boolean>(false);
 
   const onClick = () => {
@@ -31,50 +27,39 @@ const RightMenuComponent: React.FC = () => {
       return (
         <ExitButtonComponent
           onClick={() => {
-            // if (UIStore.getEditOSobject()) {
-            //     // 편집 중인 데이터 존재할 경우 팝업창
-            //     setOpen(true);
-            // } else {
             UIStore.setWorkAreaTabIndex(WorkAreaTabIndex.EDITOR);
-            //     UIStore.clearOSobjectTab();
-            // }
           }}
         />
       );
     }
 
     return (
-      !isDialogWidgetMode && (
-        <PublishButtonComponent
-          id={'RIB_VIEW_RUN_PROJECT'}
-          commandPropName={'BuildApp'}
-          commandType={'View'}
-          onClick={onClick}
-        />
-      )
+      <PublishButtonComponent
+        id={'RIB_VIEW_RUN_PROJECT'}
+        commandPropName={'BuildApp'}
+        commandType={'View'}
+        onClick={onClick}
+      />
     );
   };
 
   return (
     <div css={rightMenu}>
-      {!isDialogWidgetMode ? (
-        <>
-          <DeviceButtonComponent />
-          <SaveIndicatorComponent />
-          <div
-            css={playButton}
-            onClick={() => {
-              // onClick('PreviewProject', 'View');
-            }}
-            key={'RIB_VIEW_PREVIEW_PROJECT'}
-          >
-            {/* <ImageResourceComponent id={'IC_TOP_PLAY_NORMAL'} w={'32px'} h={'32px'} /> */}
-            <button style={{ width: '32px', height: '32px' }} />
-          </div>
-        </>
-      ) : (
+      <>
+        <DeviceButtonComponent />
         <SaveIndicatorComponent />
-      )}
+        <div
+          css={playButton}
+          onClick={() => {
+            // onClick('PreviewProject', 'View');
+          }}
+          key={'RIB_VIEW_PREVIEW_PROJECT'}
+        >
+          {/* <ImageResourceComponent id={'IC_TOP_PLAY_NORMAL'} w={'32px'} h={'32px'} /> */}
+          <button style={{ width: '32px', height: '32px' }} />
+        </div>
+      </>
+
       {button()}
       {/* <DataEditWarningDialogComponent open={open} handleClose={() => setOpen(false)} /> */}
     </div>

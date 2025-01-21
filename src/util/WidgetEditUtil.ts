@@ -103,7 +103,7 @@ export function calcResizeDeltaBounds(
  */
 export function overrideHitWidgetModel(ctx: AkronContext, hitModel: WidgetModel): WidgetModel {
   const appModeContainer = ctx.getAppModeContainer();
-  const editingWidgetModel = ctx.getEditingWidgetModel();
+  const appModel = ctx.getAppModel();
   let newHitWidgetModel = hitModel;
   //   if (isEditAppMode(appModeContainer)) {
   //     // 최상단의 BusinessDialog widget을 찾아 해당 widget에게 이벤트 처리를 위임 -> BusinessDialog widget이 한 덩어리로 select.

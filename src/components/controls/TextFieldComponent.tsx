@@ -11,7 +11,6 @@ import {
  * TextFieldComponent props.
  */
 interface IProps {
-  className?: string;
   css?: Interpolation<Theme>;
   value: string | undefined;
   inputType?: string;
@@ -32,7 +31,7 @@ interface IProps {
  * 툴페인 등에서 공통적으로 사용할 text field 컨트롤입니다.
  */
 const TextFieldComponent: React.FC<IProps> = ({
-  className,
+  css,
   componentInsertToolpane = false,
   value,
   inputType = 'text',
@@ -53,7 +52,7 @@ const TextFieldComponent: React.FC<IProps> = ({
 
   return (
     <>
-      <div css={textField(disabled, showError, componentInsertToolpane)}>
+      <div css={[textField(disabled, showError, componentInsertToolpane), css]}>
         {icon}
         {unitPlace === 'left' && <span css={textFieldUnitLeft}>{unit}</span>}
         <input

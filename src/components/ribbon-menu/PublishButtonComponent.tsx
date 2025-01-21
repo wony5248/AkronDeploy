@@ -43,13 +43,13 @@ const PublishButtonComponent: React.FC<IProps> = (props: IProps) => {
       </button>
       {open && (
         <DialogContent
-        // open={open}
-        // handleClose={() => {
-        //     handleDialogClose();
-        // }}
-        // commandPropName={commandPropName}
-        // commandType={commandType}
-        // onClick={onClick}
+          open={open}
+          handleClose={() => {
+            handleDialogClose();
+          }}
+          // commandPropName={commandPropName}
+          // commandType={commandType}
+          onClick={onClick}
         />
       )}
     </div>

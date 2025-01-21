@@ -30,47 +30,9 @@ import MetadataContainer from 'models/store/container/MetadataContainer';
  * MainPageComponent가 store의 Provider이므로 이렇게 자식에서부터 store를 사용합니다.
  */
 const MainPageContent: React.FC = observer(() => {
-  const editorStore = useEditorStore();
-  // const isEditMode = appStore.isEditableMode();
-
-  // document.body.classList.add(variable.gxApp);
-
-  const [isDragThumbnail, setIsDragThumbnail] = useState(false);
-  // const handleMouseMove = (e: React.MouseEvent) => {
-  //     // drag event로 사용
-  //     if (e.buttons === 1) {
-  //         const target = e.target as HTMLElement;
-  //         if (
-  //             // 일부 element의 경우 className이 없어 object형식으로 나옴
-  //             appStore.getDragObject() === 'Thumbnail' &&
-  //             (typeof target.className !== 'string' || target.className.includes('PageWidgetList') === false)
-  //         ) {
-  //             setIsDragThumbnail(true);
-  //         } else {
-  //             setIsDragThumbnail(false);
-  //         }
-  //     }
-  // };
-
-  // const handleMouseUp = () => {
-  //     setIsDragThumbnail(false);
-  // };
-
-  // const handleMouseDown = () => {
-  //     // page가 아닌 곳에서는 mouse mode 해제
-  //     appStore.setMouseMode('Normal');
-  // };
-
-  // isGXEditAppMode
   return (
-    // <AppStylesWrapper globalCSSs={appStore.getAllGlobalCSSs()}>
-    //     {/* HotKeyWrapper가 내부적으로 div를 생성하기 때문에, main의 style(ex. flex)이 의도한 대로 child들을 배치하도록 HotKeyWrapper를 main보다 밖에 둠. */}
-    //     <GlobalHotKeyWrapper>
     <div
-      css={[main, isDragThumbnail && dragThumbnail]}
-      // onMouseMove={handleMouseMove}
-      // onMouseUp={handleMouseUp}
-      // onMouseDown={handleMouseDown}
+      css={[main /*isDragThumbnail && dragThumbnail*/]} // drag 동작 추가 시 style 적용
     >
       <TitleBarComponent>
         <AppNameComponent />
@@ -78,8 +40,6 @@ const MainPageContent: React.FC = observer(() => {
       <RibbonMenuComponent />
       <WorkAreaComponent />
     </div>
-    //     {/* </GlobalHotKeyWrapper>
-    // </AppStylesWrapper> */}
   );
 });
 

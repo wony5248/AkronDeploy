@@ -182,12 +182,11 @@ class EditorStore {
   }
 
   /**
-   * 현재 수정중인 widget model을 반환합니다.
-   *
-   * @returns 현재 모드에 따라 수정중인 widget model 반환 (EDIT_APP 모드에서는 AppWidgetModel 반환)
+   * selectionContainer 반환.
    */
-  public getEditingWidgetModel() {
-    return this.ctx.getEditingWidgetModel();
+  @boundMethod
+  getSelectionContainer() {
+    return this.ctx.getSelectionContainer();
   }
 
   /**

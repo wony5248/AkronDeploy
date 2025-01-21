@@ -8,9 +8,6 @@ export default class WidgetSelection {
   // 현재 Widget 의 WidgetModel.
   private widgetModel: WidgetModel;
 
-  // 현재 Widget 의 parentWidgetModel.
-  private parentModel: WidgetModel | undefined;
-
   /**
    * 생성자.
    *
@@ -19,7 +16,6 @@ export default class WidgetSelection {
   public constructor(widgetModel: WidgetModel) {
     makeObservable(this);
     this.widgetModel = widgetModel;
-    // this.parentModel = widgetModel.getParent();
   }
 
   /**
@@ -43,6 +39,6 @@ export default class WidgetSelection {
    * parent Widget 을 반환
    */
   public getParentModel(): WidgetModel | undefined {
-    return this.parentModel;
+    return this.widgetModel.getParent();
   }
 }
