@@ -498,7 +498,7 @@ class WidgetEditCommandHandler extends CommandHandler {
       throw new Error('ctx.command가 undefined입니다!');
     }
 
-    const appendWidgetCommand = new (isClone ? AppendWidgetRecursiveCommand : AppendWidgetCommand)(
+    const appendWidgetCommand = new AppendWidgetCommand(
       ctx,
       newWidgetModel,
       parentWidgetModel,

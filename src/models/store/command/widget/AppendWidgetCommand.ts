@@ -98,18 +98,22 @@ class AppendWidgetCommand extends SimpleCommand {
     //   messages.push(lastChildMessage);
     // }
 
-    if (this.parent.getFirstChild()?.getID() === this.nextSibling?.getID() || !this.parent.getFirstChild()) {
+    if (
+      this.parent.getFirstChild()?.getID() === this.nextSibling?.getID() ||
+      this.parent.getFirstChild()?.getID() === this.target.getID()
+    ) {
       // 첫 자식으로 삽입
       const parentMessage = this.parent.makeRelationMessage('ue');
       messages.push(parentMessage);
-    }
-    if (
+    } else if (
       (this.nextSibling && this.parent.getFirstChild()?.getID() !== this.nextSibling.getID()) ||
       (this.parent.getFirstChild() && !this.nextSibling)
     ) {
       // 중간에 삽입 || 마지막 자식으로 삽입
       const prevSiblingMessage = this.target.getPrevSibling()?.makeRelationMessage('ue') as IOperationMessage;
-      messages.push(prevSiblingMessage);
+      if (prevSiblingMessage) {
+        messages.push(prevSiblingMessage);
+      }
     }
     messages.push(...message);
 
