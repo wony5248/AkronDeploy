@@ -330,7 +330,7 @@ export function clearWidgetModelEditContext(ctx: AkronContext): void {
 export function getPropertyKeys(properties: IWidgetContentProperties | IWidgetStyleProperties) {
   const keys = [];
   for (const key in properties) {
-    if (isDefined(properties.key)) {
+    if (isDefined(properties[key])) {
       keys.push(key);
     }
   }

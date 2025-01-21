@@ -71,8 +71,53 @@ class AppendWidgetCommand extends SimpleCommand {
     if (isUndefined(this.target)) {
       return undefined;
     }
-    // TODO: command prop 으로 behavior 받아서 기존에 있던 model의 이동이면 ue, 신규 생성도니 model의 삽입이면 ue로 변환 필요
-    return this.target.makeOperationMessage('ie') as IOperationMessage[];
+    const messages: IOperationMessage[] = [];
+    const message = this.target.makeOperationMessage('ie') as IOperationMessage[];
+
+    // apply가 message 생성보다 늦어진다는 가정하에 주석의 코드를 이용하려 했으나, 정상 동작으로 인해 아래 코드로 사용
+    // if (this.parent.getFirstChild()?.getID() === this.nextSibling?.getID() || !this.parent.getFirstChild()) {
+    //   // 첫 자식으로 삽입
+    //   const parentMessage = this.parent.makeRelationMessage('ue');
+    //   parentMessage.childId = this.target.getID();
+    //   messages.push(parentMessage);
+    //   if (this.nextSibling) {
+    //     message[0].nextId = this.nextSibling.getID();
+    //   }
+    // }
+    // if (this.nextSibling && this.parent.getFirstChild()?.getID() !== this.nextSibling.getID()) {
+    //   // 중간에 삽입
+    //   const prevSiblingMessage = this.nextSibling.getPrevSibling()?.makeRelationMessage('ue') as IOperationMessage;
+    //   prevSiblingMessage.nextId = this.target.getID();
+    //   messages.push(prevSiblingMessage);
+    //   message[0].nextId = this.nextSibling.getID();
+    // }
+    // if (this.parent.getFirstChild() && !this.nextSibling) {
+    //   // 마지막 자식으로 삽입
+    //   const lastChildMessage = this.parent.getLastChild()?.makeRelationMessage('ue') as IOperationMessage;
+    //   lastChildMessage.nextId = this.target.getID();
+    //   messages.push(lastChildMessage);
+    // }
+
+    if (
+      this.parent.getFirstChild()?.getID() === this.nextSibling?.getID() ||
+      this.parent.getFirstChild()?.getID() === this.target.getID()
+    ) {
+      // 첫 자식으로 삽입
+      const parentMessage = this.parent.makeRelationMessage('ue');
+      messages.push(parentMessage);
+    } else if (
+      (this.nextSibling && this.parent.getFirstChild()?.getID() !== this.nextSibling.getID()) ||
+      (this.parent.getFirstChild() && !this.nextSibling)
+    ) {
+      // 중간에 삽입 || 마지막 자식으로 삽입
+      const prevSiblingMessage = this.target.getPrevSibling()?.makeRelationMessage('ue') as IOperationMessage;
+      if (prevSiblingMessage) {
+        messages.push(prevSiblingMessage);
+      }
+    }
+    messages.push(...message);
+
+    return messages;
   }
 
   /**
@@ -83,8 +128,30 @@ class AppendWidgetCommand extends SimpleCommand {
     if (isUndefined(this.target)) {
       return undefined;
     }
-    // TODO: command prop 으로 behavior 받아서 기존에 있던 model의 이동이면 ue, 신규 생성도니 model의 삽입이면 ue로 변환 필요
-    return this.target.makeOperationMessage('de') as IOperationMessage[];
+    const messages: IOperationMessage[] = [];
+    const message = this.target.makeOperationMessage('de') as IOperationMessage[];
+
+    if (this.parent.getFirstChild()?.getID() === this.nextSibling?.getID() || !this.parent.getFirstChild()) {
+      // 첫 자식으로 삽입
+      const parentMessage = this.parent.makeRelationMessage('ue');
+      parentMessage.childId = this.parent.getFirstChild()?.getID();
+      messages.push(parentMessage);
+    }
+    if (this.nextSibling && this.parent.getFirstChild()?.getID() !== this.nextSibling.getID()) {
+      // 중간에 삽입
+      const prevSiblingMessage = this.nextSibling.getPrevSibling()?.makeRelationMessage('ue') as IOperationMessage;
+      prevSiblingMessage.nextId = this.nextSibling.getID();
+      messages.push(prevSiblingMessage);
+    }
+    if (this.parent.getFirstChild() && !this.nextSibling) {
+      // 마지막 자식으로 삽입
+      const lastChildMessage = this.parent.getLastChild()?.makeRelationMessage('ue') as IOperationMessage;
+      lastChildMessage.nextId = null;
+      messages.push(lastChildMessage);
+    }
+    messages.push(...message);
+
+    return messages;
   }
 
   /**

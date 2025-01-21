@@ -4,6 +4,7 @@
  */
 export enum ContentType {
   INVALID = 0,
+  COMPONENT_REL,
   COMPONENT_APP,
   COMPONENT,
   COMPONENT_PAGE,

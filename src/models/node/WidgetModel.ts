@@ -31,6 +31,7 @@ export interface IWidgetModelInitProps<IWidgetCommonProperties> {
 class WidgetModel<
   Properties extends IWidgetCommonProperties = IWidgetCommonProperties,
 > extends BaseWidgetModel<Properties> {
+  protected contentType: ContentType;
   /**
    * 생성자
    */
@@ -43,8 +44,8 @@ class WidgetModel<
       properties: args.properties,
       ref: args.ref,
     });
-
     makeObservable(this);
+    this.contentType = ContentType.COMPONENT;
   }
 
   public isRepeatableLayoutWidgetType() {
@@ -403,7 +404,7 @@ class WidgetModel<
   }
 
   public getContentType(): ContentType {
-    return ContentType.COMPONENT;
+    return this.contentType;
   }
 
   /**
@@ -484,7 +485,7 @@ class WidgetModel<
   public makeRelationMessage(behavior: Behavior): IOperationMessage {
     return {
       elementId: this.getID(),
-      elementType: this.getContentType(),
+      elementType: ContentType.COMPONENT_REL,
       parentId: this.getParent()?.getID(),
       nextId: this.getNextSibling()?.getID(),
       childId: this.getFirstChild()?.getID(),
@@ -509,7 +510,7 @@ class WidgetModel<
   public makeInstanceMessage(behavior: Behavior): IOperationMessage {
     return {
       elementId: this.getID(),
-      elementType: ContentType.COMPONENT,
+      elementType: this.getContentType(),
       componentType: this.getWidgetType(),
       name: this.getName(),
       locked: false, // 필드 추가해야함
@@ -522,21 +523,18 @@ class WidgetModel<
    * 컴포넌트 삽입시, Content Property Message를 생성합니다.
    */
   private makeContentMessage(): IOperationMessage[] {
-    const contentKeys = getPropertyKeys(this.getProperties().style);
-    const messageList: IOperationMessage[] = [];
+    const contentKeys = getPropertyKeys(this.getProperties().content);
 
-    contentKeys.map(contentKey => {
+    return contentKeys.map(contentKey => {
       return {
         elementId: this.getID(),
         elementType: ContentType.COMPONENT_CONTENT,
-        objectType: 1,
         behavior: 'ie',
-        key: contentKey,
-        value: this.getProperties().style[contentKey].value,
+        name: contentKey,
+        value: this.getProperties().content[contentKey].value,
+        dataType: 0,
       } as IOperationMessage;
     });
-
-    return messageList;
   }
 
   /**
@@ -544,20 +542,17 @@ class WidgetModel<
    */
   private makeStyleMessage(): IOperationMessage[] {
     const styleKeys = getPropertyKeys(this.getProperties().style);
-    const messageList: IOperationMessage[] = [];
 
-    styleKeys.map(styleKey => {
+    return styleKeys.map(styleKey => {
       return {
         elementId: this.getID(),
         elementType: ContentType.COMPONENT_STYLE,
-        objectType: 1,
         behavior: 'ie',
-        key: styleKey,
+        name: styleKey,
         value: this.getProperties().style[styleKey].value,
+        dataType: 0,
       } as IOperationMessage;
     });
-
-    return messageList;
   }
 }
 
