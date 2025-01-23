@@ -5,7 +5,6 @@ import {
   isNotNull,
   isNull,
   isUndefined,
-  IWidgetCommonProperties,
   IWidgetContentProperties,
   IWidgetStyleProperties,
   Nullable,
@@ -14,7 +13,7 @@ import {
 import { boundMethod } from 'autobind-decorator';
 import PageModel from 'models/node/PageModel';
 import WidgetModel from 'models/node/WidgetModel';
-import MetadataContainer, { ContentMetadata, StyleMetadata } from 'models/store/container/MetadataContainer';
+import MetadataContainer from 'models/store/container/MetadataContainer';
 
 export type AppJson = {
   components: NodeJson[];
@@ -148,8 +147,6 @@ class AppParser {
   private createComponent(item: NodeJson) {
     const { componentID, componentType, name, contentsData, stylesData } = item;
     const widgetType = componentType as WidgetTypeEnum;
-    const contents = contentsData;
-    const styles = stylesData;
 
     return new WidgetModel({
       id: componentID,
@@ -157,8 +154,8 @@ class AppParser {
       widgetType: widgetType,
       name: name,
       properties: {
-        content: this.createContents(contents, widgetType),
-        style: this.createStyles(styles, widgetType),
+        content: this.createContents(contentsData, widgetType),
+        style: this.createStyles(stylesData, widgetType),
       },
     });
   }
@@ -169,8 +166,6 @@ class AppParser {
   private createPageComponent(item: NodeJson) {
     const { componentID, componentType, name, contentsData, stylesData } = item;
     const widgetType = componentType as WidgetTypeEnum;
-    const contents = contentsData;
-    const styles = stylesData;
 
     return new PageModel({
       id: componentID,
@@ -178,8 +173,8 @@ class AppParser {
       widgetType: widgetType,
       name: name,
       properties: {
-        content: this.createContents(contents, widgetType),
-        style: this.createStyles(styles, widgetType),
+        content: this.createContents(contentsData, widgetType),
+        style: this.createStyles(stylesData, widgetType),
       },
     });
   }
