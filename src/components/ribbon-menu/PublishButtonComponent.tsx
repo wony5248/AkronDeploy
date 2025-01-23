@@ -1,3 +1,4 @@
+import BuildRepository from 'models/repository/BuildRepository';
 import * as React from 'react';
 import { ribbonDialogContentMap } from 'store/ribbon-menu/RibbonMenuComponentInfo';
 import { publishButton } from 'styles/ribbon-menu/RibbonMenu';
@@ -35,7 +36,8 @@ const PublishButtonComponent: React.FC<IProps> = (props: IProps) => {
         css={publishButton}
         type={'button'}
         onClick={() => {
-          handleDialogOpen();
+          // handleDialogOpen();
+          BuildRepository.getAppFile(1, 'test');
         }}
         key={id}
       >
