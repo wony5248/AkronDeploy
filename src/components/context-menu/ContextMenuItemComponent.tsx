@@ -122,8 +122,8 @@ const ContextMenuSmallDialogItemComponent = ({
             setOpen(false);
             handleClose();
           }}
-          // commandPropName={commandPropName}
-          // commandType={commandType}
+          commandPropName={commandPropName}
+          commandType={commandType}
           onClick={onClick}
         />
       )}
@@ -202,8 +202,8 @@ const ContextMenuLargeDialogItemComponent = ({
             setOpen(false);
             handleClose();
           }}
-          // commandPropName={commandPropName}
-          // commandType={commandType}
+          commandPropName={commandPropName}
+          commandType={commandType}
           onClick={onClick}
         />
       )}

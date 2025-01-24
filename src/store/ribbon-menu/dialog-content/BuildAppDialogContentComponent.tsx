@@ -2,15 +2,12 @@ import DialogComponent from 'components/controls/dialog/DialogComponent';
 import useEditorStore from 'hooks/useEditorStore';
 import AppRepository from 'models/repository/AppRepository';
 import { ChangeEvent, ReactNode, useState } from 'react';
-import { IRibbonDialogContentProps } from 'store/ribbon-menu/RibbonCommonTypes';
+import { IDialogContentProps, IRibbonDialogContentProps } from 'store/ribbon-menu/RibbonCommonTypes';
 
 /**
  * 웹에서 가져온 이미지, 비디오 등을 삽입할 때 쓰는 dialog입니다.
  */
-const BuildAppDialogContentComponent: React.FC<IRibbonDialogContentProps> = ({
-  open,
-  handleClose,
-}: IRibbonDialogContentProps) => {
+const BuildAppDialogContentComponent: React.FC<IDialogContentProps> = ({ open, handleClose }: IDialogContentProps) => {
   const editorStore = useEditorStore();
   const editorUIStore = editorStore.getEditorUIStore();
   const [resultName, setResultName] = useState(editorStore.getAppModel()?.getName() ?? '');

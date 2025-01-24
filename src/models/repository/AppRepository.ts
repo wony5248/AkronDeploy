@@ -8,7 +8,6 @@ import { ComponentMetadata, MetadataContainerProp } from 'models/store/container
 import { UpdateMessage } from 'models/store/container/UpdateMessageContainer';
 import { HandlerID, ChainID } from 'models/widget/WidgetPropTypes';
 import { AppType } from 'store/app/AppInfo';
-import { DeviceInfo } from 'util/DeviceUtil';
 import { FileInfo } from 'util/FileUtil';
 
 /**
@@ -50,16 +49,11 @@ export interface IRoomDTO {
  * 서버에서 받아온 앱의 정보를 나타냅니다.
  */
 export interface IAppItem {
-  appType: AppType;
   appID: number;
   appName: string;
   userID?: number;
-  roomID?: number;
-  bookmark?: number;
-  isShared?: boolean;
   isOwned?: boolean;
   timestamp?: string;
-  usedLibraryID?: number;
 }
 
 /**
@@ -147,7 +141,7 @@ export interface ICreateFileInput {
 /**
  * createApp input.
  */
-export interface ICreateAppInput extends DeviceInfo {
+export interface ICreateAppInput {
   appType: AppType;
   appID?: number;
   appName: string;
@@ -160,11 +154,9 @@ export interface ICreateAppInput extends DeviceInfo {
  * createFile output.
  */
 export interface ICreateFileOutput {
-  appType: AppType;
   appID?: number;
   appName?: string;
   userID?: number;
-  roomID?: number;
   error?: string;
 }
 
@@ -792,9 +784,7 @@ class AppRepository {
   /**
    * AppMeta get
    */
-  public async getAppMeta(
-    input: IGetAppMetaInput
-  ): Promise<{ appInfo: string; appName: string; deviceInfo: DeviceInfo }> {
+  public async getAppMeta(input: IGetAppMetaInput): Promise<{ appInfo: string; appName: string }> {
     const serviceUrl = `/FileBehavior/appMeta/?appID=${input.appID}`;
     return API.get(serviceUrl).then(response => {
       const appMeta = response.data;
@@ -1241,26 +1231,6 @@ class AppRepository {
   }
 
   /**
-   * roomID에 해당하는 앱들의 정보를 가져옵니다.
-   */
-  public async getRoomApps(roomID: number): Promise<IAppItem[]> {
-    const serviceUrl = `/app/getRoomApps/?roomID=${roomID}`;
-    const response = await API.get(serviceUrl);
-    const appList: IAppItem[] = response.data;
-    return appList;
-  }
-
-  /**
-   * roomID 목록에 해당하는 앱들의 정보를 가져옵니다.
-   */
-  public async getRoomsApps(roomIDs: number[], userID: number): Promise<IAppItem[]> {
-    const serviceUrl = `/app/getRoomsApps`;
-    const response = await API.post(serviceUrl, { roomIDs, userID });
-    const appList: IAppItem[] = response.data;
-    return appList;
-  }
-
-  /**
    * -1번 룸에 속한 appItem들을 myRoom으로 변경합니다.
    */
   public async changeAppsToMyRoom(appIDs: number[], myRoomID: number): Promise<boolean> {
@@ -1325,7 +1295,7 @@ class AppRepository {
   }
 
   /**
-   * UX/GX 프로젝트에서 사용 중인 라이브러리 정보를 업데이트 합니다.
+   * Akron 프로젝트에서 사용 중인 라이브러리 정보를 업데이트 합니다.
    */
   public async updateUsedLibraryID(appID: number, usedLibraryID: number, libraryType: LibraryType) {
     const serviceUrl = `/app/updateUsedLibraryID`;
@@ -1365,24 +1335,6 @@ class AppRepository {
     const serviceUrl = `/component/GetComponentCodes`;
     const response = await API.post(serviceUrl, compList);
     return response.data;
-  }
-
-  /**
-   * deviceInfo 업데이트
-   */
-  public async updateDeviceInfo(deviceInfo: DeviceInfo): Promise<boolean> {
-    const serviceUrl = `/app/deviceInfo`;
-    try {
-      const response = await API.put(serviceUrl, { dto: deviceInfo });
-      if (response.status >= 200 && response.status < 300) {
-        return true;
-      }
-      dError('updateDeviceInfo failed');
-      return false;
-    } catch (e) {
-      dError('updateDeviceInfo failed');
-      return false;
-    }
   }
 
   /**

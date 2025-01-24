@@ -2,8 +2,6 @@ import AppModeContainer, { AppModeType } from 'models/store/container/AppModeCon
 
 /**
  * 현재 앱 모드가 'EDIT_APP' 모드인지 확인합니다.
- * App type(UX/GX)과 상관없이 앱 모드만 확인합니다.
- * App type에 따라 동작이 다른 경우, isUXEditAppMode 또는 isGXEditAppMode를 호출해야 합니다.
  *
  * @param appModeContainer AppModeContainer
  * @returns App type과 상관없이 현재 앱 모드가 'EDIT_APP'인 경우 true

@@ -59,7 +59,6 @@ export interface EditorStoreInitParams {
   selectAtFirst: boolean;
   startPageURL?: string;
   startPageID?: number;
-  startElementId: number;
 }
 
 export enum SaveState {

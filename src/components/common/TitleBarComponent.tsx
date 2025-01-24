@@ -33,14 +33,14 @@ const TitleBarComponent: React.FC<IProps> = ({
         <button style={{ width: '40px', height: '38px' }} />
       </div>
       <div css={childrenStyle}>{children}</div>
-      <div css={controls}>
+      {/* <div css={controls}>
         <div
           css={control}
           onClick={() => {
             // minimizeCurrentWindow();
           }}
         >
-          {/* <ImageResourceComponent id="IC_MINIMIZATION_NORMAL" w={'16px'} h={'16px'} /> */}
+          <ImageResourceComponent id="IC_MINIMIZATION_NORMAL" w={'16px'} h={'16px'} />
           <button style={{ width: '16px', height: '16px' }} />
         </div>
         <div
@@ -49,14 +49,14 @@ const TitleBarComponent: React.FC<IProps> = ({
             // toggleMaximizeCurrentWindow();
           }}
         >
-          {/* <ImageResourceComponent id="IC_MAXIMIZE_NORMAL" w={'16px'} h={'16px'} /> */}
+          <ImageResourceComponent id="IC_MAXIMIZE_NORMAL" w={'16px'} h={'16px'} />
           <button style={{ width: '16px', height: '16px' }} />
         </div>
         <div css={control} onClick={onClose}>
-          {/* <ImageResourceComponent id="IC_CLOSE_NORMAL" w={'16px'} h={'16px'} /> */}
+          <ImageResourceComponent id="IC_CLOSE_NORMAL" w={'16px'} h={'16px'} />
           <button style={{ width: '16px', height: '16px' }} />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

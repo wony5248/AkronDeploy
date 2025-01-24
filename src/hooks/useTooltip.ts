@@ -6,7 +6,7 @@ const useTooltip = (editorStore: EditorStore) => {
   const position = tooltipStore.getPosition();
 
   const tooltipRef = useRef<HTMLDivElement>(null);
-  const tooltipTimer = useRef</*NodeJS.Timeout | */ number | null>();
+  const tooltipTimer = useRef<NodeJS.Timeout | number | null>();
   const tooltipTarget = tooltipStore.getTarget();
   const clearTooltipTimer = () => {
     if (!tooltipTimer.current) {
