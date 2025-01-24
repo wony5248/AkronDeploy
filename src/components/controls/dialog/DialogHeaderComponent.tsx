@@ -1,3 +1,4 @@
+import ImageResourceButtonComponent from 'components/common/ImageResourceButtonComponent';
 import DialogHeaderDropdownComponent from 'components/controls/dialog/DialogHeaderDropdownComponent';
 import DialogHeaderLabelsComponent from 'components/controls/dialog/DialogHeaderLabelsComponent';
 import { IDropdownMenuOnlyProps } from 'components/controls/dropdown/DropdownMenuComponent';
@@ -76,13 +77,13 @@ const DialogHeaderComponent = ({ title, headerProps }: IProps): JSX.Element => {
         </div>
       </div>
       {/* <ImageResourceButtonComponent
-                buttonClassName={styles.closeButton}
-                aria-label={'close button'}
-                onClick={handler}
-                id={'IC_CLOSE'}
-                w="28px"
-                h="28px"
-            /> */}
+        buttonClassName={styles.closeButton}
+        aria-label={'close button'}
+        onClick={handler}
+        id={'IC_CLOSE'}
+        w="28px"
+        h="28px"
+      /> */}
       <button
         aria-label={'close button'}
         onClick={handler}

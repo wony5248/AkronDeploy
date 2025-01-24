@@ -1,4 +1,5 @@
 import { WidgetTypeEnum } from '@akron/runner';
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import useEditorStore from 'hooks/useEditorStore';
 import WidgetRepository from 'models/repository/WidgetRepository';
 import AkronCommandMapper from 'models/store/command/akron/AkronCommandMapper';
@@ -79,7 +80,7 @@ const ToolPaneTitleComponent: React.FC<IProps> = ({
       <div>
         {titleID === 'MSG_CM_TLP_TITLE_SERVICE_MAPPING' && (
           <button css={toolPanePopupButton} type={'button'} aria-label={'Back'} onClick={onClickBackButton}>
-            {/* <ImageResourceComponent id={'IC_TOOLPANE_ARROW_BACK'} w={'16px'} h={'16px'} /> */}
+            <ImageResourceComponent id={'IC_TOOLPANE_ARROW_BACK'} w={'16px'} h={'16px'} />
             <div style={{ width: '16px', height: '16px' }} />
           </button>
         )}
@@ -88,7 +89,7 @@ const ToolPaneTitleComponent: React.FC<IProps> = ({
       <div css={toolPaneTitleButtonGroup}>
         {showCloseButton && (
           <button css={toolPaneCloseButton} type={'button'} aria-label={'Close'} onClick={onClickCloseButton}>
-            {/* <ImageResourceComponent id={'IC_L_TOOLPANE_CLOSE'} w={'16px'} h={'16px'} /> */}
+            <ImageResourceComponent id={'IC_L_TOOLPANE_CLOSE'} w={'16px'} h={'16px'} />
             <div style={{ width: '16px', height: '16px' }} />
           </button>
         )}
@@ -99,8 +100,8 @@ const ToolPaneTitleComponent: React.FC<IProps> = ({
             aria-label={'Popup'}
             onClick={onClickPlusButton}
           >
-            {/* <ImageResourceComponent id={'IC_TOOLPANE_PAGEADD'} w={'16px'} h={'16px'} /> */}
-            <div style={{ width: '16px', height: '16px' }} />
+            <ImageResourceComponent id={'IC_TOOLPANE_PAGEADD'} w={'16px'} h={'16px'} />
+            {/* <div style={{ width: '16px', height: '16px' }} /> */}
           </button>
         )}
       </div>
