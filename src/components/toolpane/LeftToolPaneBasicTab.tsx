@@ -1,3 +1,4 @@
+import ImageResourceButtonComponent from 'components/common/ImageResourceButtonComponent';
 import LeftToolPaneMUITab from 'components/toolpane/LeftToolPaneMUITab';
 import useEditorStore from 'hooks/useEditorStore';
 import useFile from 'hooks/widget/useFile';
@@ -12,6 +13,7 @@ import {
   toolPaneComponentButtonLabelWrapper,
   toolPaneComponentButtonWrapper,
   toolPaneComponentCategory,
+  toolPaneComponentCategoryButton,
   toolPaneComponentCategoryItems,
   toolPaneComponentCategoryTitle,
   toolPaneComponentTabPanel,
@@ -118,17 +120,19 @@ const LibraryCategory: React.FC<ILibraryCategoryProps> = ({
       {/* 카테고리 부분 */}
       {categoryName !== '' && (
         <div css={toolPaneComponentCategory}>
-          {/* <ImageResourceButtonComponent
+          <ImageResourceButtonComponent
             id={'IC_TOOLPANE_TOGGLE_OFF'}
             pressedId={'IC_TOOLPANE_TOGGLE_ON'}
             w={'16px'}
             h={'16px'}
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => {
+              setIsOpen(!isOpen);
+            }}
             pressed={isOpen}
             disabled={false}
             imagecss={toolPaneComponentCategoryButton}
-          /> */}
-          <button style={{ width: '16px', height: '16px' }} />
+          />
+          {/* <button style={{ width: '16px', height: '16px' }} /> */}
 
           <div css={toolPaneComponentCategoryTitle}>{categoryName}</div>
         </div>

@@ -13,6 +13,7 @@ import {
   toolPaneComponentCategoryItems,
   toolPaneComponentCategoryTitle,
 } from 'styles/toolpane/ComponentInsertToolpane';
+import ImageResourceButtonComponent from 'components/common/ImageResourceButtonComponent';
 
 /**
  * Item props.
@@ -39,7 +40,7 @@ const Item: React.FC<IItemProps> = observer(({ item, searchValue }: IItemProps) 
     <ToolPaneComponentButton
       key={item.id}
       label={item.label ?? ''}
-      image={item.image ? item.image : 'IMG_GX_COMPONENT_DUMMY'}
+      image={item.image ?? 'IMG_GX_COMPONENT_DUMMY'}
       commandType={item.commandType ? item.commandType : 'None'}
       commandPropName={item.commandPropName ? item.commandPropName : 'None'}
       // tooltip={item.tooltip ? item.tooltip : 'MSG_CM_RIBBON_TOOLTIP_TEMP'}
@@ -47,7 +48,6 @@ const Item: React.FC<IItemProps> = observer(({ item, searchValue }: IItemProps) 
       disabled={disabled}
       selected={selected}
       onClick={async (commandPropName, commandType, ...args) => {
-        console.log(commandPropName, commandType, args);
         const metaDataContainer = editorStore.getMetadataContainer();
         if (!metaDataContainer.getDefaultWidgetModel(commandPropName as WidgetTypeEnum)) {
           await metaDataContainer.updateWidgetModels([commandPropName as WidgetTypeEnum]);
@@ -108,17 +108,19 @@ const LeftToolPaneCategory: React.FC<IItemProps> = ({ item, searchValue }: IItem
   return (
     <>
       <div css={toolPaneComponentCategory}>
-        {/* <ImageResourceButtonComponent
-                    id={'IC_TOOLPANE_TOGGLE_OFF'}
-                    pressedId={'IC_TOOLPANE_TOGGLE_ON'}
-                    w={'16px'}
-                    h={'16px'}
-                    onClick={() => setOpen(!open)}
-                    pressed={open}
-                    disabled={false}
-                    imageCss={toolPaneComponentCategoryButton}
-                /> */}
-        <button css={toolPaneComponentCategoryButton} style={{ width: '16px', height: '16px' }} />
+        <ImageResourceButtonComponent
+          id={'IC_TOOLPANE_TOGGLE_OFF'}
+          pressedId={'IC_TOOLPANE_TOGGLE_ON'}
+          w={'16px'}
+          h={'16px'}
+          onClick={() => {
+            setOpen(!open);
+          }}
+          pressed={open}
+          disabled={false}
+          imagecss={toolPaneComponentCategoryButton}
+        />
+        {/* <button css={toolPaneComponentCategoryButton} style={{ width: '16px', height: '16px' }} /> */}
         <div css={toolPaneComponentCategoryTitle}>{item.label}</div>
       </div>
       <div css={toolPaneComponentCategoryItems} style={{ display: open ? 'flex' : 'none' }}>

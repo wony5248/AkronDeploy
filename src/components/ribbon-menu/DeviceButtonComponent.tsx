@@ -16,7 +16,7 @@ const DeviceButtonComponent: React.FC = () => {
   }
 
   const deviceName =
-    currentPage.getProperties().content['device'].value ?? currentPage.getProperties().content['device'].defaultValue;
+    currentPage.getProperties().content['device']?.value ?? currentPage.getProperties().content['device']?.defaultValue;
   const pageWidth = currentPage.getStyleProperties('width').absolute;
   const pageHeight = currentPage.getStyleProperties('height').absolute;
 

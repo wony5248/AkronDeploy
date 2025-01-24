@@ -1,3 +1,4 @@
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import useEditorStore from 'hooks/useEditorStore';
 import WidgetRepository from 'models/repository/WidgetRepository';
 import {
@@ -53,8 +54,8 @@ const ToolPaneComponentButton: React.FC<IProps> = (props: IProps) => {
         draggable="true"
       >
         <div css={toolPaneComponentButtonImage}>
-          {/* <ImageResourceComponent id={image} w={'32px'} h={'32px'} /> */}
-          <button style={{ width: '32px', height: '32px' }} />
+          <ImageResourceComponent id={image} w={'32px'} h={'32px'} />
+          {/* <button style={{ width: '32px', height: '32px' }} /> */}
         </div>
         <div css={toolPaneComponentButtonLabelWrapper}>
           <div css={toolPaneComponentButtonLabel}>{/*useTextResource(label)*/ label}</div>

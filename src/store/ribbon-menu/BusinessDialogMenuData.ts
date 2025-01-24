@@ -1,5 +1,4 @@
 import { IRibbonButton } from 'store/ribbon-menu/RibbonMenuComponentInfo';
-
 /**
  * BusinessDialogMenuData
  * UI 나오기 전 임시 버튼입니다

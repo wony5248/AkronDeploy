@@ -7,7 +7,7 @@ import { WorkAreaTabIndex } from 'store/app/EditorUIStore';
 import { IRibbonButton } from 'store/ribbon-menu/RibbonMenuComponentInfo';
 import RibbonButtonDataList from 'store/ribbon-menu/RibbonMenuData';
 import { leftMenu } from 'styles/ribbon-menu/RibbonMenu';
-
+import dialog from '../../../public/resources/dialog.svg';
 /**
  * 좌측 Ribbon Menu 구성 Component
  */
