@@ -10,6 +10,7 @@
 export interface IDialogContentProps {
   open: boolean;
   handleClose: () => void;
+  onClick: (buttonName: string, commandType: string, ...args: any[]) => void;
 }
 
 /**
@@ -26,5 +27,5 @@ export interface IRibbonDialogContentProps extends IDialogContentProps {
 
   // 확인을 클릭할 경우의 handler.
 
-  onClick: (buttonName: string, commandType: string, ...args: any[]) => void;
+  // onClick: (buttonName: string, commandType: string, ...args: any[]) => void;
 }

@@ -1,8 +1,14 @@
 // import styles from 'common/style/ribbon-menu/RibbonMenu.scss';
+import Menu from 'components/controls/Menu';
 import useEditorStore from 'hooks/useEditorStore';
 import * as React from 'react';
 import { getPropsHandler, IRibbonItemProp, ribbonDropdownMenuItemMap } from 'store/ribbon-menu/RibbonMenuComponentInfo';
-import { ribbonButtonLabel, ribbonDropdownButton, ribbonDropdownButtonIcon } from 'styles/ribbon-menu/RibbonMenu';
+import {
+  ribbonButtonLabel,
+  ribbonDropdownButton,
+  ribbonDropdownButtonIcon,
+  ribbonDropdownMenu,
+} from 'styles/ribbon-menu/RibbonMenu';
 
 /**
  * Dropdown Button props.
@@ -41,16 +47,16 @@ const RibbonMenuDropdownButtonComponent: React.FC<IProps> = (props: IProps) => {
         return (
           <MenuItem
             key={child.id}
-            // id={child.id}
+            id={child.id}
             // index={index}
-            // label={child.label ?? ''}
-            // image={child.image ? child.image : ''}
-            // commandPropName={child.commandPropName ? child.commandPropName : 'None'}
-            // commandType={child.commandType ? child.commandType : 'None'}
+            label={child.label ?? ''}
+            image={child.image ? child.image : ''}
+            commandPropName={child.commandPropName ? child.commandPropName : 'None'}
+            commandType={child.commandType ? child.commandType : 'None'}
             // childList={child.childList}
-            // disabled={disabled}
-            // handleClose={handleClose}
-            // onClick={onClick}
+            disabled={disabled}
+            handleClose={handleClose}
+            onClick={onClick}
           />
         );
       });
@@ -74,19 +80,18 @@ const RibbonMenuDropdownButtonComponent: React.FC<IProps> = (props: IProps) => {
           <button style={{ width: '8px', height: '8px' }} />
         </div>
       </div>
-      {/* <Menu
-                className={styles.ribbonDropdownMenu}
-                keepMounted
-                anchorEl={anchorEl}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-                onClose={handleClose}
-                open={Boolean(anchorEl)}
-                PaperProps={{ sx: { borderRadius: '8px' } }}
-                MenuListProps={{ sx: { paddingTop: '6px', paddingBottom: '6px' } }}
-            >
-                {parseMenu()}
-            </Menu> */}
+      <Menu
+        css={ribbonDropdownMenu}
+        anchorEl={anchorEl}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+        onClose={handleClose}
+        open={Boolean(anchorEl)}
+        paperStyle={{ borderRadius: '8px' }}
+        menuListStyle={{ paddingTop: '6px', paddingBottom: '6px' }}
+      >
+        {parseMenu()}
+      </Menu>
     </div>
   );
 };

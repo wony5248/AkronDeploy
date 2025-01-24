@@ -74,7 +74,13 @@
 
 import EditorStore from 'models/store/EditorStore';
 import BuildAppDialogContentComponent from 'store/ribbon-menu/dialog-content/BuildAppDialogContentComponent';
+import RibbonOpenFileDialogContentComponent from 'store/ribbon-menu/dialog-content/OpenFileDialogComponent';
+import RibbonUpdateNameDialogComponent from 'store/ribbon-menu/dialog-content/RibbonUpdateNameDialogComponent';
+import SaveAsDialogContentComponent from 'store/ribbon-menu/dialog-content/SaveAsDialogContentComponent';
 import UpdateDeviceDialogContentComponent from 'store/ribbon-menu/dialog-content/UpdateDeviceDialogContentComponent';
+import DialogMenuItemComponent from 'store/ribbon-menu/menu-item/DialogMenuItemComponent';
+import NormalMenuItemComponent from 'store/ribbon-menu/menu-item/NormalMenuItemComponent';
+import SeparatorItemComponent from 'store/ribbon-menu/menu-item/SeparatorItemComponent';
 
 /**
  * toolPaneTabMap 자료 구조 때문에 이관
@@ -147,27 +153,27 @@ export interface IRibbonItemProp extends PropHandlerItem {
 /**
  * dropdown MenuItem을 위한 map
  */
-type DropdownMenuItemType = string;
-// | typeof NormalMenuItemComponent
-// | typeof SubMenuItemComponent
-// | typeof GalleryMenuItemComponent
-// | typeof SeparatorItemComponent
-// | typeof DialogMenuItemComponent
+type DropdownMenuItemType =
+  | typeof NormalMenuItemComponent
+  // | typeof SubMenuItemComponent
+  // | typeof GalleryMenuItemComponent
+  | typeof SeparatorItemComponent
+  | typeof DialogMenuItemComponent;
 // | typeof IconMenuItemComponent
 // | typeof GreyTextAreaMenuItemComponent
 // | typeof DialogNoImageMenuItemComponent;
 
 export const ribbonDropdownMenuItemMap: { [key: string]: DropdownMenuItemType } = {
   // Ribbon Resize 되었을 때, 상위 Button 류를 처리하기 위함
-  // NormalButton: NormalMenuItemComponent,
+  NormalButton: NormalMenuItemComponent,
   // DropdownButton: SubMenuItemComponent,
-  // DialogButton: DialogMenuItemComponent,
+  DialogButton: DialogMenuItemComponent,
   // // Dropdown 내부에 위치하는 MenuItem
-  // NormalMenuItem: NormalMenuItemComponent,
+  NormalMenuItem: NormalMenuItemComponent,
   // SubMenuItem: SubMenuItemComponent,
   // GalleryMenuItem: GalleryMenuItemComponent,
-  // SeparatorItem: SeparatorItemComponent,
-  // DialogMenuItem: DialogMenuItemComponent,
+  SeparatorItem: SeparatorItemComponent,
+  DialogMenuItem: DialogMenuItemComponent,
   // IconMenuItem: IconMenuItemComponent,
   // GreyLebelMenuItem: GreyTextAreaMenuItemComponent,
   // DialogMenuItemWithNoImage: DialogNoImageMenuItemComponent,
@@ -183,7 +189,7 @@ export type DialogContentType =
   // // | typeof InsertOnlineMediaDialogContentComponent
   // | typeof RenamePageDialogContentComponent
   // | typeof RenameSectionDialogContentComponent
-  // | typeof SaveAsDialogContentComponent
+  | typeof SaveAsDialogContentComponent
   // | typeof RenameResourceDialogContentComponent
   // | typeof ZoomInOutDialogContentComponent
   // | typeof VariableDataStoreDialogContentComponent
@@ -194,7 +200,10 @@ export type DialogContentType =
   // | typeof SelectReactNodePropContentComponent
   // | typeof UpdatePageLevelDialogContentComponent
   // | typeof NudgeAmountControlDialogComponent
-  typeof BuildAppDialogContentComponent | typeof UpdateDeviceDialogContentComponent;
+  | typeof RibbonUpdateNameDialogComponent
+  | typeof RibbonOpenFileDialogContentComponent
+  | typeof BuildAppDialogContentComponent
+  | typeof UpdateDeviceDialogContentComponent;
 // | typeof GXCustomComponentDialogComponent
 // | typeof SelectUXComponentLibraryDialogComponent
 // | typeof SelectTemplateLibraryDialogComponent;
@@ -206,11 +215,11 @@ export const ribbonDialogContentMap: { [key: string]: DialogContentType } = {
   // RenamePage: RenamePageDialogContentComponent,
   // // InsertOnlineMedia: InsertOnlineMediaDialogContentComponent,
   // RenameSection: RenameSectionDialogContentComponent,
-  // SaveFileAs: SaveAsDialogContentComponent,
-  // RenameFile: RibbonUpdateNameDialogComponent,
+  SaveFileAs: SaveAsDialogContentComponent,
+  RenameFile: RibbonUpdateNameDialogComponent,
   // RenameResource: RenameResourceDialogContentComponent,
   // AddFile: RibbonNewAppDialogComponent,
-  // OpenFile: RibbonOpenFileDialogContentComponent,
+  OpenFile: RibbonOpenFileDialogContentComponent,
   // ZoomDialog: ZoomInOutDialogContentComponent,
   // CustomPropsStatesDialog: CompositeComponentCustomPropsStatesDialogContentComponent,
   // VariableDataStoreDialog: VariableDataStoreDialogContentComponent,

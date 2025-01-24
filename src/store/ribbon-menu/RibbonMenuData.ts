@@ -11,7 +11,7 @@ const RibbonButtonDataList: IRibbonButton[] = [
   ProjectMenuData,
   // PageMenuData,
   // BusinessDialogMenuData,
-  ...RibbonButtonData,
+  // ...RibbonButtonData,
 ];
 
 // /**

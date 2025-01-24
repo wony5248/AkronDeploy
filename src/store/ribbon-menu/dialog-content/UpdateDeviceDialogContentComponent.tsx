@@ -1,28 +1,11 @@
-import { isNull } from '@akron/runner';
-import DialogBottomComponent from 'components/controls/dialog/DialogBottomComponent';
 import DialogComponent from 'components/controls/dialog/DialogComponent';
-import DialogContentComponent from 'components/controls/dialog/DialogContentComponent';
 import { Tab, Tabs } from 'components/controls/TabComponent';
-import TextFieldComponent from 'components/controls/TextFieldComponent';
 import useEditorStore from 'hooks/useEditorStore';
 import CommandEnum from 'models/store/command/common/CommandEnum';
 import { UpdateDeviceInfoCommandProps } from 'models/store/command/handler/AppCommandHandler';
 import { CSSProperties, useState } from 'react';
-import { IRibbonDialogContentProps } from 'store/ribbon-menu/RibbonCommonTypes';
-import {
-  activeTab,
-  deviceButton,
-  deviceCustomLabel,
-  deviceNameLabel,
-  deviceSizeLabel,
-  deviceTabContainer,
-  deviceTextField,
-  multiplyText,
-  listItem,
-  tab,
-  tabView,
-  listStyle,
-} from 'styles/ribbon-menu/DeviceDialog';
+import { IDialogContentProps } from 'store/ribbon-menu/RibbonCommonTypes';
+import { listItem, listStyle } from 'styles/ribbon-menu/DeviceDialog';
 import { tabLabel } from 'styles/toolpane/ComponentInsertToolpane';
 import { DeviceSizeMap } from 'util/DeviceUtil';
 
@@ -34,7 +17,7 @@ type OrientationType = 'vertical' | 'horizontal';
 /**
  * UpdateDevice content props
  */
-interface IProps extends Pick<IRibbonDialogContentProps, 'open' | 'handleClose' | 'onClick'> {
+interface IProps extends Pick<IDialogContentProps, 'open' | 'handleClose' | 'onClick'> {
   mode?: string;
 }
 
