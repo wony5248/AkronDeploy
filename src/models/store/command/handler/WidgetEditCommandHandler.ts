@@ -7,6 +7,7 @@ import {
   WidgetTypeEnum,
   WidgetEditingState,
   IWidgetStyleProperties,
+  IWidgetContentProperties,
 } from '@akron/runner';
 import { boundMethod } from 'autobind-decorator';
 import { runInAction } from 'mobx';
@@ -33,13 +34,14 @@ import {
   getDeletableWidgetModels,
   isWidgetsDeletable,
 } from 'util/WidgetUtil';
-import UpdateWidgetCommand from 'models/store/command/widget/UpdateWidgetCommand';
 import AppendWidgetRecursiveCommand from 'models/store/command/widget/AppendWidgetRecursiveCommand';
 import { isEditAppMode, isEditWidgetMode } from 'util/AppModeUtil';
 import RenameWidgetCommand from 'models/store/command/widget/RenameWidgetCommand';
 import PageModel from 'models/node/PageModel';
 import MoveWidgetCommand from 'models/store/command/widget/MoveWidgetCommand';
 import { applyStyleByEditingState } from 'util/WidgetEditUtil';
+import UpdateWidgetStyleCommand from 'models/store/command/widget/UpdateWidgetStyleCommand';
+import UpdateWidgetContentCommand from 'models/store/command/widget/UpdateWidgetContentCommand';
 
 /**
  * 삽입과 동시에 속성을 특정 값으로 설정해야 할 때 사용.
@@ -159,7 +161,8 @@ export type WidgetMoveCommandProps =
 export type WidgetUpdateCommandProps = WidgetCommandProps & {
   commandID: CommandEnum.WIDGET_UPDATE_PROPERTIES;
   targetModel: WidgetModel[];
-  newWidgetProps: IWidgetCommonProperties;
+  newStyles: IWidgetStyleProperties;
+  newContents: IWidgetContentProperties;
 };
 
 /**
@@ -931,12 +934,8 @@ class WidgetEditCommandHandler extends CommandHandler {
         parentHeight
       );
 
-      const updateWidgetCommand = new UpdateWidgetCommand(widgetModel, {
-        content: widgetModel.getProperties().content,
-        style: { ...widgetModel.getProperties().style, ...updatedStyle },
-      });
-
-      command.append(updateWidgetCommand);
+      const updateWidgetStyleCommand = new UpdateWidgetStyleCommand(widgetModel, updatedStyle);
+      command.append(updateWidgetStyleCommand);
     });
 
     runInAction(() => {
@@ -1078,84 +1077,80 @@ class WidgetEditCommandHandler extends CommandHandler {
         ? page.getStyleProperties('height').absolute
         : parentWidget.getStyleProperties('height').absolute;
 
-      const updateWidgetCommand = new UpdateWidgetCommand(widgetModel, {
-        ...widgetProps,
-        style: {
-          ...widgetProps.style,
-          x: {
-            ...widgetProps.style.x,
-            value: {
-              absolute: isDefined(container) && canInsertToWidget ? 0 : resultX,
-              relative:
-                isDefined(container) && canInsertToWidget ? 0 : Math.round((Number(resultX) / parentWidth) * 100),
-              unit: widgetModel.getStyleProperties('x').unit,
-            },
-          },
-          y: {
-            ...widgetProps.style.y,
-            value: {
-              absolute: isDefined(container) && canInsertToWidget ? 0 : resultY,
-              relative:
-                isDefined(container) && canInsertToWidget ? 0 : Math.round((Number(resultY) / parentHeight) * 100),
-              unit: widgetModel.getStyleProperties('y').unit,
-            },
-          },
-          frameType: widgetProps.style.frameType,
-          left: {
-            ...widgetProps.style.left,
-            value: {
-              absolute: isDefined(container) && canInsertToWidget ? 0 : resultX,
-              relative:
-                isDefined(container) && canInsertToWidget ? 0 : Math.round((Number(resultX) / parentWidth) * 100),
-              unit: widgetModel.getStyleProperties('left').unit,
-            },
-          },
-          top: {
-            ...widgetProps.style.top,
-            value: {
-              absolute: isDefined(container) && canInsertToWidget ? 0 : resultY,
-              relative:
-                isDefined(container) && canInsertToWidget ? 0 : Math.round((Number(resultY) / parentHeight) * 100),
-              unit: widgetModel.getStyleProperties('top').unit,
-            },
-          },
-          right: {
-            ...widgetProps.style.right,
-            value: {
-              absolute:
-                parentWidth -
-                (isDefined(container) && canInsertToWidget ? 0 : resultX) -
-                widgetModel.getStyleProperties('width').absolute,
-              relative:
-                100 -
-                (isDefined(container) && canInsertToWidget
-                  ? 0
-                  : Math.round(
-                      ((Number(resultX) + widgetModel.getStyleProperties('width').relative) / parentWidth) * 100
-                    )),
-              unit: widgetModel.getStyleProperties('right').unit,
-            },
-          },
-          bottom: {
-            ...widgetProps.style.bottom,
-            value: {
-              absolute:
-                parentHeight -
-                (isDefined(container) && canInsertToWidget ? 0 : resultY) -
-                widgetModel.getStyleProperties('height').absolute,
-              relative:
-                100 -
-                (isDefined(container) && canInsertToWidget
-                  ? 0
-                  : Math.round(
-                      ((Number(resultY) + widgetModel.getStyleProperties('height').relative) / parentHeight) * 100
-                    )),
-              unit: widgetModel.getStyleProperties('bottom').unit,
-            },
+      const newStyle = {
+        x: {
+          ...widgetProps.style.x,
+          value: {
+            absolute: isDefined(container) && canInsertToWidget ? 0 : resultX,
+            relative: isDefined(container) && canInsertToWidget ? 0 : Math.round((Number(resultX) / parentWidth) * 100),
+            unit: widgetModel.getStyleProperties('x').unit,
           },
         },
-      });
-      ctx.getCommand()?.append(updateWidgetCommand);
+        y: {
+          ...widgetProps.style.y,
+          value: {
+            absolute: isDefined(container) && canInsertToWidget ? 0 : resultY,
+            relative:
+              isDefined(container) && canInsertToWidget ? 0 : Math.round((Number(resultY) / parentHeight) * 100),
+            unit: widgetModel.getStyleProperties('y').unit,
+          },
+        },
+        frameType: widgetProps.style.frameType,
+        left: {
+          ...widgetProps.style.left,
+          value: {
+            absolute: isDefined(container) && canInsertToWidget ? 0 : resultX,
+            relative: isDefined(container) && canInsertToWidget ? 0 : Math.round((Number(resultX) / parentWidth) * 100),
+            unit: widgetModel.getStyleProperties('left').unit,
+          },
+        },
+        top: {
+          ...widgetProps.style.top,
+          value: {
+            absolute: isDefined(container) && canInsertToWidget ? 0 : resultY,
+            relative:
+              isDefined(container) && canInsertToWidget ? 0 : Math.round((Number(resultY) / parentHeight) * 100),
+            unit: widgetModel.getStyleProperties('top').unit,
+          },
+        },
+        right: {
+          ...widgetProps.style.right,
+          value: {
+            absolute:
+              parentWidth -
+              (isDefined(container) && canInsertToWidget ? 0 : resultX) -
+              widgetModel.getStyleProperties('width').absolute,
+            relative:
+              100 -
+              (isDefined(container) && canInsertToWidget
+                ? 0
+                : Math.round(
+                    ((Number(resultX) + widgetModel.getStyleProperties('width').relative) / parentWidth) * 100
+                  )),
+            unit: widgetModel.getStyleProperties('right').unit,
+          },
+        },
+        bottom: {
+          ...widgetProps.style.bottom,
+          value: {
+            absolute:
+              parentHeight -
+              (isDefined(container) && canInsertToWidget ? 0 : resultY) -
+              widgetModel.getStyleProperties('height').absolute,
+            relative:
+              100 -
+              (isDefined(container) && canInsertToWidget
+                ? 0
+                : Math.round(
+                    ((Number(resultY) + widgetModel.getStyleProperties('height').relative) / parentHeight) * 100
+                  )),
+            unit: widgetModel.getStyleProperties('bottom').unit,
+          },
+        },
+      };
+
+      const updateWidgetStyleCommand = new UpdateWidgetStyleCommand(widgetModel, newStyle);
+      ctx.getCommand()?.append(updateWidgetStyleCommand);
     });
 
     const selectedWidgets = ctx.getSelectionContainer()?.getSelectedWidgets();
@@ -1241,15 +1236,14 @@ class WidgetEditCommandHandler extends CommandHandler {
       return;
     }
 
-    const { newWidgetProps, targetModel: widgetModels } = props;
+    const { newStyles, newContents, targetModel: widgetModels } = props;
 
     widgetModels.forEach((widgetModel: WidgetModel) => {
-      const updatePropsCommand = new UpdateWidgetCommand(
-        widgetModel,
-        newWidgetProps,
-        undefined
-        // ctx.getDataStore().getNonBindableDataReferenceContainer()
-      );
+      const updateWidgetContentCommand = new UpdateWidgetContentCommand(widgetModel, newContents);
+      ctx.getCommand()?.append(updateWidgetContentCommand);
+
+      const updateWidgetStyleCommand = new UpdateWidgetStyleCommand(widgetModel, newStyles);
+      ctx.getCommand()?.append(updateWidgetStyleCommand);
     });
   }
 

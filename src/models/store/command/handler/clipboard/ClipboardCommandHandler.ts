@@ -7,7 +7,6 @@ import { findPageModelByID } from 'models/store/command/handler/PageCommandHandl
 import AppendWidgetRecursiveCommand from 'models/store/command/widget/AppendWidgetRecursiveCommand';
 import MoveWidgetCommand from 'models/store/command/widget/MoveWidgetCommand';
 import RenameWidgetCommand from 'models/store/command/widget/RenameWidgetCommand';
-import UpdateWidgetCommand from 'models/store/command/widget/UpdateWidgetCommand';
 import WidgetCommandProps, { SelectionProp } from 'models/store/command/widget/WidgetCommandProps';
 import { WidgetModelIndexInfo } from 'models/store/container/ClipboardContainer';
 import AkronContext from 'models/store/context/AkronContext';
@@ -352,7 +351,6 @@ class ClipboardCommandHandler extends CommandHandler {
         copiedPageID.push(pageWidgetModel.widgetModel.getID());
       });
       parentWidgetModel = appWidgetModel;
-      this.updateSectionWhenPagePasted(ctx);
     } else if (
       selectedWidgets.length === 1 &&
       clipboardContainer.getLocalWidgetModels().every(widgetModelIndex => {
@@ -630,16 +628,6 @@ class ClipboardCommandHandler extends CommandHandler {
       const nextPageModel = copiedPageIndex + 1 >= pageList.length ? undefined : pageList[copiedPageIndex + 1];
 
       const appProp = ctx.getAppModel().getProperties();
-      const sectionPageCountArr = appProp.content.sectionList?.value?.map((section: PageSection) => {
-        return section.pageCount;
-      });
-      const prevSectionIdx = getSectionIdxByPageIdx(sectionPageCountArr, copiedPageIndex);
-      const newSectionList: PageSection[] = [];
-      appProp.content.sectionList?.value?.forEach((section: PageSection, _: number) => {
-        newSectionList.push({
-          ...section,
-        });
-      });
 
       copiedPageID.forEach((pageID, idx) => {
         if (isDefined(newWidgetModels)) {
@@ -662,51 +650,7 @@ class ClipboardCommandHandler extends CommandHandler {
           );
           command.append(moveWidgetCommand);
         }
-        // Section이 있을 경우 Section Update.
-        if (isDefined(appProp.content.sectionList) && appProp.content.sectionList?.value.length !== 0) {
-          newSectionList[prevSectionIdx].pageCount += 1;
-        }
       });
-      const newAppProp: IWidgetCommonProperties = {
-        ...appProp,
-        content: {
-          ...appProp.content,
-          sectionList: { ...appProp.content.newSectionList, value: newSectionList },
-        },
-      };
-      const updateWidgetCommand = new UpdateWidgetCommand(ctx.getAppModel(), newAppProp);
-      command.append(updateWidgetCommand);
-    }
-  }
-
-  /**
-   * 페이지 갯수가 변경 될 시, 구역갱신을 위한 로직입니다.
-   * 복사/붙여넣기 할 경우 마지막 페이지가 있는 구역의 pageCount를 붙여넣는 페이지 수만큼 확장합니다.
-   */
-  private updateSectionWhenPagePasted(ctx: AkronContext) {
-    const { sectionList } = ctx.getAppModel().getProperties().content;
-    if (isDefined(sectionList)) {
-      const pastePageNum = ctx.getClipboardContainer().getLocalWidgetModels().length;
-
-      const newSectionList: PageSection[] = sectionList?.value.map((section: PageSection, idx: number) => {
-        if (idx === sectionList?.value.length - 1) {
-          return {
-            ...section,
-            pageCount: section.pageCount + pastePageNum,
-          };
-        }
-        return section;
-      });
-      const appProp = ctx.getAppModel().getProperties();
-      const newAppProp: IWidgetCommonProperties = {
-        ...appProp,
-        content: {
-          ...appProp.content,
-          sectionList: { ...appProp.content.sectionList, value: newSectionList },
-        },
-      };
-      const updateWidgetCommand = new UpdateWidgetCommand(ctx.getAppModel(), newAppProp);
-      ctx.getCommand()?.append(updateWidgetCommand);
     }
   }
 

@@ -69,16 +69,6 @@ enum CommandEnum {
   // paragraph
   UPDATE_TEXT,
 
-  // section
-  ADD_SECTION,
-  DELETE_SECTION,
-  DELETE_ALL_SECTION,
-  EXPAND_ALL_SECTION,
-  COLLAPSE_ALL_SECTION,
-  COLLAPSE_SECTION,
-  RENAME_SECTION,
-  SELECT_SECTION,
-
   // OS object
   ADD_OS_OBJECT,
   DELETE_OS_OBJECT,
@@ -106,8 +96,6 @@ enum CommandEnum {
 
   // page list sort
   MOVE_PAGE_THUMBNAIL,
-  MOVE_PAGE_THUMBNAIL_IN_SECTION,
-  MOVE_SECTION,
 
   // register Business Dialog Widget
   REGISTER_BUSINESS_DIALOG_WIDGET,
