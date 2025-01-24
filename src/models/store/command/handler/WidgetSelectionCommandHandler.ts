@@ -15,15 +15,6 @@ import AkronContext from 'models/store/context/AkronContext';
 import PageModel from 'models/node/PageModel';
 
 /**
- * Section 선택 시 필요한 props
- */
-export type SectionSelectCommandProps = WidgetCommandProps & {
-  commandID: CommandEnum.SELECT_SECTION;
-  pageSection: PageSection;
-  firstPageModel?: WidgetModel;
-};
-
-/**
  * BasicWidget 선택 시 필요한 Props
  */
 export type WidgetSelectCommandProps = WidgetCommandProps & {
@@ -55,11 +46,7 @@ export type PageThumbnailSelectCommandProps = WidgetCommandProps & {
 /**
  * 셀렉션 관련 command props 인터페이스 입니다.
  */
-type SelectCommandProps =
-  | WidgetSelectCommandProps
-  | WidgetDragSelectCommandProps
-  | SectionSelectCommandProps
-  | PageThumbnailSelectCommandProps;
+type SelectCommandProps = WidgetSelectCommandProps | WidgetDragSelectCommandProps | PageThumbnailSelectCommandProps;
 
 /**
  * Widget 선택 동작을 처리하는 CommandHandler
@@ -78,9 +65,6 @@ class WidgetSelectCommandHandler extends CommandHandler {
         break;
       case CommandEnum.SELECT_PAGE_THUMBNAIL:
         this.selectPageThumbnail(ctx, props);
-        break;
-      case CommandEnum.SELECT_SECTION:
-        this.selectSection(ctx, props);
         break;
       default:
         return false;
@@ -291,20 +275,6 @@ class WidgetSelectCommandHandler extends CommandHandler {
     };
     if (isDefined(commandProps)) {
       commandProps.selectionProp = selectionPropObj;
-    }
-  }
-
-  /**
-   * 구역 선택 핸들링 함수입니다.
-   */
-  @action
-  private selectSection(ctx: AkronContext, props: SectionSelectCommandProps) {
-    const commandProps = ctx.getCommandProps();
-    const sectionSelectionPropObj: SectionSelectionProp = {
-      pageSection: props.pageSection,
-    };
-    if (isDefined(commandProps)) {
-      commandProps.sectionSelectionProp = sectionSelectionPropObj;
     }
   }
 }

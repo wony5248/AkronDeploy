@@ -121,7 +121,6 @@ class AkronCommandMapper extends CommandMapper {
     this.commandMap.set(CommandEnum.SELECT_WIDGET, [widgetSelectCommandHandler]);
     this.commandMap.set(CommandEnum.SELECT_PAGE_THUMBNAIL, [widgetSelectCommandHandler]);
     this.commandMap.set(CommandEnum.DRAG_SELECT_WIDGET, [widgetSelectCommandHandler]);
-    this.commandMap.set(CommandEnum.SELECT_SECTION, [widgetSelectCommandHandler]);
   }
 
   /**
@@ -164,13 +163,6 @@ class AkronCommandMapper extends CommandMapper {
     const appCommandHandler = factory.createAppCommandHandler();
     this.commandMap.set(CommandEnum.SAVE, [appCommandHandler]);
     this.commandMap.set(CommandEnum.SAVE_AS, [appCommandHandler]);
-    this.commandMap.set(CommandEnum.ADD_SECTION, [appCommandHandler]);
-    this.commandMap.set(CommandEnum.DELETE_SECTION, [appCommandHandler]);
-    this.commandMap.set(CommandEnum.DELETE_ALL_SECTION, [appCommandHandler]);
-    this.commandMap.set(CommandEnum.EXPAND_ALL_SECTION, [appCommandHandler]);
-    this.commandMap.set(CommandEnum.COLLAPSE_ALL_SECTION, [appCommandHandler]);
-    this.commandMap.set(CommandEnum.COLLAPSE_SECTION, [appCommandHandler]);
-    this.commandMap.set(CommandEnum.RENAME_SECTION, [appCommandHandler]);
     this.commandMap.set(CommandEnum.UPDATE_DEVICE_INFO, [appCommandHandler]);
   }
 
@@ -287,8 +279,6 @@ class AkronCommandMapper extends CommandMapper {
   private setPageListSortCommandMap(factory: CommandHandlerFactory): void {
     const pageListSortCommandHandler = factory.createPageListSortCommandHandler();
     this.commandMap.set(CommandEnum.MOVE_PAGE_THUMBNAIL, [pageListSortCommandHandler]);
-    this.commandMap.set(CommandEnum.MOVE_PAGE_THUMBNAIL_IN_SECTION, [pageListSortCommandHandler]);
-    this.commandMap.set(CommandEnum.MOVE_SECTION, [pageListSortCommandHandler]);
   }
 
   //   /**
