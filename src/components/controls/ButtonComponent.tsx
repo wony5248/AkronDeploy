@@ -1,3 +1,4 @@
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import { StandardSize } from 'components/type/SizeTypes';
 import { IIconProps } from 'components/type/StyleTypes';
 import { button, buttonVariants } from 'styles/controls/Button';
@@ -55,9 +56,9 @@ const ButtonComponent = ({
       aria-label={label}
       onClick={onClick}
     >
-      {leftIcon && <div style={{ width: '100%', height: '100%' }} /> /*<ImageResourceComponent id={leftIcon} />*/}
+      {leftIcon && <ImageResourceComponent id={leftIcon} />}
       {label}
-      {rightIcon && <div style={{ width: '100%', height: '100%' }} /> /*<ImageResourceComponent id={rightIcon} />*/}
+      {rightIcon && <ImageResourceComponent id={rightIcon} />}
     </button>
   );
 };

@@ -1,3 +1,4 @@
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import { MenuItem } from 'components/controls/MenuItem';
 import PopoverComponent from 'components/controls/popover/PopoverComponent';
 import useEditorStore from 'hooks/useEditorStore';
@@ -78,17 +79,9 @@ const SubMenuItemComponent: React.FC<IProps> = (props: IProps) => {
     <MenuItem css={menuItem} ref={ref} onMouseEnter={handleOpen} onMouseLeave={handleSubMenuClose} disabled={disabled}>
       <div css={menuItemWrapper(disabled)} key={id}>
         <div css={menuItemContent}>
-          {image && (
-            // <ImageResourceComponent className={styles.menuItemImage} id={image} w={'14px'} h={'14px'} />
-            <button css={menuItemImage} style={{ width: '14px', height: '14px' }} />
-          )}
+          {image && <ImageResourceComponent css={menuItemImage} id={image} w={'14px'} h={'14px'} />}
           <div css={image ? menuItemLabel : menuNoImageItemLabel}>{label}</div>
-          {/* <ImageResourceComponent
-                        className={styles.subMenuArrowIcon}
-                        id={'IC_CONTEXTMENU_ARROW_DEPTH_NORMAL'}
-                        w={'8px'}
-                        h={'8px'}
-                    /> */}
+          <ImageResourceComponent css={subMenuArrowIcon} id={'IC_CONTEXTMENU_ARROW_DEPTH_NORMAL'} w={'8px'} h={'8px'} />
           <button css={subMenuArrowIcon} style={{ width: '8px', height: '8px' }} />
         </div>
       </div>

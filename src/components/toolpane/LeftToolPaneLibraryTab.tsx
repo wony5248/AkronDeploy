@@ -1,3 +1,5 @@
+import ImageResourceButtonComponent from 'components/common/ImageResourceButtonComponent';
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import DropdownComponent from 'components/controls/DropdownComponent';
 import useEditorStore from 'hooks/useEditorStore';
 import useFile from 'hooks/widget/useFile';
@@ -98,8 +100,7 @@ const LibraryItem: React.FC<ILibraryItemProps> = ({ editorStore, componentItem }
               style={{ width: '32px', height: '32px', objectFit: 'contain' }}
             />
           ) : (
-            // <ImageResourceComponent w="32px" h="32px" id={'IMG_GX_COMPONENT_DUMMY'} />
-            <button style={{ width: '32px', height: '32px' }} />
+            <ImageResourceComponent w="32px" h="32px" id={'IMG_GX_COMPONENT_DUMMY'} />
           )}
         </div>
         <div css={toolPaneComponentButtonLabelWrapper}>
@@ -135,7 +136,7 @@ const LibraryCategory: React.FC<ILibraryCategoryProps> = ({
     <>
       {categoryName !== '' && (
         <div css={toolPaneComponentCategory}>
-          {/* <ImageResourceButtonComponent
+          <ImageResourceButtonComponent
             id={'IC_TOOLPANE_TOGGLE_OFF'}
             pressedId={'IC_TOOLPANE_TOGGLE_ON'}
             w={'16px'}
@@ -143,9 +144,8 @@ const LibraryCategory: React.FC<ILibraryCategoryProps> = ({
             onClick={() => setIsOpen(!isOpen)}
             pressed={isOpen}
             disabled={false}
-            imagecss={toolPaneComponentCategoryButton}
-          /> */}
-          <button style={{ width: '16px', height: '16px' }} />
+            // imagecss={toolPaneComponentCategoryButton}
+          />
           <div css={toolPaneComponentCategoryTitle}>{categoryName}</div>
         </div>
       )}
@@ -236,15 +236,14 @@ const LibraryTabTopComponent = ({
       />
 
       <div style={{ flex: 1 }} />
-      {/* <ImageResourceButtonComponent
+      <ImageResourceButtonComponent
         w={'24px'}
         h={'24px'}
         id={'L_TOOLPANE_CUSTOM_UPDATE_NORMAL'}
         hoverId={'L_TOOLPANE_CUSTOM_UPDATE_HOVER'}
         disabled={false}
         onClick={onClickUpdate}
-      /> */}
-      <button style={{ width: '24px', height: '24px' }} />
+      />
     </div>
   );
 };
@@ -277,8 +276,7 @@ const LeftToolPaneLibraryTab: React.FC<IProps> = ({ searchValue, setAddLibraryDi
           onClickUpdate={() => setAddLibraryDialogOpen(true)}
         />
         <div css={addLibraryWrapper}>
-          {/* <ImageResourceComponent id={'IMG_UPLOAD'} w={'112px'} h={'109px'} /> */}
-          <button style={{ width: '112px', height: '109px' }} />
+          <ImageResourceComponent id={'IMG_UPLOAD'} w={'112px'} h={'109px'} />
           <span css={addLibraryText}>{'Bring the UI Kit'}</span>
           <button
             type={'button'}

@@ -1,3 +1,4 @@
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import PortalComponent from 'components/common/PortalComponent';
 import SaveCompleteMessageComponent from 'components/ribbon-menu/save-indicator/SaveCompleteMessageComponent';
 import SaveErrorMessageComponent from 'components/ribbon-menu/save-indicator/SaveErrorMessageComponent';
@@ -108,16 +109,16 @@ const SaveIndicatorComponent: React.FC = () => {
             }}
           >
             {completeGif ? (
-              <img
-                src={'' /*IcAutosavecomplete*/}
-                alt="SAVE_COMPLETE"
-                onLoad={setSaveComplete}
-                width={'32px'}
-                height={'32px'}
-              />
+              // <img
+              //   src={'' /*IcAutosavecomplete*/}
+              //   alt="dd"
+              //   onLoad={setSaveComplete}
+              //   width={'32px'}
+              //   height={'32px'}
+              // />
+              <ImageResourceComponent id={'IC_AUTOSAVECOMPLETE'} w={'32px'} h={'32px'} />
             ) : (
-              // <ImageResourceComponent id={'IC_AUTOSAVECOMPLETE'} w={'32px'} h={'32px'} />
-              <button style={{ width: '32px', height: '32px' }} />
+              <ImageResourceComponent id={'IC_AUTOSAVECOMPLETE'} w={'32px'} h={'32px'} />
             )}
           </div>
           <SaveCompleteMessageComponent setMessageShow={setMessageShow} messageShow={messageShow} />
@@ -125,8 +126,7 @@ const SaveIndicatorComponent: React.FC = () => {
       )}
       {indicatorState === 'SaveError' && (
         <>
-          {/* <ImageResourceComponent id={'IC_TOP_AUTOSAVEFAIL'} w={'32px'} h={'32px'} /> */}
-          <button style={{ width: '32px', height: '32px' }} />
+          <ImageResourceComponent id={'IC_TOP_AUTOSAVEFAIL'} w={'32px'} h={'32px'} />
           <SaveErrorMessageComponent />
         </>
       )}

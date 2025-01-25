@@ -1,3 +1,4 @@
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import { useState } from 'react';
 import {
   defaultValue,
@@ -90,8 +91,8 @@ const DropdownComponent: React.FC<IProps> = ({
         </button>
         <div css={dropdownButtonGroup}>
           <button disabled={disabled} css={dropdownButton(disabled)} type={'button'} onClick={onButtonClick}>
-            {/* <ImageResourceComponent id={'IC_TOOLPANE_ARROW_DOWN_NORMAL'} w={'16px'} h={'16px'} /> */}
-            <div style={{ width: '16px', height: '16px' }} />
+            <ImageResourceComponent id={'IC_TOOLPANE_ARROW_DOWN_NORMAL'} w={'16px'} h={'16px'} />
+            {/* <div style={{ width: '16px', height: '16px' }} /> */}
           </button>
         </div>
       </div>

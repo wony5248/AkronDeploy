@@ -1,3 +1,4 @@
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import {
   menuItem,
   menuItemImage,
@@ -35,10 +36,7 @@ const NormalMenuItemComponent: React.FC<IProps> = (props: IProps) => {
       key={id}
     >
       <div css={menuItemWrapper}>
-        {
-          image && <button css={menuItemImage} style={{ width: '14px', height: '14px' }} />
-          /*<ImageResourceComponent className={styles.menuItemImage} id={image} w={'14px'} h={'14px'} />*/
-        }
+        {image && <ImageResourceComponent css={menuItemImage} id={image} w={'14px'} h={'14px'} />}
         <div css={image ? menuItemLabel : menuNoImageItemLabel}>{label}</div>
       </div>
     </div>

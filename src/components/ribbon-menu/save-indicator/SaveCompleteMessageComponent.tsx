@@ -1,3 +1,4 @@
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import useEditorStore from 'hooks/useEditorStore';
 import { useLayoutEffect, useState } from 'react';
 import { lastSavedTime, saveMessageContainer } from 'styles/ribbon-menu/SaveIndicator';
@@ -36,16 +37,14 @@ const SaveCompleteMessageComponent: React.FC<IProps> = ({ setMessageShow, messag
         visibility: messageShow ? 'visible' : 'hidden',
       }}
     >
-      {/* <ImageResourceComponent id={'IC_DIALOG_AUTOSAVECOMPLETE'} w={'24px'} h={'24px'} /> */}
-      <button style={{ width: '24px', height: '24px' }} />
+      <ImageResourceComponent id={'IC_DIALOG_AUTOSAVECOMPLETE'} w={'24px'} h={'24px'} />
       {lastSaveTime && <div css={[lastSavedTime, 'forComplete']}>최근 저장 시간 : {lastSaveTime}</div>}
       <div
         onClick={() => {
           setMessageShow(false);
         }}
       >
-        {/* <ImageResourceComponent id={'IC_POPUP_CLOSE_SEARCH'} w={'16px'} h={'16px'} /> */}
-        <button style={{ width: '16px', height: '16px' }} />
+        <ImageResourceComponent id={'IC_POPUP_CLOSE_SEARCH'} w={'16px'} h={'16px'} />
       </div>
     </div>
   );

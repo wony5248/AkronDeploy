@@ -95,13 +95,12 @@ const ToolPaneTitleComponent: React.FC<IProps> = ({
         )}
         {showPlusButton && (
           <button
-            css={isLeftToolPane ? leftToolpaneTitleButton : toolPanePopupButton}
+            css={{ backgroundColor: 'white', border: '1px solid gray' }}
             type={'button'}
             aria-label={'Popup'}
             onClick={onClickPlusButton}
           >
             <ImageResourceComponent id={'IC_TOOLPANE_PAGEADD'} w={'16px'} h={'16px'} />
-            {/* <div style={{ width: '16px', height: '16px' }} /> */}
           </button>
         )}
       </div>

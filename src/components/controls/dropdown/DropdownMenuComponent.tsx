@@ -1,3 +1,4 @@
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import { IIconProps } from 'components/type/StyleTypes';
 import useDropdownContext from 'hooks/controls/useDropdownContext';
 import { DropdownOption } from 'models/widget/WidgetPropTypes';
@@ -80,22 +81,10 @@ const DropdownMenuComponent = ({
             aria-selected={selectedMenu}
             onClick={() => onClick(option)}
           >
-            {
-              leftIcon && (
-                <button style={{ width: '16px', height: '16px' }} />
-              ) /*<ImageResourceComponent id={leftIcon} w="16px" h="16px" />*/
-            }
+            {leftIcon && <ImageResourceComponent id={leftIcon} w="16px" h="16px" />}
             <span>{label}</span>
-            {
-              selectedMenu && (
-                <button style={{ width: '20px', height: '20px' }} />
-              ) /*<ImageResourceComponent id={'IC_CHECK'} w="20px" h="20px" />*/
-            }
-            {
-              rightIcon && (
-                <button style={{ width: '16px', height: '16px' }} />
-              ) /*<ImageResourceComponent id={rightIcon} w="16px" h="16px" />*/
-            }
+            {selectedMenu && <ImageResourceComponent id={'IC_CHECK'} w="20px" h="20px" />}
+            {rightIcon && <ImageResourceComponent id={rightIcon} w="16px" h="16px" />}
           </li>
         );
       })}

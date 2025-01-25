@@ -1,5 +1,6 @@
 // import styles from 'common/style/ribbon-menu/RibbonMenu.scss';
 
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import { ribbonButtonLabel, ribbonDropdownButton, ribbonDropdownButtonIcon } from 'styles/ribbon-menu/RibbonMenu';
 
 /**
@@ -28,8 +29,7 @@ const RibbonButtonComponent: React.FC<IProps> = (props: IProps) => {
             onClick(commandPropName || 'None', commandType || 'None');
           }}
         >
-          {/* <ImageResourceComponent id={image} w={'18px'} h={'18px'} /> */}
-          <button style={{ width: '8px', height: '8px' }} />
+          <ImageResourceComponent id={image} w={'18px'} h={'18px'} />
         </div>
         <div
           css={ribbonButtonLabel}

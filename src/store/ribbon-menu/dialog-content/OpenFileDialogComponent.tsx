@@ -1,3 +1,4 @@
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import DialogComponent from 'components/controls/dialog/DialogComponent';
 import useEditorStore from 'hooks/useEditorStore';
 import { IAppItem } from 'models/repository/AppRepository';
@@ -141,8 +142,7 @@ const RibbonOpenFileDialogContentComponent: React.FC<IDialogContentProps> = ({
       }}
     >
       <div css={openFileDialogSearchBar}>
-        {/* <ImageResourceComponent id={'IC_TOOLPANE_SEARCH'} w={'28px'} h={'28px'} /> */}
-        <button style={{ width: '28px', height: '28px' }} />
+        <ImageResourceComponent id={'IC_TOOLPANE_SEARCH'} w={'28px'} h={'28px'} />
         <input
           css={openFileDialogSearchBarInput}
           type={'text'}

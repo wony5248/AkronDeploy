@@ -1,3 +1,4 @@
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import { ReactNode } from 'react';
 import { controls, home, titleBar, children as childrenStyle, control } from 'styles/common/TitleBar';
 // import styles from 'ux/style/common/TitleBar.scss';
@@ -29,8 +30,8 @@ const TitleBarComponent: React.FC<IProps> = ({
           // openLandingPage();
         }}
       >
-        {/* <ImageResourceComponent id="IC_HOME_NORMAL" w={'40px'} h={'38px'} /> */}
-        <button style={{ width: '40px', height: '38px' }} />
+        <ImageResourceComponent id="IC_HOME_NORMAL" w={'40px'} h={'38px'} />
+        {/* <button style={{ width: '40px', height: '38px' }} /> */}
       </div>
       <div css={childrenStyle}>{children}</div>
       {/* <div css={controls}>

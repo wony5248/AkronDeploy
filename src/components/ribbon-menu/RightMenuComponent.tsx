@@ -1,3 +1,4 @@
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import DeviceButtonComponent from 'components/ribbon-menu/DeviceButtonComponent';
 import ExitButtonComponent from 'components/ribbon-menu/ExitButtonComponent';
 import PublishButtonComponent from 'components/ribbon-menu/PublishButtonComponent';
@@ -55,8 +56,7 @@ const RightMenuComponent: React.FC = () => {
           }}
           key={'RIB_VIEW_PREVIEW_PROJECT'}
         >
-          {/* <ImageResourceComponent id={'IC_TOP_PLAY_NORMAL'} w={'32px'} h={'32px'} /> */}
-          <button style={{ width: '32px', height: '32px' }} />
+          <ImageResourceComponent id={'IC_TOP_PLAY_NORMAL'} w={'32px'} h={'32px'} />
         </div>
       </>
 

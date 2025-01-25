@@ -1,3 +1,4 @@
+import ImageResourceButtonComponent from 'components/common/ImageResourceButtonComponent';
 import { DialogSize } from 'components/controls/dialog/DialogComponent';
 import DropdownMenuComponent, { IDropdownMenuOnlyProps } from 'components/controls/dropdown/DropdownMenuComponent';
 import useDropdown from 'hooks/controls/useDropdown';
@@ -21,17 +22,16 @@ const DialogHeaderDropdownComponent = ({ dropdownProps, size }: IProps): JSX.Ele
 
   return (
     <div ref={ref} css={dropdown} aria-expanded={isOpen}>
-      {/* <ImageResourceButtonComponent
-                buttonClassName={classNames(styles.dropdownIcon, {
-                    [styles.dropdownLargeIcon]: size === 'large',
-                })}
-                onClick={() => setIsOpen(!isOpen)}
-                aria-label={'toggle button'}
-                id={'IC_CHEVRON_REGULAR_SMALL_DOWN'}
-                w="28px"
-                h="28px"
-            /> */}
-      <button style={{ width: '28px', height: '28px' }} />
+      <ImageResourceButtonComponent
+        // buttonClassName={classNames(styles.dropdownIcon, {
+        //   [styles.dropdownLargeIcon]: size === 'large',
+        // })}
+        onClick={() => setIsOpen(!isOpen)}
+        aria-label={'toggle button'}
+        id={'IC_CHEVRON_REGULAR_SMALL_DOWN'}
+        w="28px"
+        h="28px"
+      />
 
       {isOpen && (
         <DropdownMenuComponent

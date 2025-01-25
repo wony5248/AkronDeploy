@@ -134,7 +134,7 @@ const SVGObjectComponent: React.FC<ISVGObjectComponentProps> = ({
  * ImageResourceComponent props.
  */
 interface IProps {
-  disabled: boolean;
+  disabled?: boolean;
   id: string;
   hoverId?: string;
   pressedId?: string;

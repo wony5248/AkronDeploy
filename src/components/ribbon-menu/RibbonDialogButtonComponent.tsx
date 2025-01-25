@@ -1,4 +1,5 @@
 // import styles from 'common/style/ribbon-menu/RibbonMenu.scss';
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import * as React from 'react';
 import { ribbonDialogContentMap } from 'store/ribbon-menu/RibbonMenuComponentInfo';
 import { ribbonButtonLabel, ribbonDropdownButton, ribbonDropdownButtonIcon } from 'styles/ribbon-menu/RibbonMenu';
@@ -36,8 +37,8 @@ const RibbonDialogButtonComponent: React.FC<IProps> = (props: IProps) => {
     <div>
       <div css={ribbonDropdownButton}>
         <div css={ribbonDropdownButtonIcon} onClick={handleDialogOpen}>
-          {/* <ImageResourceComponent id={image} w={'18px'} h={'18px'} /> */}
-          <button style={{ width: '18px', height: '18px' }} />
+          <ImageResourceComponent id={image} w={'18px'} h={'18px'} />
+          {/* <button style={{ width: '18px', height: '18px' }} /> */}
         </div>
         <div css={ribbonButtonLabel} onClick={handleDialogOpen}>
           {/* {useTextResource(label)} */}
@@ -50,8 +51,8 @@ const RibbonDialogButtonComponent: React.FC<IProps> = (props: IProps) => {
           handleClose={() => {
             handleDialogClose();
           }}
-          // commandPropName={commandPropName}
-          // commandType={commandType}
+          commandPropName={commandPropName}
+          commandType={commandType}
           onClick={onClick}
         />
       )}
