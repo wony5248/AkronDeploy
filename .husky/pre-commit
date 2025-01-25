@@ -1,0 +1,20 @@
+#!/usr/bin/env sh
+
+# 현재 브랜치명 가져오기
+BRANCH_NAME=$(git symbolic-ref --short HEAD)
+
+# feat, chore, bugfix, refactor로 시작하는지 확인
+if echo "$BRANCH_NAME" | grep -Eq '^(feat/|chore/|bugfix/|refactor/)'; then
+  
+  # 브랜치명이 규칙을 따를 경우 lint 실행
+  npm run lint
+  
+  # lint가 실패하면 커밋 차단
+  if [ $? -ne 0 ]; then
+    echo "커밋 불가: lint 오류가 발생했습니다."
+    exit 1
+  fi
+else
+  echo "커밋 불가: 브랜치명은 feat, chore, bugfix, refactor 중 하나로 시작해야 합니다."
+  exit 1
+fi

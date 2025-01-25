@@ -1,0 +1,30 @@
+image: node:22.3.0
+
+stages:
+    - libs
+    - build
+
+npm:
+    stage: libs
+    only:
+        - master
+    cache:
+        paths:
+            - node_modules
+    script:
+        - npm cache verify
+        - npm cache clean --force
+        - rm -rf package-lock.json
+        - npm install --legacy-peer-deps
+
+build:
+    stage: build
+    only:
+        - master
+    cache:
+        paths:
+            - dist
+    script:
+        - npm run build
+    tags:
+        - akron-client

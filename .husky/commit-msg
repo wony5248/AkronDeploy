@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+
+# 커밋 메시지 파일 경로
+COMMIT_MSG_FILE=$1
+
+# 커밋 메시지 파일에서 첫 번째 줄을 읽어옴
+FIRST_LINE=$(head -n 1 "$COMMIT_MSG_FILE")
+
+# 첫 번째 줄이 존재하고 길이가 10 이하인 경우, 에러 메시지 출력
+if [ -n "$FIRST_LINE" ] && [ ${#FIRST_LINE} -le 10 ]; then
+    echo 'Please write a valid title for your commit message.'
+    exit 1
+fi
+
+# 정상적으로 커밋 메시지가 작성된 경우
+exit 0
