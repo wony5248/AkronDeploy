@@ -1,4 +1,5 @@
 import ImageResourceButtonComponent from 'components/common/ImageResourceButtonComponent';
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import DialogHeaderDropdownComponent from 'components/controls/dialog/DialogHeaderDropdownComponent';
 import DialogHeaderLabelsComponent from 'components/controls/dialog/DialogHeaderLabelsComponent';
 import { IDropdownMenuOnlyProps } from 'components/controls/dropdown/DropdownMenuComponent';
@@ -57,38 +58,29 @@ const DialogHeaderComponent = ({ title, headerProps }: IProps): JSX.Element => {
   return (
     <div css={header(size)}>
       <div css={headerContent(size)}>
-        {
-          type && size !== 'xsmall' && <button style={{ width: '28px', height: '28px' }} />
-          /*                <ImageResourceComponent id={dialogImgIdMap[type]} w="40px" h="40px" />*/
-        }
+        {type && size !== 'xsmall' && <ImageResourceComponent id={dialogImgIdMap[type]} w="40px" h="40px" />}
         <div css={headerDetail}>
           {status && (
-            // <ImageResourceComponent
-            //     className={styles.statusIcon}
-            //     aria-label={`${status}_image`}
-            //     id={`IC_ALERT_${status.toUpperCase()}`}
-            //     w="28px"
-            //     h="28px"
-            // />
-            <button style={{ width: '28px', height: '28px' }} />
+            <ImageResourceComponent
+              // css={styles.statusIcon}
+              aria-label={`${status}_image`}
+              id={`IC_ALERT_${status.toUpperCase()}`}
+              w="28px"
+              h="28px"
+            />
+            // <button style={{ width: '28px', height: '28px' }} />
           )}
           <DialogHeaderLabelsComponent title={title} subText={subText} size={size} />
           {dropdownProps && <DialogHeaderDropdownComponent dropdownProps={dropdownProps} size={size} />}
         </div>
       </div>
-      {/* <ImageResourceButtonComponent
-        buttonClassName={styles.closeButton}
+      <ImageResourceButtonComponent
+        // css={closeButton}
         aria-label={'close button'}
         onClick={handler}
         id={'IC_CLOSE'}
         w="28px"
         h="28px"
-      /> */}
-      <button
-        aria-label={'close button'}
-        onClick={handler}
-        css={closeButton}
-        style={{ width: '28px', height: '28px' }}
       />
     </div>
   );

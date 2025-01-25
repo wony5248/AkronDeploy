@@ -117,10 +117,9 @@ const LeftToolPaneCategory: React.FC<IItemProps> = ({ item, searchValue }: IItem
             setOpen(!open);
           }}
           pressed={open}
+          buttoncss={{ backgroundColor: 'white', border: '1px solid gray' }}
           disabled={false}
-          imagecss={toolPaneComponentCategoryButton}
         />
-        {/* <button css={toolPaneComponentCategoryButton} style={{ width: '16px', height: '16px' }} /> */}
         <div css={toolPaneComponentCategoryTitle}>{item.label}</div>
       </div>
       <div css={toolPaneComponentCategoryItems} style={{ display: open ? 'flex' : 'none' }}>

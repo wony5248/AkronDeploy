@@ -1,3 +1,4 @@
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import PageThumbnailTitleComponent from 'components/toolpane/PageThumbnailTitleComponent';
 import useContextMenuContainer from 'hooks/useContextMenuContainer';
 import useEditorStore from 'hooks/useEditorStore';
@@ -111,25 +112,8 @@ const PageThumbnailComponent: React.FC<IProps> = (props: IProps) => {
           onMouseUp={() => setArrowClicked(true)}
           onMouseDown={handleClickOpen}
         >
-          {/* <ImageResourceComponent
-                        className={classNames(styles.pageThumbnailArrow, {
-                            [styles.hidden]: !(locked && (isSelectedThumbnailPage || isHover)),
-                        })}
-                        id={'IC_TOOLPANE_HOLD_NORMAL'}
-                        w={'12px'}
-                        h={'12px'}
-                    /> */}
-          <button style={{ width: '12px', height: '12px' }} />
-
-          {/* <ImageResourceComponent
-                        className={classNames(styles.pageThumbnailArrow, {
-                            [styles.hidden]: !(locked || isSelectedThumbnailPage || isHover),
-                        })}
-                        id={arrowType}
-                        w={'12px'}
-                        h={'12px'}
-                    /> */}
-          <button style={{ width: '12px', height: '12px' }} />
+          <ImageResourceComponent id={'IC_TOOLPANE_HOLD_NORMAL'} w={'12px'} h={'12px'} />
+          <ImageResourceComponent id={arrowType} w={'12px'} h={'12px'} />
         </div>
       </div>
     </div>

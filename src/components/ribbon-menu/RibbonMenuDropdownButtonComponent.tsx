@@ -1,4 +1,5 @@
 // import styles from 'common/style/ribbon-menu/RibbonMenu.scss';
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import Menu from 'components/controls/Menu';
 import useEditorStore from 'hooks/useEditorStore';
 import * as React from 'react';
@@ -68,16 +69,14 @@ const RibbonMenuDropdownButtonComponent: React.FC<IProps> = (props: IProps) => {
     <div ref={rootRef}>
       <div css={ribbonDropdownButton} className={anchorEl ? 'selected' : ''} onClick={handleOpen}>
         <div css={ribbonDropdownButtonIcon} onClick={handleOpen}>
-          {/* <ImageResourceComponent id={image} w={'18px'} h={'18px'} /> */}
-          <button style={{ width: '18px', height: '18px' }} />
+          <ImageResourceComponent id={image} w={'18px'} h={'18px'} />
         </div>
         <div css={ribbonButtonLabel} onClick={handleOpen}>
           {/* {useTextResource(label)} */}
           {label}
         </div>
         <div css={ribbonDropdownButtonIcon} onClick={handleOpen}>
-          {/* <ImageResourceComponent id={'IC_TOP_MENU_ARROW_DOWN'} w={'8px'} h={'8px'} /> */}
-          <button style={{ width: '8px', height: '8px' }} />
+          <ImageResourceComponent id={'IC_TOP_MENU_ARROW_DOWN'} w={'8px'} h={'8px'} />
         </div>
       </div>
       <Menu

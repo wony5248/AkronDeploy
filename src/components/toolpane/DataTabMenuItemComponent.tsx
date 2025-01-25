@@ -1,7 +1,8 @@
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import useEditorStore from 'hooks/useEditorStore';
 import { observer } from 'mobx-react-lite';
 import { DataTabIndex } from 'store/app/EditorUIStore';
-import { pageThumbnail, pageThumbnailName, pageThumbnailTitle } from 'styles/toolpane/PageList';
+import { pageThumbnail, pageThumbnailIndex, pageThumbnailName, pageThumbnailTitle } from 'styles/toolpane/PageList';
 
 /**
  * DataTabMenuItemComponent Props
@@ -18,7 +19,7 @@ interface IProps {
 const DataTabMenuItemComponent: React.FC<IProps> = (props: IProps) => {
   const editorStore = useEditorStore();
   const UIStore = editorStore.getEditorUIStore();
-  const { tabIndex, labelString } = props;
+  const { tabIndex, labelString, imgID } = props;
   const handleDataTabClick = (idx: DataTabIndex) => {
     UIStore.setDataTabIndex(idx);
   };
@@ -27,8 +28,7 @@ const DataTabMenuItemComponent: React.FC<IProps> = (props: IProps) => {
   return (
     <div css={pageThumbnail(isSelected)} onClick={() => handleDataTabClick(tabIndex)}>
       <div css={pageThumbnailTitle}>
-        {/* <ImageResourceComponent css={pageThumbnailIndex} id={imgID} w={'16px'} h={'16px'} /> */}
-        <button style={{ width: '16px', height: '16px' }} />
+        <ImageResourceComponent id={imgID} w={'16px'} h={'16px'} />
         <label css={pageThumbnailName(false)}>{labelString}</label>
       </div>
     </div>

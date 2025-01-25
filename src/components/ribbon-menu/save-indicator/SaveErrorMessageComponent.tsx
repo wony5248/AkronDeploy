@@ -1,3 +1,4 @@
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import PortalComponent from 'components/common/PortalComponent';
 import useEditorStore from 'hooks/useEditorStore';
 import { SaveState } from 'models/store/EditorStore';
@@ -60,8 +61,7 @@ const SaveErrorMessageComponent: React.FC = () => {
         >
           <div css={[saveMessageContainer, 'forError']} style={{ visibility: messageOpen ? 'visible' : 'hidden' }}>
             <div style={{ flexDirection: 'row', display: 'flex', alignItems: 'start' }}>
-              {/* <ImageResourceComponent id={'IC_DIALOG_AUTOSAVEFAIL'} w={'24px'} h={'24px'} /> */}
-              <button style={{ width: '24px', height: '24px' }} />
+              <ImageResourceComponent id={'IC_DIALOG_AUTOSAVEFAIL'} w={'24px'} h={'24px'} />
               <div style={{ margin: '0px 12px 16px 12px' }}>
                 <div css={saveMessageTitle}>저장 실패</div>
                 <div css={saveMessageText}>새로고침(F5)을 누르거나 앱을 다시 실행하세요.</div>
@@ -73,8 +73,7 @@ const SaveErrorMessageComponent: React.FC = () => {
                   closeMessage();
                 }}
               >
-                {/* <ImageResourceComponent id={'IC_POPUP_CLOSE_SEARCH'} w={'16px'} h={'16px'} /> */}
-                <button style={{ width: '16px', height: '16px' }} />
+                <ImageResourceComponent id={'IC_POPUP_CLOSE_SEARCH'} w={'16px'} h={'16px'} />
               </div>
             </div>
             <div css={reloadButtonContainer}>

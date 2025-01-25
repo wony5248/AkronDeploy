@@ -1,4 +1,5 @@
 import { isNotNull } from '@akron/runner';
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import useContextMenuContainer from 'hooks/useContextMenuContainer';
 import useEditorStore from 'hooks/useEditorStore';
 import { observer } from 'mobx-react-lite';
@@ -231,13 +232,12 @@ const TreeNodeComponent: React.FC<IProps> = observer(({ widgetModel, isTop = tru
       <div css={nameArea({ isTop, isLeaf, isSelected })} onMouseDown={handleDragStart} onMouseUp={handleDragEnd}>
         <div css={openButton} onClick={handleClickOpen}>
           {!isLeaf && (
-            // <ImageResourceComponent
-            //     css={openIcon}
-            //     id={isOpen ? 'IC_TOOLPANE_TOGGLE_ON' : 'IC_TOOLPANE_TOGGLE_OFF'}
-            //     w={'16px'}
-            //     h={'16px'}
-            // />
-            <button css={hideIconArea} style={{ width: '16px', height: '16px' }} id="IC_TOOLPANE_HIDE_DISABLED" />
+            <ImageResourceComponent
+              css={openIcon}
+              id={isOpen ? 'IC_TOOLPANE_TOGGLE_ON' : 'IC_TOOLPANE_TOGGLE_OFF'}
+              w={'16px'}
+              h={'16px'}
+            />
           )}
         </div>
         <div css={nameButtonArea}>
@@ -269,23 +269,16 @@ const TreeNodeComponent: React.FC<IProps> = observer(({ widgetModel, isTop = tru
             <div style={{ flex: 1 }}>{widgetModel.getName()}</div>
 
             {locked && (
-              // <ImageResourceComponent
-              //     id={hidden ? 'IC_TOOLPANE_HOLD_DISABLED' : 'IC_TOOLPANE_HOLD_NORMAL'}
-              //     css={lockIconArea}
-              //     w={'12px'}
-              //     h={'12px'}
-              // />
-              <button css={hideIconArea} style={{ width: '12px', height: '12px' }} id="IC_TOOLPANE_HIDE_DISABLED" />
+              <ImageResourceComponent
+                id={hidden ? 'IC_TOOLPANE_HOLD_DISABLED' : 'IC_TOOLPANE_HOLD_NORMAL'}
+                css={lockIconArea}
+                w={'12px'}
+                h={'12px'}
+              />
             )}
 
             {hidden && (
-              // <ImageResourceComponent
-              //     id={'IC_TOOLPANE_HIDE_DISABLED'}
-              //     css={hideIconArea}
-              //     w={'12px'}
-              //     h={'12px'}
-              // />
-              <button css={hideIconArea} style={{ width: '12px', height: '12px' }} id="IC_TOOLPANE_HIDE_DISABLED" />
+              <ImageResourceComponent id={'IC_TOOLPANE_HIDE_DISABLED'} css={hideIconArea} w={'12px'} h={'12px'} />
             )}
           </span>
           <div

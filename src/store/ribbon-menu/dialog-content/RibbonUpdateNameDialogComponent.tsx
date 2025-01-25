@@ -1,3 +1,4 @@
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import DialogComponent from 'components/controls/dialog/DialogComponent';
 import useEditorStore from 'hooks/useEditorStore';
 import * as React from 'react';
@@ -72,12 +73,7 @@ const RibbonUpdateNameDialogComponent: React.FC<IDialogContentProps> = (props: I
       <div style={{ display: 'flex', flexDirection: 'row' }}>
         <input id="outlined-start-adornment" value={name} onChange={handleInputChange} />
         <div onClick={handleClearClick}>
-          {/* <ImageResourceComponent
-                                        className={styles.imageResource}
-                                        id={'IC_TOOLPANE_SEARCH_DELETE'}
-                                        w={'28px'}
-                                        h={'28px'}
-                                    /> */}
+          <ImageResourceComponent css={imageResource} id={'IC_TOOLPANE_SEARCH_DELETE'} w={'28px'} h={'28px'} />
           <button css={imageResource} style={{ width: '28px', height: '28px' }} />
         </div>
       </div>

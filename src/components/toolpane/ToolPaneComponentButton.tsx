@@ -55,7 +55,6 @@ const ToolPaneComponentButton: React.FC<IProps> = (props: IProps) => {
       >
         <div css={toolPaneComponentButtonImage}>
           <ImageResourceComponent id={image} w={'32px'} h={'32px'} />
-          {/* <button style={{ width: '32px', height: '32px' }} /> */}
         </div>
         <div css={toolPaneComponentButtonLabelWrapper}>
           <div css={toolPaneComponentButtonLabel}>{/*useTextResource(label)*/ label}</div>

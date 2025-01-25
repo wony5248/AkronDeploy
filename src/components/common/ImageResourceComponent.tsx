@@ -69,11 +69,6 @@ const SVGStringComponent: React.FC<ISVGStringComponentProps> = ({
   let viewBoxWidth = 0;
   let viewBoxHeight = 0;
 
-  const viewBoxX = svg.viewBox.baseVal.x;
-  const viewBoxY = svg.viewBox.baseVal.y;
-  const viewBoxW = svg.viewBox.baseVal.width !== 0 ? svg.viewBox.baseVal.width : 32;
-  const viewBoxH = svg.viewBox.baseVal.height !== 0 ? svg.viewBox.baseVal.height : 32;
-
   try {
     viewBoxWidth = svg.width.baseVal.value;
     viewBoxHeight = svg.height.baseVal.value;
@@ -85,7 +80,10 @@ const SVGStringComponent: React.FC<ISVGStringComponentProps> = ({
   } catch (error) {
     dWarn(`w,h가 설정되지 않은 image: ${id}`);
   }
-
+  const viewBoxX = svg.viewBox.baseVal.x;
+  const viewBoxY = svg.viewBox.baseVal.y;
+  const viewBoxW = svg.viewBox.baseVal.width !== 0 ? svg.viewBox.baseVal.width : viewBoxWidth;
+  const viewBoxH = svg.viewBox.baseVal.height !== 0 ? svg.viewBox.baseVal.height : viewBoxHeight;
   const firstTagEnd = modifiedSvgData.indexOf('>'); // end of svg tag
   const result = modifiedSvgData.slice(firstTagEnd + 1);
 
@@ -94,7 +92,6 @@ const SVGStringComponent: React.FC<ISVGStringComponentProps> = ({
       className={className}
       width={w || viewBoxWidth}
       height={h || viewBoxHeight}
-      // viewBox={`0 0 32 32`}
       viewBox={`${viewBoxX} ${viewBoxY} ${viewBoxW} ${viewBoxH}`}
       // 리소스팩은 사용자로부터 얻어온 데이터가 아니므로 XSS에 대한 보안 이슈가 없을 것이라 가정
 

@@ -1,4 +1,5 @@
 import ImageResourceButtonComponent from 'components/common/ImageResourceButtonComponent';
+import ImageResourceComponent from 'components/common/ImageResourceComponent';
 import LeftToolPaneMUITab from 'components/toolpane/LeftToolPaneMUITab';
 import useEditorStore from 'hooks/useEditorStore';
 import useFile from 'hooks/widget/useFile';
@@ -83,8 +84,7 @@ const LibraryItem: React.FC<ILibraryItemProps> = ({ editorStore, componentItem }
               style={{ width: '32px', height: '32px', objectFit: 'contain' }}
             />
           ) : (
-            // <ImageResourceComponent w="32px" h="32px" id={'IMG_GX_COMPONENT_DUMMY'} />
-            <button style={{ width: '32px', height: '32px' }} />
+            <ImageResourceComponent w="32px" h="32px" id={'IMG_GX_COMPONENT_DUMMY'} />
           )}
         </div>
         <div css={toolPaneComponentButtonLabelWrapper}>
@@ -132,7 +132,6 @@ const LibraryCategory: React.FC<ILibraryCategoryProps> = ({
             disabled={false}
             imagecss={toolPaneComponentCategoryButton}
           />
-          {/* <button style={{ width: '16px', height: '16px' }} /> */}
 
           <div css={toolPaneComponentCategoryTitle}>{categoryName}</div>
         </div>
